@@ -11,10 +11,25 @@ pylfd
 
 Python package for learning from demonstration
 
-* Free software: ISC license
+* Free software: MIT license
 * Documentation: https://pylfd.readthedocs.org.
 
 Features
 --------
 
-* TODO
+* Inverse Reinforcement Learning
+    [x] Bayesian IRL (including TBIRL for finite and infinite domains)
+    [ ] MaxEnt IRL
+* RL Domains
+    [x] GridWorld (discrete)
+    [x] PuddleWorld (continuous)
+    [x] ChainWorld (discrete)
+    [x] Social Navigation (continuous)
+* MDP solvers
+    [x] Exact methods, PI, VI
+    [x] Sampled based methods, Sparse Sampling, FSSS, etc
+
+
+Getting started
+---------------
+See docs/usage
