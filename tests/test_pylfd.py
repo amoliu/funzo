@@ -10,7 +10,7 @@ Tests for `pylfd` module.
 
 import unittest
 
-from pylfd import pylfd
+from pylfd.domains.gridworld import GridWorld
 
 
 class TestPylfd(unittest.TestCase):

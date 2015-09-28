@@ -18,16 +18,16 @@ Features
 --------
 
 * Inverse Reinforcement Learning
-    [x] Bayesian IRL (including TBIRL for finite and infinite domains)
-    [ ] MaxEnt IRL
+    - Bayesian IRL (including TBIRL for finite and infinite domains)
+    - MaxEnt IRL
 * RL Domains
-    [x] GridWorld (discrete)
-    [x] PuddleWorld (continuous)
-    [x] ChainWorld (discrete)
-    [x] Social Navigation (continuous)
+    - GridWorld (discrete)
+    - PuddleWorld (continuous)
+    - ChainWorld (discrete)
+    - Social Navigation (continuous)
 * MDP solvers
-    [x] Exact methods, PI, VI
-    [x] Sampled based methods, Sparse Sampling, FSSS, etc
+    - Exact methods, PI, VI
+    - Sampled based methods, Sparse Sampling, FSSS, etc
 
 
 Getting started

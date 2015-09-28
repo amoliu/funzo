@@ -7,10 +7,14 @@ from abc import abstractmethod
 class Domain(object):
     """ Domain interface
 
+    Domains are extensions of MDPs, have all mdp relevant information
+
     domain summarizes the following:
 
     MDP states and actions
     MDP dynamics/transitions
+
+    MDP contains: discounting, terminal states?
 
     """
 
