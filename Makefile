@@ -24,6 +24,7 @@ help:
 	@echo "release - package and upload a release"
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
+	@echo "develop - install the package for local development"
 
 clean: clean-build clean-pyc clean-test
 
@@ -80,3 +81,6 @@ dist: clean
 
 install: clean
 	python setup.py install
+
+develop: clean
+	python setup.py develop
