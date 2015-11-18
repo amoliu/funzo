@@ -49,7 +49,8 @@ lint:
 	flake8 pylfd tests
 
 test:
-	python setup.py test
+	# python setup.py test
+	py.test -v
 
 test-all:
 	tox

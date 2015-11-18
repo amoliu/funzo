@@ -2,7 +2,7 @@
 import six
 
 from abc import ABCMeta
-from abc import abstractmethod
+from abc import abstractmethod, abstractproperty
 
 import numpy as np
 
