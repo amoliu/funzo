@@ -9,6 +9,18 @@ Subpackages
     pylfd.domains
     pylfd.models
 
+Submodules
+----------
+
+pylfd.base module
+-----------------
+
+.. automodule:: pylfd.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Module contents
 ---------------
 

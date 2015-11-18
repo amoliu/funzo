@@ -15,17 +15,18 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     _template = '_feature_'
 
-    def __init__(self, world, kind='linfa'):
-        # keep a reference to parent MDP to get access to S, A
+    def __init__(self, world):
+        # keep a reference to parent MDP to get access to domain and dynamics
         self._world = world
-        self.kind = kind
 
     @abstractmethod
     def __call__(self, state, action):
         """ Evaluate the reward function for the (state, action) pair
 
-        Compute :math:`r(s, a) = f(s, a, w)` where :math:`f` is a function
-        approximation for the reward parameterized by :math:`w`
+        Compute :math:`r(s, a) = \sum_i w_i f_i(s, a)`
+        where :math:`f` is a (linear )function approximation for the reward
+        parameterized by :math:`w`
+
         """
         raise NotImplementedError('Abstract method')
 
@@ -70,13 +71,53 @@ class MDP(Model):
     """
 
     def __init__(self, discount, reward):
-        if 0.0 > discount >= 1.0:
-            raise ValueError('The `discount` must be in [0, 1)')
+        assert 0.0 <= discount < 1.0, 'The `discount` must be in [0, 1)'
 
         self.gamma = discount
-        self.reward = reward
+        self.reward = reward  # keep a reference to reward function object
 
     @abstractmethod
     def terminal(self, state):
         """ Check if a state is terminal (goal state) """
         raise NotImplementedError('Abstract method')
+
+
+###############################################################################
+
+
+class Domain(six.with_metaclass(ABCMeta, Model)):
+
+    """ Domain interface
+
+    Domains are extensions of MDPs, have all mdp relevant information
+
+    domain summarizes the following:
+
+    MDP states and actions
+    MDP dynamics/transitions
+
+    MDP contains: discounting, terminal states?
+
+    """
+
+    def __init__(self, kind='discrete'):
+        self.kind = kind
+
+    @abstractmethod
+    def visualize(self, ax, **kwargs):
+        """ visualize a domain
+
+        Parameters
+        -----------
+        ax : `matplotlib` axes
+            Axes on which to visualize the domain
+        kwargs : dict
+            Optional key-world arguiments
+
+        Returns
+        --------
+        ax : `matplotlib` axes
+            The axis with the visual elements on the domain drawn
+
+        """
+        return NotImplementedError('This method is abstract')
