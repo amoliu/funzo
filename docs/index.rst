@@ -17,6 +17,7 @@ Contents:
    contributing
    authors
    history
+   reference/index
 
 Indices and tables
 ==================

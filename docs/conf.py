@@ -15,38 +15,52 @@
 
 import sys
 import os
-import sphinx_bootstrap_theme
-
+# import sphinx_bootstrap_theme
+import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
-# sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, os.path.abspath('../sphinxext'))
 
-# Get the project root dir, which is the parent dir of this
-cwd = os.getcwd()
-project_root = os.path.dirname(cwd)
+sys.path.insert(0, os.path.abspath('../pylfd'))
+sys.path.append(os.path.abspath('sphinxext'))
 
-# Insert the project root dir as the first element in the PYTHONPATH.
-# This lets us ensure that the source package is imported, and that its
-# version is used.
-sys.path.insert(0, project_root)
+# cwd = os.getcwd()
+# project_root = os.path.dirname(cwd)
+# sys.path.insert(0, project_root)
 
 import pylfd
 
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-# needs_sphinx = '1.0'
+needs_sphinx = '1.0'  # numpydoc requires sphinc >= 1.0
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
+# extensions = ['sphinx.ext.autodoc',
+#               'sphinx.ext.viewcode',
+#               'sphinx.ext.pngmath',
+#               'numpydoc',
+#               'sphinx.ext.autosummary']
+
 extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.todo',
               'sphinx.ext.viewcode',
+              'sphinx.ext.coverage',
               'sphinx.ext.pngmath',
-              'numpydoc',
-              'sphinx.ext.autosummary']
+              'sphinx.ext.ifconfig',
+              'sphinx.ext.autosummary',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.napoleon']
+              # 'math_dollar',  # has to go before numpydoc
+              # 'numpydoc',
+              # 'github']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -119,9 +133,11 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 # html_theme = 'default'
 
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-
+# html_theme = 'sphinxdoc'
+# html_theme = 'bootstrap'
+# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the

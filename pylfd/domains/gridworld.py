@@ -11,7 +11,7 @@ import six
 import numpy as np
 
 from ..base import Model
-from ..models.base import Domain, MDP, MDPReward
+from ..models.base import Domain, MDP, MDPReward, MDPController
 
 
 class Grid2D(Model):
@@ -105,6 +105,54 @@ class GridReward(MDPReward):
         return len(self._world.S)
 
 
+class GController(MDPController):
+    """ Grirdworld MDP controller """
+    def __init__(self, world, noise_level=0):
+        super(GController, self).__init__(world)
+        self._noise_level = noise_level
+
+    def __call__(self, state, action, **kwargs):
+        """ Run controller
+
+        Returns
+        --------
+        A list of all possible next states [(prob, state)]
+
+        """
+        state = self._world.S[state_]
+        action = self._world.A[action_]
+
+        if action is None:
+            return [(0.0, state)]
+        else:
+            return [(0.8, self._move(state, action)),
+                    (0.1, self._move(state, self._right(action,
+                                                        self.A.values()))),
+                    (0.1, self._move(state, self._left(action,
+                                                       self.A.values())))]
+
+    def _move(self, state, direction):
+        """ Return the state that results from going in this direction. Stays
+        in the same state if action os leading to go outside the world or to
+        obstacles
+        """
+        ns = (state[0]+direction[0], state[1]+direction[1])
+        if not self._world.grid.valid_cell(ns):
+            return self._world.state_map[state]
+        if self._world.grid.blocked(ns):
+            return self.state_map[state]
+        return self._world.state_map[ns]
+
+    def _heading(self, heading, inc, directions):
+        return directions[(directions.index(heading) + inc) % len(directions)]
+
+    def _right(self, heading, directions):
+        return _heading(heading, -1, directions)
+
+    def _left(self, heading, directions):
+        return _heading(heading, +1, directions)
+
+
 class GridWorld(Domain, MDP):
     """ GridWorld domain
 
@@ -114,6 +162,7 @@ class GridWorld(Domain, MDP):
     """
     def __init__(self, gmap):
         g_reward = GridReward(world=self)
+        g_controller = GController(world=self)
 
         Domain.__init__(self, kind='discrete')
         MDP.__init__(self, discount=0.9, reward=g_reward)
@@ -128,8 +177,6 @@ class GridWorld(Domain, MDP):
 
         self.terminals = list()
         self.S = dict()
-
-        print(self._grid.rows, self._grid.cols)
 
         state_id = 0
         self.state_map = dict()
@@ -147,19 +194,6 @@ class GridWorld(Domain, MDP):
 
         self.A = {0: (1, 0), 1: (0, 1), 2: (-1, 0), 3: (0, -1)}
 
-    def transition(self, state_id, action_id):
-        """ Transition model.  From a state and an action, return a list
-        of (probability, result-state) pairs.
-        """
-        state = self.S[state_id]
-        action = self.A[action_id]
-        if action is None:
-            return [(0.0, state)]
-        else:
-            return [(0.8, self._move(state, action)),
-                    (0.1, self._move(state, _right(action, self.A.values()))),
-                    (0.1, self._move(state, _left(action, self.A.values())))]
-
     def actions(self, state):
         """ Set of actions that can be performed in this state. """
         if self.terminal(self.S[state]):
@@ -169,18 +203,6 @@ class GridWorld(Domain, MDP):
         """ Check if a state is terminal"""
         assert isinstance(state, Iterable), '`state` expected a tuple/list'
         return state in self.terminals
-
-    def _move(self, state, direction):
-        """ Return the state that results from going in this direction. Stays
-        in the same state if action os leading to go outside the world or to
-        obstacles
-        """
-        ns = (state[0]+direction[0], state[1]+direction[1])
-        if not self._grid.valid_cell(ns):
-            return self.state_map[state]
-        if self._grid.blocked(ns):
-            return self.state_map[state]
-        return self.state_map[ns]
 
     def visualize(self, ax, **kwargs):
         if 'show_policy' in kwargs and 'policy' in kwargs:
@@ -206,22 +228,3 @@ class GridWorld(Domain, MDP):
 
     def _show_policy(self, ax, **kwargs):
         pass
-
-
-#############################################################################
-# Grid world controller
-
-def _heading(heading, inc, directions):
-    return directions[(directions.index(heading) + inc) % len(directions)]
-
-
-def _right(heading, directions):
-    return _heading(heading, -1, directions)
-
-
-def _left(heading, directions):
-    return _heading(heading, +1, directions)
-
-
-# Create a class for gridworl controller and reward function
-#

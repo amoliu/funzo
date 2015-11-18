@@ -2,56 +2,40 @@
 # -*- coding: utf-8 -*-
 
 
+import os
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
 
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
+ver_file = os.path.join('pylfd', 'version.py')
+with open(ver_file) as f:
+    exec(f.read())
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read().replace('.. :changelog:', '')
+# with open('README.rst') as readme_file:
+#     readme = readme_file.read()
 
-requirements = [
-    # TODO: put package requirements here
-]
+# with open('HISTORY.rst') as history_file:
+#     history = history_file.read().replace('.. :changelog:', '')
 
-test_requirements = [
-    # TODO: put package test requirements here
-]
+opts = dict(name=NAME,
+            maintainer=MAINTAINER,
+            maintainer_email=MAINTAINER_EMAIL,
+            description=DESCRIPTION,
+            long_description=LONG_DESCRIPTION,
+            url=URL,
+            download_url=DOWNLOAD_URL,
+            license=LICENSE,
+            classifiers=CLASSIFIERS,
+            author=AUTHOR,
+            author_email=AUTHOR_EMAIL,
+            platforms=PLATFORMS,
+            version=VERSION,
+            packages=PACKAGES,
+            package_data=PACKAGE_DATA,
+            requires=REQUIRES)
 
-setup(
-    name='pylfd',
-    version='0.1.0',
-    description="Python package for learning from demonstration",
-    long_description=readme + '\n\n' + history,
-    author="Billy Okal",
-    author_email='sudo@makokal.com',
-    url='https://github.com/makokal/pylfd',
-    packages=[
-        'pylfd',
-    ],
-    package_dir={'pylfd':
-                 'pylfd'},
-    include_package_data=True,
-    install_requires=requirements,
-    license="MIT",
-    zip_safe=False,
-    keywords='pylfd',
-    classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License (MIT)',
-        'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-    ],
-    # test_suite='tests',
-    # tests_require=test_requirements
-)
+
+if __name__ == '__main__':
+    setup(**opts)

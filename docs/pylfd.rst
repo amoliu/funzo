@@ -20,6 +20,14 @@ pylfd.base module
     :undoc-members:
     :show-inheritance:
 
+pylfd.version module
+--------------------
+
+.. automodule:: pylfd.version
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

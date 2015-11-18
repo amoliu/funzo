@@ -10,8 +10,42 @@ import numpy as np
 from ..base import Model
 
 
+########################################################################
+
+
 class MDPReward(six.with_metaclass(ABCMeta, Model)):
-    """ Reward  function base class """
+    """ Markov decision process reward  function interface
+
+    Rewards are as functions of state and action spaces of MDPs, i.e.
+
+    .. math::
+        :label: reward
+
+        r: \mathcal{S} \\times \mathcal{A} \longrightarrow \mathbb{R}
+
+    Rewards are accessed via the `__call__` method with apppropriate
+    parameters.
+
+
+    Parameters
+    -----------
+    world : `class` object
+        Object reference to the domain of the MDP that the reward is
+        to be used
+
+    Attributes
+    -----------
+    _world : `class` object
+        Object reference to the domain of the MDP that the reward is
+        to be used
+
+    Note
+    -------
+    The dimension of the reward in case of linear function representation is
+    computed based on a convention of reward function names defined by the
+    `_template` tag
+
+    """
 
     _template = '_feature_'
 
@@ -24,15 +58,17 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
         """ Evaluate the reward function for the (state, action) pair
 
         Compute :math:`r(s, a) = \sum_i w_i f_i(s, a)`
-        where :math:`f` is a (linear )function approximation for the reward
+        if  :math:`f` is a (linear )function approximation for the reward
         parameterized by :math:`w`
+
+        Otherwise, return the tabular reward for the given state.
 
         """
         raise NotImplementedError('Abstract method')
 
     @property
     def dim(self):
-        """ Dimension of the reward function """
+        """ Dimension of the reward function in the case of LFA """
         # - count all class members named '_feature_{x}'
         features = self.__class__.__dict__
         dim = sum([f[0].startswith(self._template) for f in features])
@@ -49,6 +85,54 @@ class RewardLoss(six.with_metaclass(ABCMeta, Model)):
     def __call__(self, r1, r2):
         """ Reward loss between ``r1`` and ``r2`` """
         raise NotImplementedError('Abstract')
+
+
+########################################################################
+
+
+class MDPController(six.with_metaclass(ABCMeta, Model)):
+    """ A MDP controller
+
+    A generic way of representing MDP transition operation for both discrete
+    and continuous spaces. A controller simply takes and `action` at a given
+    `state` and executes it based on the controller properties (which could
+    include stochaticity, etc)
+
+    Parameters
+    -----------
+    world : `class` object
+        Object reference to the domain of the MDP that the controller is
+        to be used on
+    kind : str
+        Controller type (descriptive tag)
+
+    Attributes
+    -----------
+    _world : `class` object
+        Object reference to the domain of the MDP that the controller is
+        to be used on
+    kind : str
+        Controller type (descriptive tag)
+
+
+    """
+
+    def __init__(self, world, kind='abstract'):
+        self._world = world
+        self.kind = kind
+
+    @abstractmethod
+    def __call__(self, state, action, **kwargs):
+        """ Execute a controller
+
+        Run the controller at `state` using `action` with optional parameters
+        given in `kwargs`
+
+        """
+        raise NotImplementedError('Abstract method')
+
+
+########################################################################
 
 
 class MDP(Model):
