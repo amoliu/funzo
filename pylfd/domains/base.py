@@ -3,8 +3,11 @@
 from abc import ABCMeta
 from abc import abstractmethod
 
+import six
 
-class Domain(object):
+
+class Domain(six.with_metaclass(ABCMeta)):
+
     """ Domain interface
 
     Domains are extensions of MDPs, have all mdp relevant information
@@ -18,12 +21,24 @@ class Domain(object):
 
     """
 
-    __meta__ = ABCMeta
-
     def __init__(self, kind='discrete'):
-        super(Domain, self).__init__()
         self.kind = kind
 
     @abstractmethod
-    def visualize(self):
-        pass
+    def visualize(self, ax, **kwargs):
+        """ visualize a domain
+
+        Parameters
+        -----------
+        ax : `matplotlib` axes
+            Axes on which to visualize the domain
+        kwargs : dict
+            Optional key-world arguiments
+
+        Returns
+        --------
+        ax : `matplotlib` axes
+            The axis with the visual elements on the domain drawn
+
+        """
+        return NotImplementedError('This method is abstract')
