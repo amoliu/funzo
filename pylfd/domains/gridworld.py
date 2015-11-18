@@ -68,8 +68,7 @@ class Grid(Model):
                     for j in range(self._cols))
 
     def __repr__(self):
-        """ Print the map to stdout in ASCII
-        """
+        """ Print the map to stdout in ASCII """
         for row in range(self._rows):
             for col in range(self._cols):
                 print("%s" % ('[X]' if self._map[row, col] == 1 else '[ ]')),
@@ -79,8 +78,8 @@ class Grid(Model):
         return self.__repr__
 
     def _check_dim(self, value, dim):
+        value = int(value)
         assert value > 0, '{} must be greater than 0'.format(dim)
-        assert isinstance(value, int), '{} must be an integer'.format(dim)
         if value > 100:
             warnings.warn('{} is large, MDP may be slow'.format(dim))
         return value
@@ -95,8 +94,69 @@ class GridWorld(Domain):
     """
     def __init__(self, gmap, goal):
         super(GridWorld, self).__init__(kind='discrete')
-        self._gmap = gmap
         self._goal = goal
+
+        gmap = np.asarray(gmap)
+        assert gmap.ndim == 2, '`gmap` must be a two array'
+        self._initialize(gmap)
+
+    def _initialize(self, gmap):
+        height, width = gmap.shape
+        self._grid = Grid(nrows=width, ncols=height)
+
+        self.terminals = list()
+        self.S = dict()
+
+        state_id = 0
+        self.state_map = dict()
+        for i in range(self._grid.rows):
+            for j in range(self._grid.cols):
+                if gmap[i, j] == 1:
+                    self._grid.block_cell((j, i))
+                if gmap[i, j] == 2:
+                    self.terminals.append((j, i))
+                    self.goal = (j, i)
+
+                self.S[state_id] = (j, i)
+                self.state_map[(j, i)] = state_id
+                state_id += 1
+
+        self.A = {0: (1, 0), 1: (0, 1), 2: (-1, 0), 3: (0, -1)}
+
+    def transition(self, state_id, action_id):
+        """ Transition model.  From a state and an action, return a list
+        of (probability, result-state) pairs.
+        """
+        state = self.S[state_id]
+        action = self.A[action_id]
+        if action is None:
+            return [(0.0, state)]
+        else:
+            return [(0.8, self._move(state, action)),
+                    (0.1, self._move(state, _right(action, self.A.values()))),
+                    (0.1, self._move(state, _left(action, self.A.values())))]
+
+    def actions(self, state):
+        """ Set of actions that can be performed in this state. """
+        if self.terminal(self.S[state]):
+            return self.A.keys()
+
+    def terminal(self, state):
+        """ Check if a state is terminal"""
+        assert isinstance(state, Iterable), '`state` expected a tuple/list'
+        return state in self.terminals
+
+    def _move(self, state, direction):
+        """ Return the state that results from going in this direction. Stays
+        in the same state if action os leading to go outside the world or to
+        obstacles
+        """
+        ns = (state[0]+direction[0], state[1]+direction[1])
+        if not self.grid.valid_cell(ns):
+            return self.state_map[state]
+        if self.grid.blocked(ns):
+            return self.state_map[state]
+        return self.state_map[ns]
 
     def visualize(self, ax, **kwargs):
         if 'show_policy' in kwargs and 'policy' in kwargs:

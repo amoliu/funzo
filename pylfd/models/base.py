@@ -81,6 +81,10 @@ class MDP(Model):
         """ Check if a state is terminal (goal state) """
         raise NotImplementedError('Abstract method')
 
+    @abstractproperty
+    def goal_state(self):
+        return None
+
 
 ###############################################################################
 
