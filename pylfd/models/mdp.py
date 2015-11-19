@@ -20,6 +20,7 @@ from ..base import Model
 __all__ = [
     'MDP',
     'MDPReward',
+    'MDPRewardLFA',
     'MDPTransition'
 ]
 
@@ -163,8 +164,6 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     """
 
-    _template = '_feature_'
-
     def __init__(self, domain):
         # keep a reference to parent MDP to get access to domain and dynamics
         self._domain = domain
@@ -176,12 +175,35 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     @abstractmethod
     def __len__(self):
+        """ Dimension of the reward function """
+        raise NotImplementedError('Abstract method')
+
+
+class MDPRewardLFA(six.with_metaclass(MDPReward)):
+    """ MDPReward using Linear Function Approximation
+
+    The reward is given by;
+
+    .. math:
+
+            r(s, a) = \sum_i w_i f_i(s, a)
+
+    where :math:`f_(s, a)` is a reward feature defined over state and action
+    spaces of the underlying MDP
+
+    """
+
+    _template = '_feature_'
+
+    def __init__(self, domain):
+        super(MDPRewardLFA, self).__init__(domain)
+
+    def __len__(self):
         """ Dimension of the reward function in the case of LFA """
         # - count all class members named '_feature_{x}'
         features = self.__class__.__dict__
         dim = sum([f[0].startswith(self._template) for f in features])
         return dim
-
 
 ########################################################################
 
