@@ -11,7 +11,8 @@ import six
 import numpy as np
 
 from ..base import Model
-from ..models.base import Domain, MDP, MDPReward, MDPController
+from ..models.domain import Domain
+from ..models.mdp import MDP, MDPReward, MDPTransition
 
 
 class Grid2D(Model):
@@ -94,42 +95,37 @@ class Grid2D(Model):
 
 class GridReward(MDPReward):
     """ Grid world MDP reward function """
-    def __init__(self, world):
-        super(GridReward, self).__init__(world)
+    def __init__(self, domain):
+        super(GridReward, self).__init__(domain)
 
     def __call__(self, state, action):
         return 1.0
 
-    @property
-    def dim():
-        return len(self._world.S)
+    def __len__():
+        return len(self._domain.S)
 
 
-class GController(MDPController):
+class GTransition(MDPTransition):
     """ Grirdworld MDP controller """
-    def __init__(self, world, noise_level=0):
-        super(GController, self).__init__(world)
+    def __init__(self, domain, noise_level=0):
+        super(GTransition, self).__init__(domain)
         self._noise_level = noise_level
 
     def __call__(self, state, action, **kwargs):
-        """ Run controller
+        """ Transition
 
         Returns
         --------
         A list of all possible next states [(prob, state)]
 
         """
-        state = self._world.S[state_]
-        action = self._world.A[action_]
-
-        if action is None:
-            return [(0.0, state)]
-        else:
-            return [(0.8, self._move(state, action)),
-                    (0.1, self._move(state, self._right(action,
-                                                        self.A.values()))),
-                    (0.1, self._move(state, self._left(action,
-                                                       self.A.values())))]
+        state_ = self._domain.S[state]
+        action_ = self._domain.A[action]
+        return [(0.8, self._move(state_, action_)),
+                (0.1, self._move(state_, self._right(action_,
+                                                     self.A.values()))),
+                (0.1, self._move(state_, self._left(action_,
+                                                    self.A.values())))]
 
     def _move(self, state, direction):
         """ Return the state that results from going in this direction. Stays
@@ -161,11 +157,11 @@ class GridWorld(Domain, MDP):
 
     """
     def __init__(self, gmap):
-        g_reward = GridReward(world=self)
-        g_controller = GController(world=self)
+        gr = GridReward(domain=self)
+        gt = GTransition(domain=self)
 
-        Domain.__init__(self, kind='discrete')
-        MDP.__init__(self, discount=0.9, reward=g_reward)
+        # Domain.__init__(self)
+        MDP.__init__(self, discount=0.9, reward=gr, transition=gt)
 
         gmap = np.asarray(gmap)
         assert gmap.ndim == 2, '`gmap` must be a two array'
@@ -175,34 +171,37 @@ class GridWorld(Domain, MDP):
         height, width = gmap.shape
         self._grid = Grid2D(nrows=width, ncols=height)
 
-        self.terminals = list()
-        self.S = dict()
+        self._terminals = list()
+        self._states = dict()
 
         state_id = 0
-        self.state_map = dict()
         for i in range(self._grid.rows):
             for j in range(self._grid.cols):
                 if gmap[i, j] == 1:
                     self._grid.block_cell((j, i))
                 if gmap[i, j] == 2:
-                    self.terminals.append((j, i))
+                    self._terminals.append((j, i))
                     self._goal = (j, i)
 
-                self.S[state_id] = (j, i)
-                self.state_map[(j, i)] = state_id
+                self._states[state_id] = (j, i)
                 state_id += 1
 
-        self.A = {0: (1, 0), 1: (0, 1), 2: (-1, 0), 3: (0, -1)}
+        self._action = {0: (1, 0), 1: (0, 1), 2: (-1, 0), 3: (0, -1)}
 
-    def actions(self, state):
-        """ Set of actions that can be performed in this state. """
-        if self.terminal(self.S[state]):
-            return self.A.keys()
+    @property
+    def S(self):
+        """ States of the MDP in an indexable container """
+        return self._states
+
+    @property
+    def A(self):
+        """ Actions of the MDP in an indexable container """
+        return self._actions
 
     def terminal(self, state):
         """ Check if a state is terminal"""
         assert isinstance(state, Iterable), '`state` expected a tuple/list'
-        return state in self.terminals
+        return state in self._terminals
 
     def visualize(self, ax, **kwargs):
         if 'show_policy' in kwargs and 'policy' in kwargs:

@@ -179,7 +179,7 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Abstract method')
 
 
-class MDPRewardLFA(six.with_metaclass(MDPReward)):
+class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
     """ MDPReward using Linear Function Approximation
 
     The reward is given by;
