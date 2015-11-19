@@ -1,5 +1,9 @@
 """
-Exact MDP planning using Value Iteration
+Exact MDP planning using *exact* methods
+
+    * Policy Iteration (PI)
+    * Value  Iteration (VI)
+    * Linear Programming (LP)
 
 Assumptions
 =============
@@ -10,6 +14,10 @@ in discrete case with small to medium size MDPs
 
 
 import numpy as np
+
+
+def policy_iteration(mdp):
+    pass
 
 
 def value_iteraction(mdp, epsilon=1e-05):
@@ -36,3 +44,11 @@ def value_iteraction(mdp, epsilon=1e-05):
     Q = np.zeros(shape=(len(mdp.S), len(mdp.A)))
 
     return dict(V, policy, Q)
+
+
+def _policy_evaluation(mdp, policy):
+    pass
+
+
+def _policy_improvement(mdp, Q):
+    pass
