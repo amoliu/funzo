@@ -17,8 +17,8 @@ def main():
     g = GridWorld(np.array(gmap).T)
     # print(g._grid)
 
-    fig = plt.figure(figsize=(8, 6))
-    ax = plt.axes([0, 0, 0.8, 1])
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.gca()
 
     ax = g.visualize(ax)
 
