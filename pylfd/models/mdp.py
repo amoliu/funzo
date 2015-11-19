@@ -17,8 +17,24 @@ from abc import abstractmethod, abstractproperty
 from ..base import Model
 
 
+__all__ = [
+    'MDP',
+    'MDPReward',
+    'MDPTransition'
+]
+
+
 class MDP(Model):
     """ Markov Decision Process Model
+
+
+    For general MDPs, states and action can be continuous making it hard to
+    efficiently represent them using standard data strcutures. In the case of
+    discrete MDPs, it is straightforward to develop indexable data strcutures
+    to contain all possible states and actions (evne though these may be huge).
+    In the continuous cases, we assume that only a sample of the state and
+    action spaces will be used, and these can also be represented with relavant
+    indexable data strcutures.
 
     Parameters
     ------------
@@ -37,15 +53,6 @@ class MDP(Model):
         self._reward = reward  # keep a reference to reward function object
         self._transition = transition
 
-    @abstractproperty
-    def S(self):
-        raise NotImplementedError('Abstract property')
-
-    @abstractproperty
-    def A(self):
-        raise NotImplementedError('Abstract property')
-
-    @abstractmethod
     def R(self, state, action):
         """ Reward function
 
@@ -54,10 +61,12 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : State
-            A state in the MDP
-        action : Action
-            MDP action
+        state : int
+            A state id in the MDP, used to index into the relevant state. The
+            representation of state is irrelevant as long as `self.S[state]`
+            returns a meaningful state on which the reward can be computed
+        action : int
+            MDP action id analogous the state id described above.
 
         Returns
         --------
@@ -65,23 +74,24 @@ class MDP(Model):
             A real valued reward signal
 
         """
-        raise NotImplementedError('Abstract method')
+        return self._reward(state, action)
 
-    @abstractmethod
     def T(self, state, action):
         """ Transition from `state` with `action`
 
-        Perform a transion from a state using the action specified. The result
-        is all reachable states with their respective "reach" probabilities. In
-        the case of deteministic dynamics, the result will contain only one of
-        the reachable states.
+        Perform a transition from a state using the action specified. The
+        result is all reachable states with their respective "reach"
+        probabilities. In the case of deteministic dynamics, the result will
+        contain only one of the reachable states.
 
         Parameters
         -----------
-        state : State
-            A state in the MDP
-        action : Action
-            MDP action
+        state : int
+            A state id in the MDP, used to index into the relevant state. The
+            representation of state is irrelevant as long as `self.S[state]`
+            returns a meaningful state on which the transition can be computed
+        action : int
+            MDP action id analogous the state id described above.
 
         Returns
         --------
@@ -90,12 +100,22 @@ class MDP(Model):
             i.e. :math:`\{(p, s') \\forall s' \in T(s, a, \cdot) \}`
 
         """
-        raise NotImplementedError('Abstract method')
+        return self._transition(state, action)
 
     @abstractmethod
     def terminal(self, state):
         """ Check if a state is terminal (absorbing state) """
         raise NotImplementedError('Abstract method')
+
+    @abstractproperty
+    def S(self):
+        """ States of the MDP in an indexable container """
+        raise NotImplementedError('Abstract property')
+
+    @abstractproperty
+    def A(self):
+        """ Actions of the MDP in an indexable container """
+        raise NotImplementedError('Abstract property')
 
     @property
     def gamma(self):
@@ -116,7 +136,6 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
     Rewards are as functions of state and action spaces of MDPs, i.e.
 
     .. math::
-        :label: reward
 
         r: \mathcal{S} \\times \mathcal{A} \longrightarrow \mathbb{R}
 
@@ -126,13 +145,13 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     -----------
-    world : `class` object
+    domain : `class` object
         Object reference to the domain of the MDP that the reward is
         to be used
 
     Attributes
     -----------
-    _world : `class` object
+    _domain : `class` object
         Object reference to the domain of the MDP that the reward is
         to be used
 
@@ -146,25 +165,17 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     _template = '_feature_'
 
-    def __init__(self, world):
+    def __init__(self, domain):
         # keep a reference to parent MDP to get access to domain and dynamics
-        self._world = world
+        self._domain = domain
 
     @abstractmethod
     def __call__(self, state, action):
-        """ Evaluate the reward function for the (state, action) pair
-
-        Compute :math:`r(s, a) = \sum_i w_i f_i(s, a)`
-        if  :math:`f` is a (linear )function approximation for the reward
-        parameterized by :math:`w`
-
-        Otherwise, return the tabular reward for the given state.
-
-        """
+        """ Evaluate the reward function for the (state, action) pair """
         raise NotImplementedError('Abstract method')
 
-    @property
-    def dim(self):
+    @abstractmethod
+    def __len__(self):
         """ Dimension of the reward function in the case of LFA """
         # - count all class members named '_feature_{x}'
         features = self.__class__.__dict__
@@ -172,23 +183,11 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
         return dim
 
 
-class RewardLoss(six.with_metaclass(ABCMeta, Model)):
-    """ Reward loss function """
-
-    def __init__(self, name):
-        self.name = name
-
-    @abstractmethod
-    def __call__(self, r1, r2):
-        """ Reward loss between ``r1`` and ``r2`` """
-        raise NotImplementedError('Abstract')
-
-
 ########################################################################
 
 
-class MDPController(six.with_metaclass(ABCMeta, Model)):
-    """ A MDP controller
+class MDPTransition(six.with_metaclass(ABCMeta, Model)):
+    """ A MDP transition function
 
     A generic way of representing MDP transition operation for both discrete
     and continuous spaces. A controller simply takes and `action` at a given
@@ -197,26 +196,20 @@ class MDPController(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     -----------
-    world : `class` object
+    domain : `class` object
         Object reference to the domain of the MDP that the controller is
         to be used on
-    kind : str
-        Controller type (descriptive tag)
 
     Attributes
     -----------
-    _world : `class` object
+    _domain : `class` object
         Object reference to the domain of the MDP that the controller is
         to be used on
-    kind : str
-        Controller type (descriptive tag)
-
 
     """
 
-    def __init__(self, world, kind='abstract'):
-        self._world = world
-        self.kind = kind
+    def __init__(self, domain):
+        self._domain = domain
 
     @abstractmethod
     def __call__(self, state, action, **kwargs):
