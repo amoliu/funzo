@@ -21,7 +21,9 @@ __all__ = [
     'MDP',
     'MDPReward',
     'MDPRewardLFA',
-    'MDPTransition'
+    'MDPTransition',
+    'MDPState',
+    'MDPAction'
 ]
 
 
@@ -62,12 +64,11 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : int
-            A state id in the MDP, used to index into the relevant state. The
-            representation of state is irrelevant as long as `self.S[state]`
-            returns a meaningful state on which the reward can be computed
-        action : int
-            MDP action id analogous the state id described above.
+        state : :class: `MDPState`
+            A state in an MDP represented as an object that is hashable and
+            comparable
+        action : :class: `MDPAction`
+            MDP action that is hashable and comparable
 
         Returns
         --------
@@ -87,12 +88,11 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : int
-            A state id in the MDP, used to index into the relevant state. The
-            representation of state is irrelevant as long as `self.S[state]`
-            returns a meaningful state on which the transition can be computed
-        action : int
-            MDP action id analogous the state id described above.
+        state : :class: `MDPState`
+            A state in an MDP represented as an object that is hashable and
+            comparable
+        action : :class: `MDPAction`
+            MDP action that is hashable and comparable
 
         Returns
         --------
@@ -218,7 +218,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     -----------
-    domain : `class` object
+    domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP that the controller is
         to be used on
 
@@ -242,3 +242,40 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
         """
         raise NotImplementedError('Abstract method')
+
+
+########################################################################
+
+
+class MDPState(six.with_metaclass(ABCMeta, Model)):
+    """ State on an MDP
+
+    A state in an MDP with all the relavant domain specific data. The state
+    object must be hashable and comparable.
+
+    """
+
+    @abstractmethod
+    def __hash__(self):
+        raise NotImplementedError('Implement state hash')
+
+    @abstractmethod
+    def __eq__(self, other):
+        raise NotImplementedError('Implement equality of states')
+
+
+class MDPAction(six.with_metaclass(ABCMeta, Model)):
+    """ Action in an MDP
+
+    An action in an MDP with all the relavant domain specific data. The action
+    object must be hashable and comparable.
+
+    """
+
+    @abstractmethod
+    def __hash__(self):
+        raise NotImplementedError('Implement action hash')
+
+    @abstractmethod
+    def __eq__(self, other):
+        raise NotImplementedError('Implement equality of actions')
