@@ -14,7 +14,8 @@ def main():
         [0, 1, 2, 0],
         # [0, 0, 1, 0]
     ]
-    g = GridWorld(np.array(np.rot90(gmap)))
+    # g = GridWorld(np.array(np.rot90(gmap)))
+    g = GridWorld(gmap)
     # print(g._grid)
 
     # fig = plt.figure(figsize=(8, 8))
@@ -23,8 +24,8 @@ def main():
 
     ax = g.visualize(ax)
 
-    fig = plt.figure()
-    plt.imshow(gmap, interpolation='nearest')
+    # fig = plt.figure()
+    # plt.imshow(gmap, interpolation='nearest')
 
     plt.show()
 

@@ -73,7 +73,7 @@ class GTransition(MDPTransition):
 
 class GState(MDPState):
     """ Gridworld state """
-    def __init__(self, cell, status):
+    def __init__(self, cell, status=FREE):
         self.cell = cell
         self.status = status
 
@@ -85,7 +85,7 @@ class GState(MDPState):
                         self.cell[1] - other.cell[1]) < 1e-05
 
     def __str__(self):
-        return '({}, {} : {})'.format(self.cell[0], self.cell[1], self.status)
+        return '({}, {})'.format(self.cell[0], self.cell[1])
 
     def __repr__(self):
         return self.__str__()
