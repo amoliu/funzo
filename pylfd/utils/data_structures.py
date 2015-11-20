@@ -82,3 +82,38 @@ class Policy(MutableMapping, dict):
         assert isinstance(key, Hashable), \
             '{} must be a hashable object'.format(key)
         return key
+
+
+class QFunction(MutableMapping, dict):
+    """ Action-value function (Q function) """
+    def __init__(self, states, actions):
+        assert isinstance(states, Iterable), '*states* must be iterable'
+        assert isinstance(actions, Iterable), '*actions* must be iterable'
+        for s in states:
+            for a in actions:
+                self.__setitem__((self._check_domain(s),
+                                  self._check_domain(a)), 0.0)
+
+    def __getitem__(self, key):
+        self._check_domain(key[0])
+        self._check_domain(key[1])
+        return dict.__getitem__(self, (key[0], key[1]))
+
+    def __setitem__(self, key, value):
+        self._check_domain(key[0])
+        self._check_domain(key[1])
+        dict.__setitem__(self, (key[0], key[1]), value)
+
+    def keys(self):
+        return dict.keys(self)
+
+    def values(self):
+        return dict.values(self)
+
+    def __iter__(self):
+        return dict.__iter__(self)
+
+    def _check_domain(self, key):
+        assert isinstance(key, Hashable), \
+            '{} must be a hashable object'.format(key)
+        return key

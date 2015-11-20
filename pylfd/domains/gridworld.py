@@ -21,7 +21,12 @@ class GridReward(MDPReward):
         super(GridReward, self).__init__(domain)
 
     def __call__(self, state, action):
-        return 1.0
+        if state.status == TERMINAL:
+            return 10.0
+        elif state.status == BLOCKED:
+            return -5.0
+        else:
+            return -1.0
 
     def __len__():
         return len(self._domain.S)
@@ -29,9 +34,9 @@ class GridReward(MDPReward):
 
 class GTransition(MDPTransition):
     """ Grirdworld MDP controller """
-    def __init__(self, domain, noise_level=0):
+    def __init__(self, domain, wind=0.2):
         super(GTransition, self).__init__(domain)
-        self._noise_level = noise_level
+        self._wind = wind
 
     def __call__(self, state, action, **kwargs):
         """ Transition
@@ -43,10 +48,12 @@ class GTransition(MDPTransition):
         """
         state_ = self._domain.S[state]
         action_ = self._domain.A[action]
-        return [(0.8, self._move(state_, action_)),
-                (0.1, self._move(state_, self._right(action_,
+        p_s = 1.0 - self._wind
+        p_f = p_s / 2.0
+        return [(p_s, self._move(state_, action_)),
+                (p_f, self._move(state_, self._right(action_,
                                                      self.A.values()))),
-                (0.1, self._move(state_, self._left(action_,
+                (p_f, self._move(state_, self._left(action_,
                                                     self.A.values())))]
 
     def _move(self, state, direction):
