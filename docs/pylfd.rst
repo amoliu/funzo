@@ -8,6 +8,8 @@ Subpackages
 
     pylfd.domains
     pylfd.models
+    pylfd.planners
+    pylfd.utils
 
 Submodules
 ----------

@@ -4,10 +4,10 @@ pylfd.domains package
 Submodules
 ----------
 
-pylfd.domains.base module
+pylfd.domains.domain module
 -------------------------
 
-.. automodule:: pylfd.domains.base
+.. automodule:: pylfd.domains.domain
     :members:
     :undoc-members:
     :show-inheritance:

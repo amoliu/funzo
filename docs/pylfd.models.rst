@@ -1,13 +1,11 @@
 pylfd.models package
 ====================
 
-Submodules
-----------
 
-pylfd.models.base module
-------------------------
+pylfd.models.mdp
+-----------------
 
-.. automodule:: pylfd.models.base
+.. automodule:: pylfd.models.mdp
     :members:
     :undoc-members:
     :show-inheritance:
