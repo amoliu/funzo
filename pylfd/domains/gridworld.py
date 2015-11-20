@@ -73,7 +73,7 @@ class GTransition(MDPTransition):
 
 class GState(MDPState):
     """ Gridworld state """
-    def __init__(self, cell, status=FREE):
+    def __init__(self, cell, status='free'):
         self.cell = cell
         self.status = status
 
@@ -124,16 +124,13 @@ class GridWorld(Domain, MDP):
         gr = GridReward(domain=self)
         gt = GTransition(domain=self)
 
-        # Domain.__init__(self)
         MDP.__init__(self, discount=0.9, reward=gr, transition=gt)
 
-        gmap = np.asarray(gmap)
-        assert gmap.ndim == 2, '`gmap` must be a two array'
-        self._initialize(gmap)
+        self._gmap = np.asarray(gmap)
+        assert self._gmap.ndim == 2, '`gmap` must be a two array'
+        self._initialize(self._gmap)
 
     def _initialize(self, gmap):
-        print(gmap.shape)
-        print('')
         self._height, self._width = gmap.shape
         self._states = set()
 
@@ -151,8 +148,6 @@ class GridWorld(Domain, MDP):
                              GAction((0, 1)),
                              GAction((-1, 0)),
                              GAction((0, -1))))
-
-        print(gmap)
 
     @property
     def S(self):
@@ -172,25 +167,10 @@ class GridWorld(Domain, MDP):
         if 'show_policy' in kwargs and 'policy' in kwargs:
             print('showing policy')
 
-        print('')
-        print(self.S)
-        print('')
-
-        cz = 1  # cell size
-        for state in self.S:
-            block = (state.cell[0] * cz, state.cell[1] * cz)
-            print(state)
-            if state.status == BLOCKED:
-                ax.add_artist(Rectangle(block, cz, cz, fc='r', ec='r'))
-            elif state.status == TERMINAL:
-                ax.add_artist(Rectangle(block, cz, cz, fc='g', ec='g'))
-            elif state.status == FREE:
-                ax.add_artist(Rectangle(block, cz, cz, fc='w', ec='k'))
-
-        ax.set_xlim([0, self._width])
-        ax.set_ylim([0, self._height])
-        # ax.set_xticks([])
-        # ax.set_yticks([])
+        ax.imshow(self._gmap, interpolation='nearest',
+                  cmap='Paired', vmin=0, vmax=2)
+        ax.set_xticks([])
+        ax.set_yticks([])
 
         return ax
 

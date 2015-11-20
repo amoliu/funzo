@@ -9,9 +9,10 @@ from pylfd.domains.gridworld import GridWorld
 
 def main():
     gmap = [
-        [1, 0, 0, 0],
-        [0, 0, 0, 1],
-        [0, 1, 2, 0],
+        [1, 0, 1, 0],
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 2],
         # [0, 0, 1, 0]
     ]
     # g = GridWorld(np.array(np.rot90(gmap)))
