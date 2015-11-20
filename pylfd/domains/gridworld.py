@@ -150,6 +150,8 @@ class GridWorld(Domain, MDP):
                              GAction((-1, 0)),
                              GAction((0, -1))))
 
+        print(gmap)
+
     @property
     def S(self):
         """ States of the MDP in an indexable container """
