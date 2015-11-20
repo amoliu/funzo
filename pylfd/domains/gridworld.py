@@ -136,7 +136,6 @@ class GridWorld(Domain, MDP):
 
         for i in range(self._height):
             for j in range(self._width):
-                print(i, j, gmap[i, j])
                 if gmap[i, j] == 1:
                     self._states.add(GState((i, j), BLOCKED))
                 if gmap[i, j] == 2:
@@ -152,12 +151,12 @@ class GridWorld(Domain, MDP):
     @property
     def S(self):
         """ States of the MDP in an indexable container """
-        return self._states
+        return list(self._states)
 
     @property
     def A(self):
         """ Actions of the MDP in an indexable container """
-        return self._actions
+        return list(self._actions)
 
     def terminal(self, state):
         """ Check if a state is terminal"""

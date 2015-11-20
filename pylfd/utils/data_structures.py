@@ -31,6 +31,15 @@ class ValueFunction(MutableMapping, dict):
     def __setitem__(self, key, value):
         dict.__setitem__(self, self._check_key(key), value)
 
+    def keys(self):
+        return dict.keys(self)
+
+    def values(self):
+        return dict.values(self)
+
+    def __iter__(self):
+        return dict.__iter__(self)
+
     def _check_key(self, key):
         assert isinstance(key, Hashable), \
             '{} must be a hashable object'.format(key)
@@ -59,6 +68,15 @@ class Policy(MutableMapping, dict):
     def __setitem__(self, key, value):
         action = self._check_domain(value)
         dict.__setitem__(self, self._check_domain(key), action)
+
+    def keys(self):
+        return dict.keys(self)
+
+    def values(self):
+        return dict.values(self)
+
+    def __iter__(self):
+        return dict.__iter__(self)
 
     def _check_domain(self, key):
         assert isinstance(key, Hashable), \
