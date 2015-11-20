@@ -12,6 +12,7 @@ import six
 
 from abc import ABCMeta
 from abc import abstractmethod, abstractproperty
+from collections import Hashable
 
 
 from ..base import Model
@@ -247,7 +248,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 ########################################################################
 
 
-class MDPState(six.with_metaclass(ABCMeta, Model)):
+class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ State on an MDP
 
     A state in an MDP with all the relavant domain specific data. The state
@@ -264,7 +265,7 @@ class MDPState(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Implement equality of states')
 
 
-class MDPAction(six.with_metaclass(ABCMeta, Model)):
+class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ Action in an MDP
 
     An action in an MDP with all the relavant domain specific data. The action
