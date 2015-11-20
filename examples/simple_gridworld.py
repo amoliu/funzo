@@ -9,18 +9,22 @@ from pylfd.domains.gridworld import GridWorld
 
 def main():
     gmap = [
-        [0, 0, 0, 0],
-        [0, 1, 0, 1],
-        [0, 0, 2, 0],
-        [0, 0, 1, 0]
+        [1, 0, 0, 0],
+        [0, 0, 0, 1],
+        [0, 1, 2, 0],
+        # [0, 0, 1, 0]
     ]
-    g = GridWorld(np.array(gmap).T)
+    g = GridWorld(np.array(np.rot90(gmap)))
     # print(g._grid)
 
-    fig = plt.figure(figsize=(8, 8))
+    # fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure()
     ax = fig.gca()
 
     ax = g.visualize(ax)
+
+    fig = plt.figure()
+    plt.imshow(gmap, interpolation='nearest')
 
     plt.show()
 

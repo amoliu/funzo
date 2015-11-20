@@ -81,13 +81,11 @@ class GState(MDPState):
         return (self.cell[0], self.cell[1]).__hash__()
 
     def __eq__(self, other):
-        try:
-            return all(self.cell == other.cell)
-        except Exception:
-            return False
+        return np.hypot(self.cell[0] - other.cell[0],
+                        self.cell[1] - other.cell[1]) < 1e-05
 
     def __str__(self):
-        return '({}, {})'.format(self.cell[0], self.cell[0])
+        return '({}, {} : {})'.format(self.cell[0], self.cell[1], self.status)
 
     def __repr__(self):
         return self.__str__()
@@ -108,7 +106,7 @@ class GAction(MDPAction):
             return False
 
     def __str__(self):
-        return '[{}, {}]'.format(self.direction[0], self.direction[0])
+        return '[{}, {}]'.format(self.direction[0], self.direction[1])
 
     def __repr__(self):
         return self.__str__()
@@ -134,16 +132,20 @@ class GridWorld(Domain, MDP):
         self._initialize(gmap)
 
     def _initialize(self, gmap):
+        print(gmap.shape)
+        print('')
         self._height, self._width = gmap.shape
         self._states = set()
-        for i in range(self._width):
-            for j in range(self._height):
+
+        for i in range(self._height):
+            for j in range(self._width):
+                print(i, j, gmap[i, j])
                 if gmap[i, j] == 1:
-                    self._states.add(GState((j, i), BLOCKED))
+                    self._states.add(GState((i, j), BLOCKED))
                 if gmap[i, j] == 2:
-                    self._states.add(GState((j, i), TERMINAL))
+                    self._states.add(GState((i, j), TERMINAL))
                 else:
-                    self._states.add(GState((j, i), FREE))
+                    self._states.add(GState((i, j), FREE))
 
         self._actions = set((GAction((1, 0)),
                              GAction((0, 1)),
@@ -170,20 +172,25 @@ class GridWorld(Domain, MDP):
         if 'show_policy' in kwargs and 'policy' in kwargs:
             print('showing policy')
 
+        print('')
+        print(self.S)
+        print('')
+
         cz = 1  # cell size
         for state in self.S:
             block = (state.cell[0] * cz, state.cell[1] * cz)
+            print(state)
             if state.status == BLOCKED:
-                ax.add_artist(Rectangle(block, cz, cz, fc='r', ec='k'))
+                ax.add_artist(Rectangle(block, cz, cz, fc='r', ec='r'))
             elif state.status == TERMINAL:
-                ax.add_artist(Rectangle(block, cz, cz, fc='g', ec='k'))
+                ax.add_artist(Rectangle(block, cz, cz, fc='g', ec='g'))
             elif state.status == FREE:
                 ax.add_artist(Rectangle(block, cz, cz, fc='w', ec='k'))
 
         ax.set_xlim([0, self._width])
         ax.set_ylim([0, self._height])
-        ax.set_xticks([])
-        ax.set_yticks([])
+        # ax.set_xticks([])
+        # ax.set_yticks([])
 
         return ax
 
