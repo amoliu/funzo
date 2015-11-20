@@ -181,3 +181,26 @@ class GridWorld(Domain, MDP):
 FREE = 'free'
 BLOCKED = 'blocked'
 TERMINAL = 'terminal'
+
+
+#############################################################################
+
+# helper plot utils
+
+def plot_values(value, ax, mapsize, **kwargs):
+    vmap = np.zeros(shape=mapsize)
+    for k, v in value.items():
+        vmap[k.cell[0], k.cell[1]] = v
+
+    ax.imshow(vmap, interpolation='nearest', cmap='viridis')
+    ax.set_title('Value function')
+    return ax
+
+
+def plot_policy(policy, ax, mapsize, **kwargs):
+    pol = [np.arctan2(a.direction[0], a.direction[1]) for a in policy.values()]
+    pol = np.array(pol).reshape(mapsize)
+
+    ax.imshow(pol, interpolation='nearest', cmap='viridis')
+    ax.set_title('Policy (direction in radians)')
+    return ax
