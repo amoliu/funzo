@@ -41,10 +41,8 @@ def main():
     # fig2 = plt.figure()
     # plot_policy(policy, fig2.gca(), (4, 4))
 
-    ## Q
-    q = QFunction(g.S, g.A)
-    p1 = q.policy
-    print(p1)
+    print(g.A)
+    print(g.S)
 
     plt.show()
 

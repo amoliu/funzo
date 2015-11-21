@@ -21,9 +21,10 @@ class GridReward(MDPReward):
         super(GridReward, self).__init__(domain)
 
     def __call__(self, state, action):
-        if state.status == TERMINAL:
+        state_ = self._domain.S[state]
+        if state_.status == TERMINAL:
             return 10.0
-        elif state.status == BLOCKED:
+        elif state_.status == BLOCKED:
             return -5.0
         else:
             return -1.0
@@ -139,31 +140,32 @@ class GridWorld(Domain, MDP):
 
     def _initialize(self, gmap):
         self._height, self._width = gmap.shape
-        self._states = set()
+        self._states = dict()
 
+        state_id = 0
         for i in range(self._height):
             for j in range(self._width):
                 if gmap[i, j] == 1:
-                    self._states.add(GState((i, j), BLOCKED))
+                    self._states[state_id] = GState((i, j), BLOCKED)
                 if gmap[i, j] == 2:
-                    self._states.add(GState((i, j), TERMINAL))
+                    self._states[state_id] = GState((i, j), TERMINAL)
                 else:
-                    self._states.add(GState((i, j), FREE))
+                    self._states[state_id] = GState((i, j), FREE)
 
-        self._actions = set((GAction((1, 0)),
-                             GAction((0, 1)),
-                             GAction((-1, 0)),
-                             GAction((0, -1))))
+                state_id += 1
+
+        self._actions = {0: GAction((1, 0)), 1: GAction((0, 1)),
+                         2: GAction((-1, 0)), 3: GAction((0, -1))}
 
     @property
     def S(self):
         """ States of the MDP in an indexable container """
-        return list(self._states)
+        return self._states
 
     @property
     def A(self):
         """ Actions of the MDP in an indexable container """
-        return list(self._actions)
+        return self._actions
 
     def terminal(self, state):
         """ Check if a state is terminal"""

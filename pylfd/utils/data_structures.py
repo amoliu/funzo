@@ -119,6 +119,8 @@ class QFunction(MutableMapping, dict):
     @property
     def policy(self):
         """ Extract the policy via argmax """
+        # NOTE - this is a lazy implementation with O(|S||A| * |S||A|)
+        # with a proper table rep, thi should be doable in O(|S||A|)
         pi_hat = Policy(list(sa[0] for sa in self.keys()),
                         list(sa[1] for sa in self.keys()))
         for s_a in self.keys():
