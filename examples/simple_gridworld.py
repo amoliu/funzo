@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from pylfd.domains.gridworld import GridWorld, plot_values, plot_policy
-from pylfd.utils.data_structures import ValueFunction, Policy
+from pylfd.utils.data_structures import ValueFunction, Policy, QFunction
 
 
 def main():
@@ -34,12 +34,17 @@ def main():
 
     print(list(V.values()))
 
-    fig = plt.figure()
-    plot_values(V, fig.gca(), (4, 4))
+    # fig = plt.figure()
+    # plot_values(V, fig.gca(), (4, 4))
 
     ##
-    fig2 = plt.figure()
-    plot_policy(policy, fig2.gca(), (4, 4))
+    # fig2 = plt.figure()
+    # plot_policy(policy, fig2.gca(), (4, 4))
+
+    ## Q
+    q = QFunction(g.S, g.A)
+    p1 = q.policy
+    print(p1)
 
     plt.show()
 
