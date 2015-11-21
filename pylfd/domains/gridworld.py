@@ -15,6 +15,12 @@ from ..models.domain import Domain
 from ..models.mdp import MDP, MDPReward, MDPTransition, MDPState, MDPAction
 
 
+# Cell status
+FREE = 'free'
+BLOCKED = 'blocked'
+TERMINAL = 'terminal'
+
+
 class GridReward(MDPReward):
     """ Grid world MDP reward function """
     def __init__(self, domain):
@@ -50,38 +56,50 @@ class GTransition(MDPTransition):
         state_ = self._domain.S[state]
         action_ = self._domain.A[action]
         p_s = 1.0 - self._wind
-        p_f = p_s / 2.0
+        p_f = self._wind / 2.0
+        A = self._domain.A.values()
         return [(p_s, self._move(state_, action_)),
-                (p_f, self._move(state_, self._right(action_,
-                                                     self.A.values()))),
-                (p_f, self._move(state_, self._left(action_,
-                                                    self.A.values())))]
+                (p_f, self._move(state_, self._right(action_, A))),
+                (p_f, self._move(state_, self._left(action_, A)))]
 
-    def _move(self, state, direction):
+    def _move(self, state, action):
         """ Return the state that results from going in this direction. Stays
         in the same state if action os leading to go outside the world or to
         obstacles
+
+        Returns
+        --------
+        new_state : int
+            Id of the new state after transition (which can be the current
+            state, if transition leads to outside of the world)
+
         """
-        ns = (state[0]+direction[0], state[1]+direction[1])
-        if not self._world.grid.valid_cell(ns):
-            return self._world.state_map[state]
-        if self._world.grid.blocked(ns):
-            return self.state_map[state]
-        return self._world.state_map[ns]
+        direction = action.direction
+        new_state = GState((state.cell[0]+direction[0],
+                           state.cell[1]+direction[1]))
+        if new_state in self._domain.state_map:
+            ns =  self._domain.state_map[new_state]
+
+            # avoid transitions to blocked cells
+            if self._domain.S[ns].status == BLOCKED:
+                return self._domain.state_map[state]
+            return ns
+
+        return self._domain.state_map[state]
 
     def _heading(self, heading, inc, directions):
         return directions[(directions.index(heading) + inc) % len(directions)]
 
     def _right(self, heading, directions):
-        return _heading(heading, -1, directions)
+        return self._heading(heading, -1, directions)
 
     def _left(self, heading, directions):
-        return _heading(heading, +1, directions)
+        return self._heading(heading, +1, directions)
 
 
 class GState(MDPState):
     """ Gridworld state """
-    def __init__(self, cell, status='free'):
+    def __init__(self, cell, status=FREE):
         self.cell = cell
         self.status = status
 
@@ -141,6 +159,7 @@ class GridWorld(Domain, MDP):
     def _initialize(self, gmap):
         self._height, self._width = gmap.shape
         self._states = dict()
+        self.state_map = dict()  # simple inverse map for transition
 
         state_id = 0
         for i in range(self._height):
@@ -152,6 +171,7 @@ class GridWorld(Domain, MDP):
                 else:
                     self._states[state_id] = GState((i, j), FREE)
 
+                self.state_map[self._states[state_id]] = state_id
                 state_id += 1
 
         self._actions = {0: GAction((1, 0)), 1: GAction((0, 1)),
@@ -186,30 +206,25 @@ class GridWorld(Domain, MDP):
         pass
 
 
-# Cell status
-FREE = 'free'
-BLOCKED = 'blocked'
-TERMINAL = 'terminal'
-
 
 #############################################################################
 
 # helper plot utils
 
-def plot_values(value, ax, mapsize, **kwargs):
-    vmap = np.zeros(shape=mapsize)
-    for k, v in value.items():
-        vmap[k.cell[0], k.cell[1]] = v
+# def plot_values(value, ax, mapsize, **kwargs):
+#     vmap = np.zeros(shape=mapsize)
+#     for k, v in value.items():
+#         vmap[k.cell[0], k.cell[1]] = v
 
-    ax.imshow(vmap, interpolation='nearest', cmap='viridis')
-    ax.set_title('Value function')
-    return ax
+#     ax.imshow(vmap, interpolation='nearest', cmap='viridis')
+#     ax.set_title('Value function')
+#     return ax
 
 
-def plot_policy(policy, ax, mapsize, **kwargs):
-    pol = [np.arctan2(a.direction[0], a.direction[1]) for a in policy.values()]
-    pol = np.array(pol).reshape(mapsize)
+# def plot_policy(policy, ax, mapsize, **kwargs):
+#     pol = [np.arctan2(a.direction[0], a.direction[1]) for a in policy.values()]
+#     pol = np.array(pol).reshape(mapsize)
 
-    ax.imshow(pol, interpolation='nearest', cmap='viridis')
-    ax.set_title('Policy (direction in radians)')
-    return ax
+#     ax.imshow(pol, interpolation='nearest', cmap='viridis')
+#     ax.set_title('Policy (direction in radians)')
+#     return ax

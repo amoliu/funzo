@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from pylfd.domains.gridworld import GridWorld, plot_values, plot_policy
+from pylfd.domains.gridworld import GridWorld, GTransition
 from pylfd.utils.data_structures import ValueFunction, Policy, QFunction
 
 
@@ -24,25 +24,12 @@ def main():
     ax = g.visualize(ax)
 
     # ------------------------
-    policy = Policy(g.S, g.A)
-    # print(policy)
-
-    V = ValueFunction(g.S)
-    V[g.S[4]] = 10
-    V[g.S[8]] = 6
-    V[g.S[1]] = 2
-
-    print(list(V.values()))
-
-    # fig = plt.figure()
-    # plot_values(V, fig.gca(), (4, 4))
-
-    ##
-    # fig2 = plt.figure()
-    # plot_policy(policy, fig2.gca(), (4, 4))
-
     print(g.A)
     print(g.S)
+
+    controller = GTransition(g, 0.3)
+    print(g.S[0])
+    print(controller(0, 2))
 
     plt.show()
 
