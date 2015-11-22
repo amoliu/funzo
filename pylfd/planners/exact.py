@@ -20,7 +20,7 @@ def policy_iteration(mdp):
     pass
 
 
-def value_iteraction(mdp, epsilon=1e-05):
+def value_iteration(mdp, epsilon=1e-05):
     """ Value iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
@@ -43,7 +43,7 @@ def value_iteraction(mdp, epsilon=1e-05):
     policy = [np.random.randint(len(mdp.A)) for _ in range(len(mdp.S))]
     Q = np.zeros(shape=(len(mdp.S), len(mdp.A)))
 
-    return dict(V, policy, Q)
+    return {'V': V, 'pi': policy, 'Q': Q}
 
 
 def _policy_evaluation(mdp, policy):

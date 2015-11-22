@@ -189,7 +189,7 @@ class GridWorld(Domain, MDP):
 
     def terminal(self, state):
         """ Check if a state is terminal"""
-        return state.status == 'terminal'
+        return self.S[state].status == 'terminal'
 
     def visualize(self, ax, **kwargs):
         if 'show_policy' in kwargs and 'policy' in kwargs:

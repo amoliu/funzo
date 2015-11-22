@@ -6,6 +6,7 @@ import numpy as np
 
 from pylfd.domains.gridworld import GridWorld, GTransition
 from pylfd.utils.data_structures import ValueFunction, Policy, QFunction
+from pylfd.planners.exact import value_iteration
 
 
 def main():
@@ -30,6 +31,11 @@ def main():
     controller = GTransition(g, 0.3)
     print(g.S[0])
     print(controller(0, 2))
+
+    res = value_iteration(g)
+    print(res['V'])
+    print(res['Q'])
+    print(res['pi'])
 
     plt.show()
 
