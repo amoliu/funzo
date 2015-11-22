@@ -21,10 +21,10 @@ BLOCKED = 'blocked'
 TERMINAL = 'terminal'
 
 
-class GridReward(MDPReward):
+class GReward(MDPReward):
     """ Grid world MDP reward function """
     def __init__(self, domain):
-        super(GridReward, self).__init__(domain)
+        super(GReward, self).__init__(domain)
 
     def __call__(self, state, action):
         state_ = self._domain.S[state]
@@ -147,7 +147,7 @@ class GridWorld(Domain, MDP):
     """
 
     def __init__(self, gmap):
-        gr = GridReward(domain=self)
+        gr = GReward(domain=self)
         gt = GTransition(domain=self)
 
         MDP.__init__(self, discount=0.9, reward=gr, transition=gt)

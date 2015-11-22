@@ -24,8 +24,8 @@ import sphinx_rtd_theme
 # absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('../sphinxext'))
 
-sys.path.insert(0, os.path.abspath('../pylfd'))
-sys.path.append(os.path.abspath('sphinxext'))
+# sys.path.insert(0, os.path.abspath('../pylfd'))
+# sys.path.append(os.path.abspath('sphinxext'))
 
 cwd = os.getcwd()
 project_root = os.path.dirname(cwd)
@@ -312,9 +312,9 @@ texinfo_documents = [
 # -- Intersphinx configuration -----------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'matplotlib': ('http://matplotlib.sourceforge.net', None),
+    # 'python': ('https://docs.python.org/', None),
+    # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    # 'matplotlib': ('http://matplotlib.sourceforge.net', None),
     # 'sklearn': ('http://scikit-learn.org/stable', None),
 }
 

@@ -27,6 +27,7 @@ Reference
 
    models
    planners
+   domains
    utils
 
 Indices and tables

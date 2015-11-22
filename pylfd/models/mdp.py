@@ -46,9 +46,18 @@ class MDP(Model):
         MDP discount factor
     reward : :class:`MDPReward` object
         Reward function for the MDP with all the relavant parameters
-    transition : :class: `MDPController` object
+    transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochaticity are handled therein.
+
+    Notes
+    ------
+    This design deliberately leaves out the details of *states* and *actions*
+    to be handled by the domain object which includes a reference to an MDP
+    object. Additioanlly, transitions and reward which are in general functions
+    are represented as separate *callable* objects with references to relevant
+    data needed. This allows a unified interface for both *discrete* and
+    *continuos* MDPs and further extensions
 
     """
 
@@ -65,10 +74,10 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : :class: `MDPState`
+        state : int
             A state in an MDP represented as an object that is hashable and
             comparable
-        action : :class: `MDPAction`
+        action : int
             MDP action that is hashable and comparable
 
         Returns
@@ -89,15 +98,15 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : :class: `MDPState`
+        state : int
             A state in an MDP represented as an object that is hashable and
             comparable
-        action : :class: `MDPAction`
+        action : int
             MDP action that is hashable and comparable
 
         Returns
         --------
-        next_states : array
+        next_states : array-like
             Array of all reachable states and their transition probabilities
             i.e. :math:`\{(p, s') \\forall s' \in T(s, a, \cdot) \}`
 
@@ -147,17 +156,16 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     -----------
-    domain : `class` object
+    domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP that the reward is
         to be used
 
     Attributes
     -----------
-    _domain : `class` object
-        Object reference to the domain of the MDP that the reward is
-        to be used
+    _domain : :class:`Domain` derivative object
+        Object reference to the domain of the MDP
 
-    Note
+    Notes
     -------
     The dimension of the reward in case of linear function representation is
     computed based on a convention of reward function names defined by the
@@ -225,7 +233,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
     Attributes
     -----------
-    _domain : `class` object
+    _domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP that the controller is
         to be used on
 
