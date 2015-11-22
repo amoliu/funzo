@@ -153,7 +153,7 @@ class GridWorld(Domain, MDP):
         MDP.__init__(self, discount=0.9, reward=gr, transition=gt)
 
         self._gmap = np.asarray(gmap)
-        assert self._gmap.ndim == 2, '`gmap` must be a two array'
+        assert self._gmap.ndim == 2, '`gmap` must be a two dimensional array'
         self._initialize(self._gmap)
 
     def _initialize(self, gmap):

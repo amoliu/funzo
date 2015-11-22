@@ -27,7 +27,7 @@ def value_iteration(mdp, epsilon=1e-05):
 
     Parameters
     ------------
-    mdp : :class: of `MDP` variant
+    mdp : :class:`MDP` variant or derivative
         The MDP to plan on.
 
     Returns

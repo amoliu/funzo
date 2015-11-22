@@ -46,17 +46,10 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
-
-api:
-	@mkdir -p reference
-	$(PYTHON) tools/build_modref_templates.py pylfd reference
-	@echo "Build API docs...done."
-
 clean:
 	rm -rf $(BUILDDIR)/*
-	rm -rf reference/*
 
-html: api
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -92,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/pylfd.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/mlpy.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/pylfd.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/mlpy.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/pylfd"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/pylfd"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/mlpy"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/mlpy"
 	@echo "# devhelp"
 
 epub:

@@ -27,9 +27,9 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('../pylfd'))
 sys.path.append(os.path.abspath('sphinxext'))
 
-# cwd = os.getcwd()
-# project_root = os.path.dirname(cwd)
-# sys.path.insert(0, project_root)
+cwd = os.getcwd()
+project_root = os.path.dirname(cwd)
+sys.path.insert(0, project_root)
 
 import pylfd
 
@@ -46,18 +46,27 @@ needs_sphinx = '1.0'  # numpydoc requires sphinc >= 1.0
 #               'numpydoc',
 #               'sphinx.ext.autosummary']
 
+
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.doctest',
+              'sphinx.ext.autosummary',
               'sphinx.ext.intersphinx',
-              'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.pngmath',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
-              'sphinx.ext.coverage',
-              'sphinx.ext.pngmath',
-              'sphinx.ext.ifconfig',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon']
+              'numpydoc',
+              ]
+
+# extensions = ['sphinx.ext.autodoc',
+#               'sphinx.ext.doctest',
+#               'sphinx.ext.intersphinx',
+#               'sphinx.ext.inheritance_diagram',
+#               'sphinx.ext.todo',
+#               'sphinx.ext.viewcode',
+#               'sphinx.ext.pngmath',
+#               'sphinx.ext.ifconfig',
+#               'sphinx.ext.autosummary',
+#               'sphinx.ext.mathjax',
+#               'sphinx.ext.napoleon']
               # 'math_dollar',  # has to go before numpydoc
               # 'numpydoc',
               # 'github']
@@ -284,7 +293,7 @@ texinfo_documents = [
      u'pylfd Documentation',
      u'Billy Okal',
      'pylfd',
-     'One line description of project.',
+     'Learning from demonstration library for Python',
      'Miscellaneous'),
 ]
 
@@ -299,3 +308,29 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
+
+# -- Intersphinx configuration -----------------------------------------
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'matplotlib': ('http://matplotlib.sourceforge.net', None),
+    # 'sklearn': ('http://scikit-learn.org/stable', None),
+}
+
+# -- Autodoc -------------------------------------------------------
+
+autodoc_default_flags = ['show-inheritance']
+
+# -- Autosummary -------------------------------------------------------
+
+import sphinx
+if sphinx.__version__ >= "0.7":
+    autosummary_generate = True
+
+# -- Numpydoc -------------------------------------------------------
+
+numpydoc_show_class_members = True
+numpydoc_show_inherited_class_members = True
+numpydoc_class_members_toctree = True
+numpydoc_use_plots = False

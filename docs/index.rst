@@ -6,10 +6,11 @@
 Welcome to pylfd's documentation!
 ======================================
 
-Contents:
+pyLFD is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents
 
    readme
    installation
@@ -17,7 +18,16 @@ Contents:
    contributing
    authors
    history
-   reference/index
+
+
+Reference
+-------------
+.. toctree::
+   :maxdepth: 1
+
+   models
+   planners
+   utils
 
 Indices and tables
 ==================
