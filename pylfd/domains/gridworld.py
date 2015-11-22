@@ -29,11 +29,11 @@ class GReward(MDPReward):
     def __call__(self, state, action):
         state_ = self._domain.S[state]
         if state_.status == TERMINAL:
-            return 10.0
+            return 1.0
         elif state_.status == BLOCKED:
-            return -5.0
-        else:
             return -1.0
+        else:
+            return 0.0
 
     def __len__():
         return len(self._domain.S)
@@ -74,9 +74,8 @@ class GTransition(MDPTransition):
             state, if transition leads to outside of the world)
 
         """
-        direction = action.direction
-        new_state = GState((state.cell[0]+direction[0],
-                           state.cell[1]+direction[1]))
+        new_state = GState((state.cell[0]+action.direction[0],
+                           state.cell[1]+action.direction[1]))
         if new_state in self._domain.state_map:
             ns =  self._domain.state_map[new_state]
 
@@ -146,11 +145,11 @@ class GridWorld(Domain, MDP):
 
     """
 
-    def __init__(self, gmap):
+    def __init__(self, gmap, discount=0.9):
         gr = GReward(domain=self)
         gt = GTransition(domain=self)
 
-        MDP.__init__(self, discount=0.9, reward=gr, transition=gt)
+        MDP.__init__(self, discount=discount, reward=gr, transition=gt)
 
         self._gmap = np.asarray(gmap)
         assert self._gmap.ndim == 2, '`gmap` must be a two dimensional array'
