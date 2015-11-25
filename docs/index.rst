@@ -1,12 +1,12 @@
-.. latte documentation master file, created by
+.. funzo documentation master file, created by
    sphinx-quickstart on Tue Jul  9 22:26:36 2013.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to latte's documentation!
+Welcome to funzo's documentation!
 ======================================
 
-latte is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
+funzo is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
 
 .. toctree::
    :maxdepth: 2

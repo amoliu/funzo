@@ -6,9 +6,9 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from latte.domains.gridworld import GridWorld, GTransition
-# from latte.utils.data_structures import ValueFunction, Policy, QFunction
-from latte.planners.exact import value_iteration, policy_iteration
+from funzo.domains.gridworld import GridWorld, GTransition
+# from funzo.utils.data_structures import ValueFunction, Policy, QFunction
+from funzo.planners.exact import value_iteration, policy_iteration
 
 
 def main():

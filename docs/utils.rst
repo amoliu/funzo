@@ -1,7 +1,7 @@
 ====================================
-Utils (:mod:`latte.utils`)
+Utils (:mod:`funzo.utils`)
 ====================================
-.. currentmodule:: latte.utils
+.. currentmodule:: funzo.utils
 
 This module contains a number of convenient utilities used in the package such as data structures, little cute computations, etc
 

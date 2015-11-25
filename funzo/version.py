@@ -25,13 +25,13 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "latte: python toolkit for inverse reinforcement learning (IRL)"
+description = "funzo: python toolkit for inverse reinforcement learning (IRL)"
 # Long description will go up on the pypi page
 long_description = """
 
-latte
+funzo
 ========
-latte long description
+funzo long description
 
 ...
 
@@ -39,7 +39,7 @@ latte long description
 Long desc.
 """
 
-NAME = "latte"
+NAME = "funzo"
 MAINTAINER = "Billy Okal"
 MAINTAINER_EMAIL = "sudo@makokal.com"
 DESCRIPTION = description
@@ -54,9 +54,9 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGES = ['latte',
-            'latte/models',
-            'latte/domains',
-            'latte/planners']
-PACKAGE_DATA = {'latte': [pjoin('data', '*')]}
+PACKAGES = ['funzo',
+            'funzo/models',
+            'funzo/domains',
+            'funzo/planners']
+PACKAGE_DATA = {'funzo': [pjoin('data', '*')]}
 REQUIRES = ["numpy", "matplotlib"]

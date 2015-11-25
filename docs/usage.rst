@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use latte in a project::
+To use funzo in a project::
 
-    import latte
+    import funzo

@@ -1,18 +1,18 @@
 ===============================
-latte
+funzo
 ===============================
 
-.. image:: https://img.shields.io/travis/makokal/latte.svg
-        :target: https://travis-ci.org/makokal/latte
+.. image:: https://img.shields.io/travis/makokal/funzo.svg
+        :target: https://travis-ci.org/makokal/funzo
 
-.. image:: https://img.shields.io/pypi/v/latte.svg
-        :target: https://pypi.python.org/pypi/latte
+.. image:: https://img.shields.io/pypi/v/funzo.svg
+        :target: https://pypi.python.org/pypi/funzo
 
 
 Python package for inverse reinforcement learning
 
 * Free software: MIT license
-* Documentation: https://latte.readthedocs.org.
+* Documentation: https://funzo.readthedocs.org.
 
 Features
 --------
@@ -33,3 +33,8 @@ Features
 Getting started
 ---------------
 See docs/usage
+
+
+What about the name?
+----------------------
+*funzo* is a swahili word for instruction or doctrine or simply teaching, which is what we try to achieve here using IRL. If we do not succeed, the end result may not be desirable as Homer Simpson found out with [Homer's funzo](http://simpsons.wikia.com/wiki/Funzo).

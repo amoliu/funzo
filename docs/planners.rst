@@ -1,7 +1,7 @@
 ====================================
-Planners (:mod:`latte.planners`)
+Planners (:mod:`funzo.planners`)
 ====================================
-.. currentmodule:: latte.planners
+.. currentmodule:: funzo.planners
 
 This module contains implementation of various planning algorithms for Markov decision processes in general. Such planners take in MDPs and additional relevant parameters and compute policies and/or value functions either using exact methods or by approximation.
 

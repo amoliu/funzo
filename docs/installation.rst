@@ -4,9 +4,9 @@ Installation
 
 At the command line::
 
-    $ pip install latte
+    $ pip install funzo
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv latte
-    $ pip install latte
+    $ mkvirtualenv funzo
+    $ pip install funzo

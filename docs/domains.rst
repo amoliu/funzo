@@ -1,7 +1,7 @@
 ====================================
-Domains (:mod:`latte.domains`)
+Domains (:mod:`funzo.domains`)
 ====================================
-.. currentmodule:: latte.domains
+.. currentmodule:: funzo.domains
 
 This module contains various domains for experimenting with RL and IRL algorithms.
 

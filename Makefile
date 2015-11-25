@@ -36,7 +36,7 @@ clean-build:
 	find . -name '*.egg' -exec rm -f {} +
 
 uninstall:
-	pip uninstall latte -y
+	pip uninstall funzo -y
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -50,7 +50,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 latte tests
+	flake8 funzo tests
 
 test:
 	# python setup.py test
@@ -60,15 +60,15 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source latte setup.py test
+	coverage run --source funzo setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	# rm -f docs/latte.rst
+	# rm -f docs/funzo.rst
 	# rm -f docs/modules.rst
-	# sphinx-apidoc -o docs/ latte
+	# sphinx-apidoc -o docs/ funzo
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html

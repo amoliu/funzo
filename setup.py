@@ -9,7 +9,7 @@ except ImportError:
     from distutils.core import setup
 
 
-ver_file = os.path.join('latte', 'version.py')
+ver_file = os.path.join('funzo', 'version.py')
 with open(ver_file) as f:
     exec(f.read())
 
