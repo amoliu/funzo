@@ -23,12 +23,13 @@ class GReward(MDPReward):
 
     def __call__(self, state, action):
         state_ = self._domain.S[state]
+        reward = -0.01
         if state_.status == TERMINAL:
-            return 1.0
+            reward = 1.0
         elif state_.status == BLOCKED:
-            return -1.0
-        else:
-            return 0.0
+            reward = -0.05
+
+        return reward
 
     def __len__(self):
         return len(self._domain.S)
@@ -72,7 +73,7 @@ class GTransition(MDPTransition):
         new_state = GState((state.cell[0]+action.direction[0],
                            state.cell[1]+action.direction[1]))
         if new_state in self._domain.state_map:
-            ns =  self._domain.state_map[new_state]
+            ns = self._domain.state_map[new_state]
 
             # avoid transitions to blocked cells
             if self._domain.S[ns].status == BLOCKED:
@@ -198,7 +199,6 @@ class GridWorld(Domain, MDP):
 
     def _show_policy(self, ax, **kwargs):
         pass
-
 
 
 #############################################################################

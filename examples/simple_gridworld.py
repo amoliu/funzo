@@ -59,7 +59,7 @@ def main():
     # print(g.A)
     # print(g.S)
 
-    controller = GTransition(g, 0.1)
+    controller = GTransition(g, 0.2)
     print(g.S[10])
     print(controller(10, 2))
 
