@@ -1,12 +1,12 @@
-.. pylfd documentation master file, created by
+.. latte documentation master file, created by
    sphinx-quickstart on Tue Jul  9 22:26:36 2013.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pylfd's documentation!
+Welcome to latte's documentation!
 ======================================
 
-pyLFD is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
+latte is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
 
 .. toctree::
    :maxdepth: 2

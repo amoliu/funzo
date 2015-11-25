@@ -6,9 +6,9 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from pylfd.domains.gridworld import GridWorld, GTransition
-# from pylfd.utils.data_structures import ValueFunction, Policy, QFunction
-from pylfd.planners.exact import value_iteration, policy_iteration
+from latte.domains.gridworld import GridWorld, GTransition
+# from latte.utils.data_structures import ValueFunction, Policy, QFunction
+from latte.planners.exact import value_iteration, policy_iteration
 
 
 def main():
@@ -71,9 +71,9 @@ def main():
     # print(res['Q'])
     print(res['pi'])
 
-
     plt.figure()
-    plt.imshow(res['V'].reshape(gmap_b.shape), interpolation='nearest', cmap='viridis')
+    plt.imshow(res['V'].reshape(gmap_b.shape),
+               interpolation='nearest', cmap='viridis')
     plt.colorbar()
 
     plt.show()

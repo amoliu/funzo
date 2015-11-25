@@ -6,7 +6,6 @@ Base data structres used throughout the package
 from __future__ import division, absolute_import
 
 from collections import MutableMapping, Hashable, Iterable
-from operator import itemgetter
 
 import numpy as np
 
@@ -126,7 +125,7 @@ class QFunction(MutableMapping, dict):
         for s_a in self.keys():
             s = s_a[0]
             # find all the occurences of state s
-            actions = {p[1] : self[p] for p in self if p[0]==s}
+            actions = {p[1]: self[p] for p in self if p[0] == s}
             a = list(sorted(actions, key=actions.get))[-1]
             pi_hat[s] = a
 

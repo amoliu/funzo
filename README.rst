@@ -1,18 +1,18 @@
 ===============================
-pylfd
+latte
 ===============================
 
-.. image:: https://img.shields.io/travis/makokal/pylfd.svg
-        :target: https://travis-ci.org/makokal/pylfd
+.. image:: https://img.shields.io/travis/makokal/latte.svg
+        :target: https://travis-ci.org/makokal/latte
 
-.. image:: https://img.shields.io/pypi/v/pylfd.svg
-        :target: https://pypi.python.org/pypi/pylfd
+.. image:: https://img.shields.io/pypi/v/latte.svg
+        :target: https://pypi.python.org/pypi/latte
 
 
-Python package for learning from demonstration
+Python package for inverse reinforcement learning
 
 * Free software: MIT license
-* Documentation: https://pylfd.readthedocs.org.
+* Documentation: https://latte.readthedocs.org.
 
 Features
 --------

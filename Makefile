@@ -36,7 +36,7 @@ clean-build:
 	find . -name '*.egg' -exec rm -f {} +
 
 uninstall:
-	pip uninstall pylfd -y
+	pip uninstall latte -y
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -50,7 +50,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 pylfd tests
+	flake8 latte tests
 
 test:
 	# python setup.py test
@@ -60,15 +60,15 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source pylfd setup.py test
+	coverage run --source latte setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	# rm -f docs/pylfd.rst
+	# rm -f docs/latte.rst
 	# rm -f docs/modules.rst
-	# sphinx-apidoc -o docs/ pylfd
+	# sphinx-apidoc -o docs/ latte
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html

@@ -4,13 +4,8 @@ GridWorld Domain
 
 from __future__ import division
 
-from collections import Iterable
-from matplotlib.patches import Rectangle
-
-import six
 import numpy as np
 
-from ..base import Model
 from ..models.domain import Domain
 from ..models.mdp import MDP, MDPReward, MDPTransition, MDPState, MDPAction
 
@@ -35,7 +30,7 @@ class GReward(MDPReward):
         else:
             return 0.0
 
-    def __len__():
+    def __len__(self):
         return len(self._domain.S)
 
 

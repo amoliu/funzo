@@ -1,2 +1,8 @@
-bumpversion==0.5.3
-wheel==0.23.0
+bumpversion>=0.5.3
+wheel>=0.23.0
+numpy>=1.6
+scipy
+matplotlib>=1.4
+six
+pytest
+coverage

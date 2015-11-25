@@ -1,7 +1,7 @@
 ====================================
-Domains (:mod:`pylfd.domains`)
+Domains (:mod:`latte.domains`)
 ====================================
-.. currentmodule:: pylfd.domains
+.. currentmodule:: latte.domains
 
 This module contains various domains for experimenting with RL and IRL algorithms.
 

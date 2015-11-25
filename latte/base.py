@@ -7,9 +7,6 @@ import six
 import inspect
 import warnings
 
-from abc import ABCMeta
-from abc import abstractmethod
-
 import numpy as np
 
 
@@ -178,5 +175,3 @@ def _pprint(params, offset=0, printer=repr):
 
 
 ########################################################################
-
-

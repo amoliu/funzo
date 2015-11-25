@@ -1,7 +1,7 @@
 ====================================
-Models (:mod:`pylfd.models`)
+Models (:mod:`latte.models`)
 ====================================
-.. currentmodule:: pylfd.models
+.. currentmodule:: latte.models
 
 This module contains the design of key models used throughout the package. The main purpose of having models explicitely defined to to have clear interfaces and contracts on which algorithms can then be implemented. These include interfaces for :class:`MDP` and :class:`Domain` among others.
 

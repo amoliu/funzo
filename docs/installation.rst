@@ -4,9 +4,9 @@ Installation
 
 At the command line::
 
-    $ pip install pylfd
+    $ pip install latte
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv pylfd
-    $ pip install pylfd
+    $ mkvirtualenv latte
+    $ pip install latte

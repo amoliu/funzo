@@ -80,9 +80,6 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05):
     """
 
     V = np.zeros(len(mdp.S))
-    policy = [np.random.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-    Q = np.zeros(shape=(len(mdp.S), len(mdp.A)))
-
     stable = False
     iteration = 0
     while not stable and iteration < max_iter:

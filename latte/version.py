@@ -25,13 +25,13 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "pylfd: python toolkit for learning from demonstation"
+description = "latte: python toolkit for inverse reinforcement learning (IRL)"
 # Long description will go up on the pypi page
 long_description = """
 
-pyLFD
+latte
 ========
-pyLFD ...
+latte long description
 
 ...
 
@@ -39,7 +39,7 @@ pyLFD ...
 Long desc.
 """
 
-NAME = "pylfd"
+NAME = "latte"
 MAINTAINER = "Billy Okal"
 MAINTAINER_EMAIL = "sudo@makokal.com"
 DESCRIPTION = description
@@ -54,6 +54,9 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGES = ['pylfd', 'pylfd/models', 'pylfd/domains']
-PACKAGE_DATA = {'pylfd': [pjoin('data', '*')]}
+PACKAGES = ['latte',
+            'latte/models',
+            'latte/domains',
+            'latte/planners']
+PACKAGE_DATA = {'latte': [pjoin('data', '*')]}
 REQUIRES = ["numpy", "matplotlib"]

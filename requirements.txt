@@ -1,4 +1,5 @@
-numpy
+numpy>=1.6
 scipy
-matplotlib
-networkx
+matplotlib>=1.4
+six
+pytest

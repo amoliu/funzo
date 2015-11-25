@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use pylfd in a project::
+To use latte in a project::
 
-    import pylfd
+    import latte

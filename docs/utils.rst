@@ -1,7 +1,7 @@
 ====================================
-Utils (:mod:`pylfd.utils`)
+Utils (:mod:`latte.utils`)
 ====================================
-.. currentmodule:: pylfd.utils
+.. currentmodule:: latte.utils
 
 This module contains a number of convenient utilities used in the package such as data structures, little cute computations, etc
 
