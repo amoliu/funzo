@@ -48,9 +48,10 @@ def main():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
 
-    g = GridWorld(gmap_b, discount=0.97)
+    g = GridWorld(gmap_b, discount=0.7)
+    # print(gmap_a)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()
 
     ax = g.visualize(ax)
@@ -67,13 +68,15 @@ def main():
 
     res = policy_iteration(g)
     # res = value_iteration(g)
-    print(res['V'])
+    V = res['V']
+    print(V)
     # print(res['Q'])
     print(res['pi'])
 
     plt.figure()
-    plt.imshow(res['V'].reshape(gmap_b.shape),
-               interpolation='nearest', cmap='viridis')
+    plt.imshow(V.reshape(gmap_b.shape),
+               interpolation='nearest', cmap='viridis', origin='lower',
+               vmin=np.min(V), vmax=np.max(V))
     plt.colorbar()
 
     plt.show()

@@ -17,7 +17,7 @@ import copy
 import numpy as np
 
 
-def policy_iteration(mdp, max_iter=500, epsilon=1e-05):
+def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
     """ Policy iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
