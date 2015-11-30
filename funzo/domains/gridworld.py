@@ -235,6 +235,7 @@ class GridWorld(Domain, MDP):
 
     def _initialize(self, gmap):
         self._height, self._width = gmap.shape
+        assert self._height == self._width, 'Only square grids supported'
         self.grid = Grid(nrows=self._width, ncols=self._height)
         self._states = dict()
         self.state_map = dict()  # simple inverse map for transition

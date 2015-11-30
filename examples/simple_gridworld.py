@@ -12,13 +12,14 @@ from funzo.planners.exact import value_iteration, policy_iteration
 
 
 def main():
-    gmap = [
+    gmap = np.array([
         [1, 0, 1, 2],
         [0, 0, 0, 0],
         [0, 1, 1, 0],
         [0, 0, 1, 0],
         # [0, 0, 1, 0]
-    ]
+    ])
+
     gmap_a = np.array(
         [[0, 0, 0, 0, 0, 1, 0, 2],
          [0, 1, 1, 0, 0, 0, 0, 0],
@@ -48,7 +49,7 @@ def main():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
 
-    g = GridWorld(gmap_b, discount=0.7)
+    g = GridWorld(gmap, discount=0.7)
 
     # ------------------------
     # print(g.A)
@@ -74,7 +75,7 @@ def main():
     # ------------------------
 
     plt.figure()
-    plt.imshow(V.reshape(gmap_b.shape),
+    plt.imshow(V.reshape(gmap.shape),
                interpolation='nearest', cmap='viridis', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
     plt.colorbar()
