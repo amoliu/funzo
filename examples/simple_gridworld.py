@@ -49,12 +49,6 @@ def main():
         ])
 
     g = GridWorld(gmap_b, discount=0.7)
-    # print(gmap_a)
-
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.gca()
-
-    ax = g.visualize(ax)
 
     # ------------------------
     # print(g.A)
@@ -72,6 +66,12 @@ def main():
     print(V)
     # print(res['Q'])
     print(res['pi'])
+
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.gca()
+    ax = g.visualize(ax, policy=res['pi'])
+
+    # ------------------------
 
     plt.figure()
     plt.imshow(V.reshape(gmap_b.shape),

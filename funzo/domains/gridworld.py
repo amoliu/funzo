@@ -273,14 +273,10 @@ class GridWorld(Domain, MDP):
         return self.S[state].status == 'terminal'
 
     def visualize(self, ax, **kwargs):
-        # if 'show_policy' in kwargs and 'policy' in kwargs:
-        #     print('showing policy')
+        ax = self._setup_visuals(ax)
 
-        # ax.imshow(self._gmap, interpolation='nearest',
-        #           cmap='Paired', vmin=0, vmax=2)
-        # ax.set_xticks([])
-        # ax.set_yticks([])
-        self._setup_visuals(ax)
+        if 'policy' in kwargs:
+            self.show_policy(ax, kwargs['policy'])
 
         return ax
 
@@ -320,39 +316,17 @@ class GridWorld(Domain, MDP):
                 'Policy not compatible with state space dimensions'
             for s in range(policy.shape[0]):
                 a = policy[s]
-                if self.A[int(a)] == (1, 0):
+                if self.A[int(a)].direction == (1, 0):
                     text = '$\\Rightarrow$'
-                elif self.A[int(a)] == (0, 1):
+                elif self.A[int(a)].direction == (0, 1):
                     text = '$\\Uparrow$'
-                elif self.A[int(a)] == (-1, 0):
+                elif self.A[int(a)].direction == (-1, 0):
                     text = '$\\Leftarrow$'
-                elif self.A[int(a)] == (0, -1):
+                elif self.A[int(a)].direction == (0, -1):
                     text = '$\\Downarrow$'
                 else:
                     text = 'G'
                 ss = self.S[s]
-                ax.text((ss[0] * 1) + (1 / 2.), (ss[1] * 1) + (1 / 2.),
+                ax.text((ss.cell[0] * 1) + (1 / 2.),
+                        (ss.cell[1] * 1) + (1 / 2.),
                         text, ha="center", size=14)
-
-
-#############################################################################
-
-# helper plot utils
-
-# def plot_values(value, ax, mapsize, **kwargs):
-#     vmap = np.zeros(shape=mapsize)
-#     for k, v in value.items():
-#         vmap[k.cell[0], k.cell[1]] = v
-
-#     ax.imshow(vmap, interpolation='nearest', cmap='viridis')
-#     ax.set_title('Value function')
-#     return ax
-
-
-# def plot_policy(policy, ax, mapsize, **kwargs):
-#     pol = [np.arctan2(a.direction[0], a.direction[1]) for a in policy.values()]
-#     pol = np.array(pol).reshape(mapsize)
-
-#     ax.imshow(pol, interpolation='nearest', cmap='viridis')
-#     ax.set_title('Policy (direction in radians)')
-#     return ax

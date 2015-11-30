@@ -56,7 +56,7 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
         print('PI, iter: %s' % iteration)
 
     result = dict()
-    result['pi'] = policy
+    result['pi'] = np.asarray(policy)
     result['V'] = V
     result['Q'] = _compute_Q(mdp, V)
     return result
