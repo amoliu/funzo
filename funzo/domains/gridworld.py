@@ -269,6 +269,9 @@ class GridWorld(Domain, MDP):
         """ Actions of the MDP in an indexable container """
         return self._actions
 
+    def actions(self, state):
+        return self._actions.keys()
+
     def terminal(self, state):
         """ Check if a state is terminal"""
         return self.S[state].status == 'terminal'

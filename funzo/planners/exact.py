@@ -44,8 +44,8 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
         # policy improvement
         unchanged = True
         for s in mdp.S:
-            # assuming all actions are available at all states
-            a = np.argmax([_expected_utility(mdp, a, s, V) for a in mdp.A])
+            a = np.argmax([_expected_utility(mdp, a, s, V)
+                          for a in mdp.actions(s)])
             if a != policy[s]:
                 policy[s] = a
                 unchanged = False
@@ -89,7 +89,7 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05):
             V[s] = mdp.R(s, None) + mdp.gamma * \
                 max([np.sum([p * V_old[s1]
                     for (p, s1) in mdp.T(s, a)])
-                    for a in mdp.A])
+                    for a in mdp.actions(s)])
             delta = max(delta, np.abs(V[s] - V_old[s]))
         if delta < epsilon * (1 - mdp.gamma) / mdp.gamma:
             stable = True

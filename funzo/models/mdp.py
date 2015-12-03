@@ -114,6 +114,28 @@ class MDP(Model):
         return self._transition(state, action)
 
     @abstractmethod
+    def actions(self, state):
+        """ Get actions available at a state
+
+        Set the set of actions available at a state. The dynamic model, T then
+        together with the policy induce a probability distribution over this
+        set.
+
+        Parameters
+        -----------
+        state : int
+            A state in the MDP
+
+        Returns
+        -------
+        a_s : array-like, shape (|A|_s,)
+            The set of available actions represented by their action ids in an
+            array, the size of which may be dependent on the state.
+
+        """
+        raise NotImplementedError('Abstract method')
+
+    @abstractmethod
     def terminal(self, state):
         """ Check if a state is terminal (absorbing state) """
         raise NotImplementedError('Abstract method')

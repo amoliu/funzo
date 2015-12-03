@@ -49,7 +49,7 @@ def main():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
 
-    g = GridWorld(gmap, discount=0.7)
+    g = GridWorld(gmap_a, discount=0.6)
 
     # ------------------------
     # print(g.A)
@@ -75,7 +75,7 @@ def main():
     # ------------------------
 
     plt.figure()
-    plt.imshow(V.reshape(gmap.shape),
+    plt.imshow(V.reshape(gmap_a.shape),
                interpolation='nearest', cmap='viridis', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
     plt.colorbar()
