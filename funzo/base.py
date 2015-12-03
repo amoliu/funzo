@@ -1,5 +1,7 @@
 """
-A set of base utilities and classes used throughout the package
+A set of base utilities and classes used throughout the package.
+
+Borrowed from `scikit-learn`
 
 """
 
