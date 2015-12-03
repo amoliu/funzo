@@ -12,12 +12,15 @@ in discrete case with small to medium size MDPs
 
 """
 
+import logging
 import copy
 
 import numpy as np
 
+logger = logging.getLogger(__name__)
 
-def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
+
+def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
     """ Policy iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
@@ -26,6 +29,12 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
     ------------
     mdp : :class:`MDP` variant or derivative
         The MDP to plan on.
+    max_iter : int, optional (default: 500)
+        Maximum number of iterations of the algorithm
+    epsilon : float, optional (default: 1e-08)
+        Threshold for policy change in policy evaluation
+    verbose : int, optional (default: 4)
+        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)
 
     Returns
     --------
@@ -33,6 +42,8 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
         Dictionary containing the optimal Q, V and pi found
 
     """
+    logging.basicConfig(level=verbose)
+
     V = np.zeros(len(mdp.S))
     policy = [np.random.randint(len(mdp.A)) for _ in range(len(mdp.S))]
     stable = False
@@ -53,7 +64,7 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
             stable = True
 
         iteration += 1
-        print('PI, iter: %s' % iteration)
+        logger.info('PI, iteration: %s' % iteration)
 
     result = dict()
     result['pi'] = np.asarray(policy)
@@ -62,7 +73,7 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08):
     return result
 
 
-def value_iteration(mdp, max_iter=200, epsilon=1e-05):
+def value_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4):
     """ Value iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
@@ -71,6 +82,13 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05):
     ------------
     mdp : :class:`MDP` variant or derivative
         The MDP to plan on.
+    max_iter : int, optional (default: 500)
+        Maximum number of iterations of the algorithm
+    epsilon : float, optional (default: 1e-08)
+        Threshold for policy change in policy evaluation
+    verbose : int, optional (default: 4)
+        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)
+
 
     Returns
     --------
@@ -78,6 +96,7 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05):
         Dictionary containing the optimal Q, V and pi found
 
     """
+    logging.basicConfig(level=verbose)
 
     V = np.zeros(len(mdp.S))
     stable = False
@@ -95,7 +114,7 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05):
             stable = True
 
         iteration += 1
-        # print('VI, iter: %s' % iteration)
+        logger.info('VI, iter: %s' % iteration)
 
     result = dict()
     result['V'] = V
@@ -128,7 +147,7 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
             finished = True
 
         iteration += 1
-        # print('PE, iter: %s' % iteration)
+        # logger.info('Policy evaluation, iter: %s' % iteration)
 
     return value
 
