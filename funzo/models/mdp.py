@@ -226,8 +226,18 @@ class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
 
     _template = '_feature_'
 
-    def __init__(self, domain):
+    def __init__(self, domain, weights):
         super(MDPRewardLFA, self).__init__(domain)
+        self._weights = weights
+
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.settet
+    def weights(self, value):
+        assert len(value) == len(self), 'Weights dim does not match reward'
+        self._weights = value
 
     def __len__(self):
         """ Dimension of the reward function in the case of LFA """

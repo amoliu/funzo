@@ -29,6 +29,8 @@ class BIRL(six.with_metaclass(ABCMeta, Model)):
     demos : array-like
         Expert demonstrations as set of :math:`M` trajectories of state action
         pairs. Trajectories can be of different lengths.
+    planner : a callable
+        A planner for MDP e.g. policy iteration as a callable
     beta : float, optional (default=0.7)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
@@ -42,15 +44,18 @@ class BIRL(six.with_metaclass(ABCMeta, Model)):
     _demos : array-like
         Expert demonstrations as set of :math:`M` trajectories of state action
         pairs. Trajectories can be of different lengths.
+    _planner : a callable
+        A reference to a planner for MDP e.g. policy iteration as a callable
     _beta : float, optional (default=0.9)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
 
     """
 
-    def __init__(self, mdp, prior, demos, beta=0.7):
+    def __init__(self, mdp, prior, demos, planner, beta=0.7):
         self._mdp = mdp
         self._prior = prior
+        self._planner = planner
 
     @abstractmethod
     def run(self, **kwargs):
@@ -140,3 +145,24 @@ class DirectionalRewardPrior(RewardPrior):
 
     def log_p(self, r):
         return np.log(self.__call__(r))
+
+
+########################################################################
+# Common utilities
+# ######################################################################
+
+
+def trajectory_Q(trajs, mdp):
+    """ Compute the Q function for a set of trajectories
+
+    trajs is a set of trajectories which are themselves sequences of (s, a)
+    pairs
+
+    """
+    q_trajs = []
+    for traj in trajs:
+        q_traj = 0
+        for t, (s, a) in enumerate(traj):
+            q_traj += mdp.gamma**t * mdp.R(s, a)
+        q_trajs.append(q_traj)
+    return q_trajs
