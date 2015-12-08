@@ -181,23 +181,22 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
     domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP that the reward is
         to be used
+    rmax : float, optional (default: 1.0)
+        Upper bound on the reward function
 
     Attributes
     -----------
     _domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP
-
-    Notes
-    -------
-    The dimension of the reward in case of linear function representation is
-    computed based on a convention of reward function names defined by the
-    `_template` tag
+    _rmax : float
+        Reward upper bound
 
     """
 
-    def __init__(self, domain):
+    def __init__(self, domain, rmax=1.0):
         # keep a reference to parent MDP to get access to domain and dynamics
         self._domain = domain
+        self._rmax = rmax
 
     @abstractmethod
     def __call__(self, state, action):
@@ -208,6 +207,11 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
     def __len__(self):
         """ Dimension of the reward function """
         raise NotImplementedError('Abstract method')
+
+    @property
+    def rmax(self):
+        """ Reward upper bound """
+        return self._rmax
 
 
 class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
