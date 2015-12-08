@@ -1,14 +1,8 @@
 """
-Exact MDP planning using *exact* methods
+MDP planning using *dynamic programming* methods
 
     * Policy Iteration (PI)
     * Value  Iteration (VI)
-    * Linear Programming (LP)
-
-Assumptions
-=============
-Both the state and action space of the MDP can be compactly represented, e.g.
-in discrete case with small to medium size MDPs
 
 """
 

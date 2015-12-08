@@ -33,7 +33,7 @@ class MAPBIRL(BIRL):
 
     def run(self, **kwargs):
         r = self._initialize_reward()
-        self._mdp._reward.weights = r
+        self._mdp.reward.weights = r
         plan = self._planner(self._mdp)
         logger.info(plan['Q'])
 
@@ -48,8 +48,9 @@ class MAPBIRL(BIRL):
 
         return r
 
-    def _initialize_reward(self, rmax=1.0):
-        d = self._mdp._reward.dim
+    def _initialize_reward(self):
+        d = self._mdp.reward.dim
+        rmax = self._mdp.reward.rmax
         reward = np.array([np.random.uniform(-rmax, rmax) for _ in range(d)])
         return reward
 

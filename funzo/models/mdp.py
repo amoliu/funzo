@@ -151,6 +151,11 @@ class MDP(Model):
         raise NotImplementedError('Abstract property')
 
     @property
+    def reward(self):
+        """ Accessor for the underlying reward object """
+        return self._reward
+
+    @property
     def gamma(self):
         return self._discount
 

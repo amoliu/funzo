@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from funzo.domains.gridworld import GridWorld
-from funzo.planners.exact import value_iteration, policy_iteration
+from funzo.planners.dp import value_iteration, policy_iteration
 
 
 def main(map_name, planner):
@@ -34,6 +34,7 @@ def main(map_name, planner):
     plt.imshow(V.reshape(gmap.shape),
                interpolation='nearest', cmap='viridis', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
+    plt.title('Value function')
     plt.colorbar()
 
     plt.show()
