@@ -321,16 +321,17 @@ class GridWorld(Domain, MDP):
             for s in range(policy.shape[0]):
                 a = policy[s]
                 if self.A[int(a)].direction == (1, 0):
-                    text = '$\\Rightarrow$'
+                    text = '$\\rightarrow$'
                 elif self.A[int(a)].direction == (0, 1):
-                    text = '$\\Uparrow$'
+                    text = '$\\uparrow$'
                 elif self.A[int(a)].direction == (-1, 0):
-                    text = '$\\Leftarrow$'
+                    text = '$\\leftarrow$'
                 elif self.A[int(a)].direction == (0, -1):
-                    text = '$\\Downarrow$'
+                    text = '$\\downarrow$'
                 else:
-                    text = 'G'
+                    text = 'O'
                 ss = self.S[s]
                 ax.text((ss.cell[0] * 1) + (1 / 2.),
                         (ss.cell[1] * 1) + (1 / 2.),
                         text, ha="center", size=14)
+        return ax

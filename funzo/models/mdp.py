@@ -234,7 +234,7 @@ class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
     def weights(self):
         return self._weights
 
-    @weights.settet
+    @weights.setter
     def weights(self, value):
         assert len(value) == len(self), 'Weights dim does not match reward'
         self._weights = value
