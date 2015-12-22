@@ -43,7 +43,6 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
     stable = False
     iteration = 0
     while not stable and iteration < (max_iter+2):
-        # policy evaluation
         V = _policy_evaluation(mdp, policy, max_iter, epsilon)
 
         # policy improvement

@@ -41,10 +41,11 @@ class MAPBIRL(BIRL):
             # update reward
             r = self._eta * r
 
-            # compute Q for current reward
-            #
+            # posterior for the current reward
+            posterior = self._reward_posterior(r, plan['Q'])
+
             # perform gradient step
-            pass
+            r = self._eta * posterior * r
 
         return r
 
@@ -54,28 +55,20 @@ class MAPBIRL(BIRL):
         reward = np.array([np.random.uniform(-rmax, rmax) for _ in range(d)])
         return reward
 
-    def _neg_loglk(self, r):
-        """ Compute the negative log likelihood for r
+    def _reward_posterior(self, r, Q):
+        """ Compute the posterior distribution of the current reward
 
         Compute :math:`\log p(\Xi | r) p(r)` with respect to the given
         reward
 
         """
-        # - prepare the trajectory quality scores
-        QE = self._rep.trajectory_quality(r, self._demos)
-        QPi = [self._rep.trajectory_quality(r, self._g_trajs[i])
-               for i in range(self._iteration)]
-
-        # - the negative log likelihood
-        # data term
-        z = []
-        for q_e in QE:
-            for QP_i in QPi:
-                for q_i in QP_i:
-                    z.append(self._beta * (q_i - q_e))
-        lk = -logsumexp(z)
+        data_lk = 0.0
+        for traj in self._demos:
+            for (s, a) in traj:
+                Q_sum = sum(self._beta * Q[s, b] for b in self._mdp.A)
+                data_lk += self._beta * Q[s, a] / Q_sum
 
         # prior term
-        prior = np.sum(self._prior.log_p(r))
+        prior = np.product(self._prior(r))
 
-        return lk - prior
+        return data_lk * prior

@@ -28,3 +28,12 @@ Domain
 
    ~domain.Domain
 
+
+StateGraph
+===========
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   ~state_graph.StateGraph
