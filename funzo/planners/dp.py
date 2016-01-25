@@ -9,6 +9,7 @@ MDP planning using *dynamic programming* methods
 import logging
 import copy
 
+from tqdm import tqdm
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -40,9 +41,10 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
 
     V = np.zeros(len(mdp.S))
     policy = [np.random.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-    stable = False
+    # stable = False
     iteration = 0
-    while not stable and iteration < (max_iter+2):
+    # while not stable and iteration < (max_iter+2):
+    for iteration in tqdm(range(0, max_iter+2)):
         V = _policy_evaluation(mdp, policy, max_iter, epsilon)
 
         # policy improvement
@@ -54,10 +56,11 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
                 policy[s] = a
                 unchanged = False
         if unchanged:
-            stable = True
+            # stable = True
+            break
 
-        iteration += 1
-        logger.info('PI, iteration: %s' % iteration)
+        # iteration += 1
+        # logger.info('PI, iteration: %s' % iteration)
 
     result = dict()
     result['pi'] = np.asarray(policy)
