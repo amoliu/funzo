@@ -7,6 +7,8 @@ from abc import ABCMeta, abstractmethod
 import six
 import numpy as np
 
+from scipy.stats import uniform, norm, laplace
+
 from ...base import Model
 
 
@@ -89,42 +91,41 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
 class UniformRewardPrior(RewardPrior):
     """ Uniform/flat prior"""
 
+    def __init__(self, loc=0.0, scale=1.0):
+        self._loc = loc
+        self._scale = scale
+
     def __call__(self, r):
-        rp = np.ones(r.shape[0])
-        dist = rp / np.sum(rp)
-        return dist
+        return uniform.pdf(r, loc=self._loc, scale=self._scale)
 
     def log_p(self, r):
-        return np.log(self.__call__(r))
+        return uniform.logpdf(r, loc=self._loc, scale=self._scale)
 
 
 class GaussianRewardPrior(RewardPrior):
     """Gaussian reward prior"""
-    def __init__(self, sigma=0.5):
+    def __init__(self, sigma=0.5, loc=0.0):
         self._sigma = sigma
+        self._loc = loc
 
     def __call__(self, r):
-        rp = np.exp(-np.square(r)/(2.0*self._sigma**2)) /\
-            np.sqrt(2.0*np.pi)*self._sigma
-        return rp / np.sum(rp)
+        return norm.pdf(r, loc=self._loc, scale=self._sigma)
 
     def log_p(self, r):
-        # TODO - make analytical
-        return np.log(self.__call__(r))
+        return norm.logpdf(r, loc=self._loc, scale=self._sigma)
 
 
 class LaplacianRewardPrior(RewardPrior):
     """Laplacian reward prior"""
-    def __init__(self, sigma=0.5):
+    def __init__(self, sigma=0.5, loc=0.0):
         self._sigma = sigma
+        self._loc = loc
 
     def __call__(self, r):
-        rp = np.exp(-np.fabs(r)/(2.0*self._sigma)) / (2.0*self._sigma)
-        return rp / np.sum(rp)
+        return laplace.pdf(r, loc=self._loc, scale=self._sigma)
 
     def log_p(self, r):
-        # TODO - make analytical
-        return np.log(self.__call__(r))
+        return laplace.logpdf(r, loc=self._loc, scale=self._sigma)
 
 
 class DirectionalRewardPrior(RewardPrior):
@@ -141,7 +142,7 @@ class DirectionalRewardPrior(RewardPrior):
     def __call__(self, r):
         dim = len(r)
         rp = np.array([r[i] * self.directions[i] for i in range(dim)])
-        return rp / np.sum(rp)
+        return rp
 
     def log_p(self, r):
         return np.log(self.__call__(r))
