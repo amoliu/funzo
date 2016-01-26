@@ -12,6 +12,7 @@ from matplotlib.patches import Rectangle
 
 from ..models.domain import Domain
 from ..models.mdp import MDP, MDPReward, MDPTransition, MDPState, MDPAction
+from ..utils.validation import check_random_state
 
 
 # Cell status
@@ -335,3 +336,29 @@ class GridWorld(Domain, MDP):
                         (ss.cell[1] * 1) + (1 / 2.),
                         text, ha="center", size=14)
         return ax
+
+    def generate_trajectories(self, num, policy, random_state=0):
+        """ Generate trajectories of varying lengths using a policy """
+        assert num > 0, 'Number of trajectories must be greater than zero'
+        controller = GTransition(domain=self)
+
+        trajs = list()
+        for _ in range(num):
+            traj = list()
+            state = self._pick_random_state(random_state)
+            # traj.append(state)
+
+            while len(traj) < 9 and not self.terminal(state):
+                action = policy[state]
+                traj.append((state, action))
+                next_state = controller(state, action)[0][1]
+                # traj.append(next_state)
+                state = next_state
+
+            trajs.append(traj)
+        return trajs
+
+    def _pick_random_state(self, random_state=0):
+        rng = check_random_state(random_state)
+        state = rng.randint(len(self.S))
+        return state

@@ -3,3 +3,5 @@ scipy
 matplotlib>=1.4
 six
 pytest
+tqdm
+networkx

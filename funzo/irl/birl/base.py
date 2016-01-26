@@ -58,6 +58,8 @@ class BIRL(six.with_metaclass(ABCMeta, Model)):
         self._mdp = mdp
         self._prior = prior
         self._planner = planner
+        self._demos = demos
+        self._beta = beta
 
     @abstractmethod
     def run(self, **kwargs):
