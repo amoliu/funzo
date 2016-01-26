@@ -11,7 +11,9 @@ import numpy as np
 from matplotlib.patches import Rectangle
 
 from ..models.domain import Domain
-from ..models.mdp import MDP, MDPReward, MDPTransition, MDPState, MDPAction
+from ..models.mdp import MDP
+from ..models.mdp import MDPReward, MDPRewardLFA
+from ..models.mdp import MDPTransition, MDPState, MDPAction
 from ..utils.validation import check_random_state
 
 
@@ -38,6 +40,40 @@ class GReward(MDPReward):
 
     def __len__(self):
         return len(self._domain.S)
+
+
+class GRewardLFA(MDPRewardLFA):
+    """ Gridworl reward using linear function approximation """
+    def __init__(self, domain, weights):
+        super(GRewardLFA, self).__init__(domain, weights)
+
+    def __call__(self, state, action):
+        state_ = self._domain.S[state]
+        phi = [self._feature_free(state_),
+               self._feature_blocked(state_),
+               self._feature_goal(state_)]
+        return np.dot(self.weights, phi)
+
+    def __len__(self):
+        return 3
+
+    def _feature_goal(self, state):
+        """ Check if the agent is at the goal position """
+        if state.status == TERMINAL:
+            return 1.0
+        return 0.0
+
+    def _feature_blocked(self, state):
+        """ Check is the agent is in a blocked cell """
+        if state.status == BLOCKED:
+            return 1.0
+        return 0.0
+
+    def _feature_free(self, state):
+        """ Check is the agent is in a free cell """
+        if state.status == FREE:
+            return 1.0
+        return 0.0
 
 
 class GTransition(MDPTransition):
@@ -223,8 +259,13 @@ class GridWorld(Domain, MDP):
 
     """
 
-    def __init__(self, gmap, discount=0.9):
-        gr = GReward(domain=self)
+    def __init__(self, gmap, reward_function=None, discount=0.9):
+        if reward_function is None:
+            gr = GReward(domain=self)
+        else:
+            gr = reward_function
+            gr._domain = self
+
         gt = GTransition(domain=self)
 
         MDP.__init__(self, discount=discount, reward=gr, transition=gt)

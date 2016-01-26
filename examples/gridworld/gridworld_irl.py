@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from funzo.domains.gridworld import GridWorld
+from funzo.domains.gridworld import GridWorld, GRewardLFA
 from funzo.planners.dp import policy_iteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
@@ -13,12 +13,18 @@ from funzo.irl.birl.base import GaussianRewardPrior
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    g = GridWorld(gmap, discount=0.9)
+    rfunc = GRewardLFA(None, weights=[0.00, -0.1, 1.0])
+    g = GridWorld(gmap, reward_function=rfunc, discount=0.7)
 
     # ------------------------
     plan = policy_iteration(g, verbose=1)
     policy = plan['pi']
     print(policy)
+
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.gca()
+    ax = g.visualize(ax, policy=policy)
+    plt.show()
 
     demos = g.generate_trajectories(10, policy, random_state=None)
     # np.save('demos.npy', demos)
@@ -26,9 +32,9 @@ def main():
     # print(demos)
 
     # IRL
-    r_prior = GaussianRewardPrior(sigma=0.2)
+    r_prior = GaussianRewardPrior(sigma=0.75)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos,
-                         planner=policy_iteration, beta=0.7)
+                         planner=policy_iteration, beta=0.8)
     r = irl_solver.run()
 
     g.reward.weights = r

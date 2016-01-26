@@ -43,15 +43,21 @@ class MAPBIRL(BIRL):
         bounds = tuple((-rmax, rmax)
                        for _ in range(len(self._mdp.reward)))
 
+        # sum to 1 (or 1 - sum = 0)
+        # only used with linear function approximation reward
+        constraints = ({'type': 'eq', 'fun': lambda x:  1 - sum(x)})
+
         # r is argmax_r p(D|r)p(r)
 
         self._iter = 1
         res = sp.optimize.minimize(fun=self._reward_log_posterior,
                                    x0=r,
-                                   method='L-BFGS-B',
+                                   # method='L-BFGS-B',
+                                   method='SLSQP',
                                    jac=False,
                                    # jac=self._grad_llk,
                                    bounds=bounds,
+                                   constraints=constraints,
                                    callback=self._callback_optimization)
         # print(res)
 
