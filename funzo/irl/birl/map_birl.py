@@ -44,23 +44,16 @@ class MAPBIRL(BIRL):
                        for _ in range(len(self._mdp.reward)))
 
         # r is argmax_r p(D|r)p(r)
+
+        self._iter = 1
         res = sp.optimize.minimize(fun=self._reward_log_posterior,
                                    x0=r,
                                    method='L-BFGS-B',
                                    jac=False,
                                    # jac=self._grad_llk,
-                                   bounds=bounds)
-        print(res)
-
-        # for step in tqdm(range(1, self._max_iter + 1)):
-        #     # update reward
-        #     r = self._eta * r
-
-        #     # posterior for the current reward
-        #     posterior = self._reward_posterior(r)
-
-        #     # perform gradient step
-        #     r = self._eta * posterior * r
+                                   bounds=bounds,
+                                   callback=self._callback_optimization)
+        # print(res)
 
         return res.x
 
@@ -96,6 +89,10 @@ class MAPBIRL(BIRL):
         """ Gradient of the reward log likelihood """
         return grad(self._reward_log_likelihood(r))
 
+    def _callback_optimization(self, param):
+        """ Callback to catch the optimization progress """
+        logger.info('iter: {}, r: {}'.format(self._iter, param))
+
     def _reward_log_posterior(self, r):
         """ Compute the log posterior distribution of the current reward
 
@@ -105,5 +102,7 @@ class MAPBIRL(BIRL):
         """
         log_lk = self._reward_log_likelihood(r)
         log_prior = np.sum(self._prior.log_p(r))
+
+        self._iter += 1
 
         return log_lk + log_prior
