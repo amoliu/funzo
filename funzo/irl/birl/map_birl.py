@@ -9,12 +9,12 @@ from __future__ import division
 
 import logging
 
-import scipy as sp
+import numpy as np
+from autograd import grad
 from scipy.misc import logsumexp
 
-import numpy as np
-
 from .base import BIRL
+from ...utils.validation import check_random_state
 
 
 logger = logging.getLogger(__name__)
@@ -22,10 +22,11 @@ logger = logging.getLogger(__name__)
 
 class MAPBIRL(BIRL):
     """ MAP based BIRL """
-    def __init__(self, mdp, prior, demos, beta, eta, max_iter, verbose=4):
+    def __init__(self, mdp, prior, demos, beta,
+                 learning_rate, max_iter, verbose=4):
         super(MAPBIRL, self).__init__(mdp, prior, demos, beta)
         # TODO - sanity checks
-        self._eta = eta
+        self._learning_rate = learning_rate
         self._max_iter = max_iter
 
         # setup logger
@@ -49,26 +50,42 @@ class MAPBIRL(BIRL):
 
         return r
 
-    def _initialize_reward(self):
-        d = self._mdp.reward.dim
-        rmax = self._mdp.reward.rmax
-        reward = np.array([np.random.uniform(-rmax, rmax) for _ in range(d)])
-        return reward
+    def _initialize_reward(self, random_state=0):
+        """ Initialize a reward vector using the prior """
+        rng = check_random_state(random_state)
+        r = rng.rand(self._mdp.reward.dim)
+        return self._prior(r)
 
-    def _reward_posterior(self, r, Q):
-        """ Compute the posterior distribution of the current reward
+    def _reward_log_likelihood(self, r):
+        """ Compute the reward log likelihood using the new reward and data
+
+        i.e. :math:`p(\Xi | r) = ...`
+
+        """
+        self._mdp.reward.weights = r
+        plan = self._planner(self._mdp)
+        Q_r = plan['Q']
+
+        data_llk = 0.0
+        for traj in self._demos:
+            for (s, a) in traj:
+                den = logsumexp(self._beta * Q_r[s, b] for b in self._mdp.A)
+                data_llk += (self._beta * Q_r[s, a]) - den
+
+        return data_llk
+
+    def _grad_llk(self, r):
+        """ Gradient of the reward log likelihood """
+        return grad(self._reward_log_likelihood(r))
+
+    def _reward_log_posterior(self, r):
+        """ Compute the log posterior distribution of the current reward
 
         Compute :math:`\log p(\Xi | r) p(r)` with respect to the given
         reward
 
         """
-        data_lk = 0.0
-        for traj in self._demos:
-            for (s, a) in traj:
-                Q_sum = sum(self._beta * Q[s, b] for b in self._mdp.A)
-                data_lk += self._beta * Q[s, a] / Q_sum
+        log_lk = self._reward_log_likelihood(r)
+        log_prior = np.sum(self._prior.log_p(r))
 
-        # prior term
-        prior = np.product(self._prior(r))
-
-        return data_lk * prior
+        return log_lk + log_prior
