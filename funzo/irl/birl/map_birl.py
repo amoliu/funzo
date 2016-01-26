@@ -11,7 +11,11 @@ import logging
 
 import numpy as np
 from autograd import grad
+
+import scipy as sp
 from scipy.misc import logsumexp
+
+from tqdm import tqdm
 
 from .base import BIRL
 from ...utils.validation import check_random_state
@@ -34,21 +38,30 @@ class MAPBIRL(BIRL):
 
     def run(self, **kwargs):
         r = self._initialize_reward()
-        self._mdp.reward.weights = r
-        plan = self._planner(self._mdp)
-        logger.info(plan['Q'])
 
-        for step in range(1, self._max_iter + 1):
-            # update reward
-            r = self._eta * r
+        rmax = self._mdp.reward.rmax
+        bounds = tuple((-rmax, rmax)
+                       for _ in range(self._mdp.reward.dim))
 
-            # posterior for the current reward
-            posterior = self._reward_posterior(r, plan['Q'])
+        # r is argmax_r p(D|r)p(r)
+        res = sp.optimize.minimize(fun=self._reward_log_posterior,
+                                   x0=r,
+                                   method='L-BFGS-B',
+                                   jac=self._grad_llk,
+                                   bounds=bounds)
+        print(res)
 
-            # perform gradient step
-            r = self._eta * posterior * r
+        # for step in tqdm(range(1, self._max_iter + 1)):
+        #     # update reward
+        #     r = self._eta * r
 
-        return r
+        #     # posterior for the current reward
+        #     posterior = self._reward_posterior(r)
+
+        #     # perform gradient step
+        #     r = self._eta * posterior * r
+
+        return res.x
 
     def _initialize_reward(self, random_state=0):
         """ Initialize a reward vector using the prior """
