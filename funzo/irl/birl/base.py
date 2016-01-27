@@ -153,19 +153,3 @@ class DirectionalRewardPrior(RewardPrior):
 ########################################################################
 # Common utilities
 # ######################################################################
-
-
-def trajectory_Q(trajs, mdp):
-    """ Compute the Q function for a set of trajectories
-
-    trajs is a set of trajectories which are themselves sequences of (s, a)
-    pairs
-
-    """
-    q_trajs = []
-    for traj in trajs:
-        q_traj = 0
-        for t, (s, a) in enumerate(traj):
-            q_traj += mdp.gamma**t * mdp.R(s, a)
-        q_trajs.append(q_traj)
-    return q_trajs

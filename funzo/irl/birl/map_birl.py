@@ -15,8 +15,6 @@ from autograd import grad
 import scipy as sp
 from scipy.misc import logsumexp
 
-from tqdm import tqdm
-
 from .base import BIRL
 from ...utils.validation import check_random_state
 
@@ -47,9 +45,8 @@ class MAPBIRL(BIRL):
         # only used with linear function approximation reward
         constraints = ({'type': 'eq', 'fun': lambda x:  1 - sum(x)})
 
-        # r is argmax_r p(D|r)p(r)
-
         self._iter = 1
+        # r is argmax_r p(D|r)p(r)
         res = sp.optimize.minimize(fun=self._reward_log_posterior,
                                    x0=r,
                                    # method='L-BFGS-B',
@@ -59,7 +56,7 @@ class MAPBIRL(BIRL):
                                    bounds=bounds,
                                    constraints=constraints,
                                    callback=self._callback_optimization)
-        # print(res)
+        print(res)
 
         return res.x
 

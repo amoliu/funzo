@@ -13,7 +13,7 @@ from funzo.irl.birl.base import GaussianRewardPrior
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    rfunc = GRewardLFA(None, weights=[0.00, -0.1, 1.0])
+    rfunc = GRewardLFA(None, weights=[0.001, -0.1, 1.0])
     g = GridWorld(gmap, reward_function=rfunc, discount=0.7)
 
     # ------------------------

@@ -273,7 +273,6 @@ class GridWorld(Domain, MDP):
         self._gmap = np.asarray(gmap)
         assert self._gmap.ndim == 2, '`gmap` must be a two dimensional array'
         self._initialize(np.flipud(self._gmap))
-        # self._initialize(self._gmap)
 
     def _initialize(self, gmap):
         self._height, self._width = gmap.shape
@@ -294,7 +293,6 @@ class GridWorld(Domain, MDP):
                 else:
                     self._states[state_id] = GState((j, i), FREE)
 
-                # self.S[state_id] = (j, i)
                 self.state_map[(j, i)] = state_id
                 state_id += 1
 
@@ -387,13 +385,11 @@ class GridWorld(Domain, MDP):
         for _ in range(num):
             traj = list()
             state = self._pick_random_state(random_state)
-            # traj.append(state)
 
             while len(traj) < 9 and not self.terminal(state):
                 action = policy[state]
                 traj.append((state, action))
                 next_state = controller(state, action)[0][1]
-                # traj.append(next_state)
                 state = next_state
 
             trajs.append(traj)
