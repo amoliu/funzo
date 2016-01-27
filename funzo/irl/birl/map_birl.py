@@ -10,7 +10,6 @@ from __future__ import division
 import logging
 
 import numpy as np
-from autograd import grad
 
 import scipy as sp
 from scipy.misc import logsumexp
@@ -52,7 +51,6 @@ class MAPBIRL(BIRL):
                                    # method='L-BFGS-B',
                                    method='SLSQP',
                                    jac=False,
-                                   # jac=self._grad_llk,
                                    bounds=bounds,
                                    constraints=constraints,
                                    callback=self._callback_optimization)
@@ -90,10 +88,6 @@ class MAPBIRL(BIRL):
             llk += (alpha_H - beta_H) / float(H+1)
         llk /= float(M)
         return llk
-
-    def _grad_llk(self, r):
-        """ Gradient of the reward log likelihood """
-        return grad(self._reward_log_likelihood(r))
 
     def _callback_optimization(self, param):
         """ Callback to catch the optimization progress """
