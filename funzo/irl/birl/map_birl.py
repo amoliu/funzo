@@ -35,16 +35,23 @@ class MAPBIRL(BIRL):
 
         self._data = dict()
         self._data['loss'] = list()
+        self._data['iter'] = list()
 
     def run(self, **kwargs):
+        """ Run the algorithm with the specified parameters """
+        self._iter = 1
+
         if 'V_E' in kwargs:
             self._ve = kwargs['V_E']
 
-        r = self._initialize_reward()
+        rseed = kwargs.get('random_state', None)
+
+        r = self._initialize_reward(random_state=rseed)
 
         self._mdp.reward.weights = r
         V_pi = self._planner(self._mdp)['V']
         self._data['loss'].append(self._loss(self._ve, V_pi))
+        self._data['iter'].append(self._iter)
 
         rmax = self._mdp.reward.rmax
         bounds = tuple((-rmax, rmax)
@@ -54,7 +61,6 @@ class MAPBIRL(BIRL):
         # only used with linear function approximation reward
         constraints = ({'type': 'eq', 'fun': lambda x:  1 - sum(x)})
 
-        self._iter = 1
         # r is argmax_r p(D|r)p(r)
         res = sp.optimize.minimize(fun=self._reward_log_posterior,
                                    x0=r,
@@ -104,7 +110,8 @@ class MAPBIRL(BIRL):
         V_pi = plan['V']
         pls = self._loss(self._ve, V_pi)
         self._data['loss'].append(pls)
-        logger.info('iter: {}, r: {}, Loss: {}'.format(self._iter, x, pls))
+        self._data['iter'].append(self._iter)
+        logger.info('iter: {}, Loss: {}'.format(self._iter, pls))
 
     def _reward_log_posterior(self, r):
         """ Compute the log posterior distribution of the current reward

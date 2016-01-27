@@ -15,7 +15,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def policy_iteration(mdp, max_iter=200, epsilon=1e-08, verbose=4):
+def policy_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4):
     """ Policy iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
