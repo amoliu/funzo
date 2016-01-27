@@ -15,7 +15,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
+def policy_iteration(mdp, max_iter=200, epsilon=1e-08, verbose=4):
     """ Policy iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
@@ -41,10 +41,8 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
 
     V = np.zeros(len(mdp.S))
     policy = [np.random.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-    # stable = False
     iteration = 0
-    # while not stable and iteration < (max_iter+2):
-    for iteration in tqdm(range(0, max_iter+2)):
+    for iteration in tqdm(range(0, max_iter)):
         V = _policy_evaluation(mdp, policy, max_iter, epsilon)
 
         # policy improvement
@@ -56,10 +54,8 @@ def policy_iteration(mdp, max_iter=500, epsilon=1e-08, verbose=4):
                 policy[s] = a
                 unchanged = False
         if unchanged:
-            # stable = True
             break
 
-        # iteration += 1
         # logger.info('PI, iteration: %s' % iteration)
 
     result = dict()

@@ -33,6 +33,8 @@ class BIRL(six.with_metaclass(ABCMeta, Model)):
         pairs. Trajectories can be of different lengths.
     planner : a callable
         A planner for MDP e.g. policy iteration as a callable
+    loss : callable
+        Loss function for evaluating the progress of the algorithms
     beta : float, optional (default=0.7)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
@@ -48,17 +50,20 @@ class BIRL(six.with_metaclass(ABCMeta, Model)):
         pairs. Trajectories can be of different lengths.
     _planner : a callable
         A reference to a planner for MDP e.g. policy iteration as a callable
+    _loss : callable
+        Loss function for evaluating the progress of the algorithms
     _beta : float, optional (default=0.9)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
 
     """
 
-    def __init__(self, mdp, prior, demos, planner, beta=0.7):
+    def __init__(self, mdp, prior, demos, planner, loss, beta=0.7):
         self._mdp = mdp
         self._prior = prior
         self._planner = planner
         self._demos = demos
+        self._loss = loss
         self._beta = beta
 
     @abstractmethod

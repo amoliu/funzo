@@ -7,7 +7,7 @@ from abc import ABCMeta, abstractmethod
 import six
 import numpy as np
 
-from ...base import Model
+from ..base import Model
 
 
 __all__ = [

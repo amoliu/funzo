@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 
 class MAPBIRL(BIRL):
     """ MAP based BIRL """
-    def __init__(self, mdp, prior, demos, planner, beta,
+    def __init__(self, mdp, prior, demos, planner, loss, beta,
                  learning_rate=0.5, max_iter=50, verbose=4):
-        super(MAPBIRL, self).__init__(mdp, prior, demos, planner, beta)
+        super(MAPBIRL, self).__init__(mdp, prior, demos, planner, loss, beta)
         # TODO - sanity checks
         self._learning_rate = learning_rate
         self._max_iter = max_iter
@@ -33,8 +33,18 @@ class MAPBIRL(BIRL):
         # setup logger
         logging.basicConfig(level=verbose)
 
+        self._data = dict()
+        self._data['loss'] = list()
+
     def run(self, **kwargs):
+        if 'V_E' in kwargs:
+            self._ve = kwargs['V_E']
+
         r = self._initialize_reward()
+
+        self._mdp.reward.weights = r
+        V_pi = self._planner(self._mdp)['V']
+        self._data['loss'].append(self._loss(self._ve, V_pi))
 
         rmax = self._mdp.reward.rmax
         bounds = tuple((-rmax, rmax)
@@ -54,9 +64,7 @@ class MAPBIRL(BIRL):
                                    bounds=bounds,
                                    constraints=constraints,
                                    callback=self._callback_optimization)
-        print(res)
-
-        return res.x
+        return res.x, self._data
 
     def _initialize_reward(self, random_state=0):
         """ Initialize a reward vector using the prior """
@@ -89,9 +97,14 @@ class MAPBIRL(BIRL):
         llk /= float(M)
         return llk
 
-    def _callback_optimization(self, param):
+    def _callback_optimization(self, x):
         """ Callback to catch the optimization progress """
-        logger.info('iter: {}, r: {}'.format(self._iter, param))
+        self._mdp.reward.weights = x
+        plan = self._planner(self._mdp)
+        V_pi = plan['V']
+        pls = self._loss(self._ve, V_pi)
+        self._data['loss'].append(pls)
+        logger.info('iter: {}, r: {}, Loss: {}'.format(self._iter, x, pls))
 
     def _reward_log_posterior(self, r):
         """ Compute the log posterior distribution of the current reward

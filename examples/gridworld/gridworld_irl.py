@@ -9,14 +9,16 @@ from funzo.planners.dp import policy_iteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
 from funzo.irl.birl.base import GaussianRewardPrior
+from funzo.irl.base import PolicyLoss
 
 
 def main():
-    gmap = np.loadtxt('maps/map_a.txt')
+    gmap = np.loadtxt('maps/map_b.txt')
     w = np.array([0.001, -0.1, 1.0])
     w /= np.sum(w)
     rfunc = GRewardLFA(None, weights=w)
-    g = GridWorld(gmap, reward_function=rfunc, discount=0.5)
+    # g = GridWorld(gmap, reward_function=rfunc, discount=0.5)
+    g = GridWorld(gmap, reward_function=None, discount=0.8)
 
     # ------------------------
     plan = policy_iteration(g, verbose=1)
@@ -36,8 +38,10 @@ def main():
     # IRL
     r_prior = GaussianRewardPrior(sigma=0.25)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos,
-                         planner=policy_iteration, beta=0.8)
-    r = irl_solver.run()
+                         planner=policy_iteration,
+                         loss=PolicyLoss(order=2),
+                         beta=0.8)
+    r, data = irl_solver.run(V_E=plan['V'])
 
     g.reward.weights = r
     r_plan = policy_iteration(g)
@@ -56,6 +60,10 @@ def main():
                vmin=np.min(V), vmax=np.max(V))
     plt.title('Value function')
     plt.colorbar()
+
+    plt.figure(figsize=(8, 8))
+    plt.plot(data['loss'])
+    plt.title('Policy loss')
 
     plt.show()
 

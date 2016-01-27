@@ -386,7 +386,8 @@ class GridWorld(Domain, MDP):
             traj = list()
             state = self._pick_random_state(random_state)
 
-            while len(traj) < 9 and not self.terminal(state):
+            max_len = self._width * self._height
+            while len(traj) < max_len and not self.terminal(state):
                 action = policy[state]
                 traj.append((state, action))
                 next_state = controller(state, action)[0][1]
