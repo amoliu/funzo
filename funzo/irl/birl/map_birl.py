@@ -76,17 +76,20 @@ class MAPBIRL(BIRL):
         plan = self._planner(self._mdp)
         Q_r = plan['Q']
 
-        data_llk = 0.0
+        M = len(self._demos)
+        llk = 0.0
         for traj in self._demos:
+            H = len(traj)
             for (s, a) in traj:
-                d = []
+                alpha_H = self._beta * Q_r[a, s]
+                beta_Hs = list()
                 for b in self._mdp.A:
-                    d.append(self._beta * Q_r[b, s])
-                # den = logsumexp(self._beta * Q_r[s, b] for b in self._mdp.A)
-                den = logsumexp(d)
-                data_llk += (self._beta * Q_r[a, s]) - den
+                    beta_Hs.append(self._beta * Q_r[b, s])
+                beta_H = logsumexp(beta_Hs)
 
-        return data_llk
+            llk += (alpha_H - beta_H) / float(H+1)
+        llk /= float(M)
+        return llk
 
     def _grad_llk(self, r):
         """ Gradient of the reward log likelihood """

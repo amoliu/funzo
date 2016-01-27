@@ -13,8 +13,10 @@ from funzo.irl.birl.base import GaussianRewardPrior
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    rfunc = GRewardLFA(None, weights=[0.001, -0.1, 1.0])
-    g = GridWorld(gmap, reward_function=rfunc, discount=0.7)
+    w = np.array([0.001, -0.1, 1.0])
+    w /= np.sum(w)
+    rfunc = GRewardLFA(None, weights=w)
+    g = GridWorld(gmap, reward_function=rfunc, discount=0.5)
 
     # ------------------------
     plan = policy_iteration(g, verbose=1)
@@ -26,13 +28,13 @@ def main():
     ax = g.visualize(ax, policy=policy)
     plt.show()
 
-    demos = g.generate_trajectories(10, policy, random_state=None)
+    demos = g.generate_trajectories(50, policy, random_state=None)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
     # print(demos)
 
     # IRL
-    r_prior = GaussianRewardPrior(sigma=0.75)
+    r_prior = GaussianRewardPrior(sigma=0.25)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos,
                          planner=policy_iteration, beta=0.8)
     r = irl_solver.run()
