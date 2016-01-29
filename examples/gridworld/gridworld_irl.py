@@ -16,11 +16,11 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_b.txt')
+    gmap = np.loadtxt('maps/map_c.txt')
     # w = np.array([0.001, -0.1, 1.0])
     w = np.array([-0.001, -0.1, 1.0])
 
-    g = GridWorld(gmap, reward_function=None, discount=0.9)
+    g = GridWorld(gmap, reward_function=None, discount=0.7)
     # rfunc = GRewardLFA(g, weights=w)
 
     rfunc = GReward(g)
@@ -58,7 +58,7 @@ def main():
 
     # compute the loss
     # loss_func = PolicyLoss(mdp=g, planner=policy_iteration, order=1)
-    loss_func = RewardLoss(order=1)
+    loss_func = RewardLoss(order=2)
     pi_loss = [loss_func(w, w_pi) for w_pi in data['rewards']]
 
     # ------------------------
