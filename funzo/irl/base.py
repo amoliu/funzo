@@ -27,7 +27,7 @@ class Loss(six.with_metaclass(ABCMeta, Model)):
         self.name = name
 
     @abstractmethod
-    def __call__(self, **kwargs):
+    def __call__(self, r_e, r_pi, **kwargs):
         # TODO - May enforce impmentation with ufuncs ?
         pass
 
@@ -40,13 +40,18 @@ class PolicyLoss(Loss):
     """
     def __init__(self, mdp, planner, order=2):
         super(PolicyLoss, self).__init__(name='policy_loss')
+        self._mdp = mdp
+        self._planner = planner
         self._p = order
 
-    def __call__(self, v_e, v_pi, **kwargs):
+    def __call__(self, r_e, r_pi, **kwargs):
         """ Compute the policy loss """
-        v_e = np.asarray(v_e)
-        v_pi = np.asarray(v_pi)
-        assert v_e.shape == v_pi.shape, 'Expecting same shapes'
+        self._mdp.reward.update_parameters(reward=r_e)
+        v_e = self._planner(self._mdp)['V']
+
+        self._mdp.reward.update_parameters(reward=r_pi)
+        v_pi = self._planner(self._mdp)['V']
+
         return np.linalg.norm(v_e - v_pi, ord=self._p)
 
 
@@ -67,17 +72,3 @@ class RewardLoss(Loss):
         assert r_e.shape == r_pi.shape, 'Expecting same shapes'
         return np.linalg.norm(r_e - r_pi, ord=self._p)
 
-
-def evaluate_loss(loss, x_e, x_t, mdp=None, planner=None):
-    """ Evaluate a loss function
-
-    Compute the resulting loss based on pair of quantities from expert and
-    training (learning) phases.
-
-    Parameters
-    -----------
-    loss : `callable`
-        A function that computes the loss
-
-    """
-    pass

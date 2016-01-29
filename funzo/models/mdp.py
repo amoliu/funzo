@@ -14,6 +14,7 @@ from abc import ABCMeta
 from abc import abstractmethod, abstractproperty
 from collections import Hashable
 
+import numpy as np
 
 from ..base import Model
 
@@ -283,8 +284,8 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     def update_parameters(self, **kwargs):
         """ Update the weights parameters of the reward function model """
-        if 'weights' in kwargs:
-            w = np.asarray(kwargs['weights'])
+        if 'reward' in kwargs:
+            w = np.asarray(kwargs['reward'])
             assert w.shape == self._weights.shape,\
                 'New weight array size must match reward function dimension'
             w /= np.sum(w)

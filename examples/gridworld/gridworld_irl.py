@@ -44,7 +44,6 @@ def main():
     r_prior = GaussianRewardPrior(sigma=0.15)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos,
                          planner=policy_iteration,
-                         loss=PolicyLoss(order=1),
                          beta=0.6)
     r, data = irl_solver.run(V_E=plan['V'], random_state=SEED)
 
@@ -53,6 +52,10 @@ def main():
     print(r_plan['pi'])
     print(r)
     V = r_plan['V']
+
+    # compute the loss
+    loss_func = PolicyLoss(mdp=g, planner=policy_iteration, order=1)
+    pi_loss = [loss_func(w, w_pi) for w_pi in data['rewards']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
@@ -68,7 +71,7 @@ def main():
     plt.colorbar()
 
     plt.figure(figsize=(8, 6))
-    plt.plot(data['iter'], data['loss'])
+    plt.plot(data['iter'], pi_loss)
     plt.ylabel('Policy loss $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
     plt.title('Policy loss')

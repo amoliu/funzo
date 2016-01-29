@@ -23,18 +23,17 @@ logger = logging.getLogger(__name__)
 
 class MAPBIRL(BIRL):
     """ MAP based BIRL """
-    def __init__(self, mdp, prior, demos, planner, loss, beta,
-                 learning_rate=0.5, max_iter=50, verbose=4):
-        super(MAPBIRL, self).__init__(mdp, prior, demos, planner, loss, beta)
+    def __init__(self, mdp, prior, demos, planner, beta,
+                 max_iter=50, verbose=4):
+        super(MAPBIRL, self).__init__(mdp, prior, demos, planner, beta)
         # TODO - sanity checks
-        self._learning_rate = learning_rate
         self._max_iter = max_iter
 
         # setup logger
         logging.basicConfig(level=verbose)
 
         self._data = dict()
-        self._data['loss'] = list()
+        self._data['rewards'] = list()
         self._data['iter'] = list()
 
     def run(self, **kwargs):
@@ -47,10 +46,7 @@ class MAPBIRL(BIRL):
         rseed = kwargs.get('random_state', None)
 
         r = self._initialize_reward(random_state=rseed)
-
-        self._mdp.reward.weights = r
-        V_pi = self._planner(self._mdp)['V']
-        self._data['loss'].append(self._loss(self._ve, V_pi))
+        self._data['rewards'].append(r)
         self._data['iter'].append(self._iter)
 
         rmax = self._mdp.reward.rmax
@@ -105,13 +101,9 @@ class MAPBIRL(BIRL):
 
     def _callback_optimization(self, x):
         """ Callback to catch the optimization progress """
-        self._mdp.reward.weights = x
-        plan = self._planner(self._mdp)
-        V_pi = plan['V']
-        pls = self._loss(self._ve, V_pi)
-        self._data['loss'].append(pls)
+        self._data['rewards'].append(x)
         self._data['iter'].append(self._iter)
-        logger.info('iter: {}, Loss: {}'.format(self._iter, pls))
+        logger.info('iter: {}, Reward: {}'.format(self._iter, x))
 
     def _reward_log_posterior(self, r):
         """ Compute the log posterior distribution of the current reward
