@@ -72,7 +72,7 @@ class MAPBIRL(BIRL):
                                    callback=self._callback_optimization)
         return res.x, self._data
 
-    def _initialize_reward(self, random_state=0):
+    def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
         rng = check_random_state(random_state)
         r = rng.rand(len(self._mdp.reward))

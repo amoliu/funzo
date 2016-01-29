@@ -17,7 +17,8 @@ SEED = None
 
 def main():
     gmap = np.loadtxt('maps/map_b.txt')
-    w = np.array([0.001, -0.1, 1.0])
+    # w = np.array([0.001, -0.1, 1.0])
+    w = np.array([0.0, -0.3, 1.0])
     w /= np.sum(w)
     rfunc = GRewardLFA(None, weights=w)
     g = GridWorld(gmap, reward_function=rfunc, discount=0.5)
@@ -33,17 +34,18 @@ def main():
     # ax = g.visualize(ax, policy=policy)
     # plt.show()
 
-    demos = g.generate_trajectories(50, policy, random_state=SEED)
+    # demos = g.generate_trajectories(policy, num=5, random_state=SEED)
+    demos = g.generate_trajectories(policy, starts=[1, 4, 3], random_state=SEED)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
-    # print(demos)
+    print(demos)
 
     # IRL
-    r_prior = GaussianRewardPrior(sigma=0.25)
+    r_prior = GaussianRewardPrior(sigma=0.15)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos,
                          planner=policy_iteration,
-                         loss=PolicyLoss(order=2),
-                         beta=0.8)
+                         loss=PolicyLoss(order=1),
+                         beta=0.6)
     r, data = irl_solver.run(V_E=plan['V'], random_state=SEED)
 
     g.reward.weights = r
@@ -65,7 +67,7 @@ def main():
     plt.title('Value function')
     plt.colorbar()
 
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 6))
     plt.plot(data['iter'], data['loss'])
     plt.ylabel('Policy loss $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')

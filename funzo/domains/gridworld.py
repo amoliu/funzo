@@ -8,6 +8,7 @@ import warnings
 
 import numpy as np
 
+from collections import Iterable
 from matplotlib.patches import Rectangle
 
 from ..models.domain import Domain
@@ -376,15 +377,23 @@ class GridWorld(Domain, MDP):
                         text, ha="center", size=14)
         return ax
 
-    def generate_trajectories(self, num, policy, random_state=0):
+    def generate_trajectories(self, policy, num=5, starts=None, random_state=None):
         """ Generate trajectories of varying lengths using a policy """
         assert num > 0, 'Number of trajectories must be greater than zero'
-        controller = GTransition(domain=self)
+        if starts is not None:
+            assert isinstance(starts, Iterable),\
+                '{} expects an iterable for *starts*'\
+                .format(self.generate_trajectories.__name__)
+            num = len(starts)
 
+        controller = GTransition(domain=self)
         trajs = list()
-        for _ in range(num):
+        for i in range(num):
             traj = list()
-            state = self._pick_random_state(random_state)
+            if starts is None:
+                state = self._pick_random_state(random_state)
+            else:
+                state = starts[i]
 
             max_len = self._width * self._height
             while len(traj) < max_len and not self.terminal(state):
@@ -396,7 +405,7 @@ class GridWorld(Domain, MDP):
             trajs.append(traj)
         return trajs
 
-    def _pick_random_state(self, random_state=0):
+    def _pick_random_state(self, random_state=None):
         rng = check_random_state(random_state)
         state = rng.randint(len(self.S))
         return state
