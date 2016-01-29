@@ -251,7 +251,7 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     def __len__(self):
         """ Dimension of the reward function """
-        return np.prod(self._R.shape)
+        return len(self._domain.S)
 
 
 

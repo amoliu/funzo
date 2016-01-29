@@ -262,15 +262,10 @@ class GridWorld(Domain, MDP):
     """
 
     def __init__(self, gmap, reward_function=None, discount=0.9):
-        if reward_function is None:
-            gr = GReward(domain=self)
-        else:
-            gr = reward_function
-            gr._domain = self
-
         gt = GTransition(domain=self)
 
-        MDP.__init__(self, discount=discount, reward=gr, transition=gt)
+        MDP.__init__(self, discount=discount,
+                     reward=reward_function, transition=gt)
 
         self._gmap = np.asarray(gmap)
         assert self._gmap.ndim == 2, '`gmap` must be a two dimensional array'

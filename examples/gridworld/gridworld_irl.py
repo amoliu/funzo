@@ -5,12 +5,12 @@ plt.style.use('fivethirtyeight')
 
 import numpy as np
 
-from funzo.domains.gridworld import GridWorld, GRewardLFA
+from funzo.domains.gridworld import GridWorld, GRewardLFA, GReward
 from funzo.planners.dp import policy_iteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
 from funzo.irl.birl.base import GaussianRewardPrior
-from funzo.irl.base import PolicyLoss
+from funzo.irl.base import PolicyLoss, RewardLoss
 
 SEED = None
 
@@ -18,11 +18,14 @@ SEED = None
 def main():
     gmap = np.loadtxt('maps/map_b.txt')
     # w = np.array([0.001, -0.1, 1.0])
-    w = np.array([0.0, -0.3, 1.0])
-    w /= np.sum(w)
-    rfunc = GRewardLFA(None, weights=w)
-    g = GridWorld(gmap, reward_function=rfunc, discount=0.5)
-    # g = GridWorld(gmap, reward_function=None, discount=0.7)
+    w = np.array([-0.001, -0.1, 1.0])
+
+    g = GridWorld(gmap, reward_function=None, discount=0.9)
+    # rfunc = GRewardLFA(g, weights=w)
+
+    rfunc = GReward(g)
+    g._reward = rfunc
+    w = rfunc._R
 
     # ------------------------
     plan = policy_iteration(g, verbose=1)
@@ -34,11 +37,11 @@ def main():
     # ax = g.visualize(ax, policy=policy)
     # plt.show()
 
-    # demos = g.generate_trajectories(policy, num=5, random_state=SEED)
-    demos = g.generate_trajectories(policy, starts=[1, 4, 3], random_state=SEED)
+    demos = g.generate_trajectories(policy, num=50, random_state=SEED)
+    # demos = g.generate_trajectories(policy, starts=[1, 4, 3], random_state=SEED)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
-    print(demos)
+    # print(demos)
 
     # IRL
     r_prior = GaussianRewardPrior(sigma=0.15)
@@ -54,7 +57,8 @@ def main():
     V = r_plan['V']
 
     # compute the loss
-    loss_func = PolicyLoss(mdp=g, planner=policy_iteration, order=1)
+    # loss_func = PolicyLoss(mdp=g, planner=policy_iteration, order=1)
+    loss_func = RewardLoss(order=1)
     pi_loss = [loss_func(w, w_pi) for w_pi in data['rewards']]
 
     # ------------------------
@@ -72,9 +76,8 @@ def main():
 
     plt.figure(figsize=(8, 6))
     plt.plot(data['iter'], pi_loss)
-    plt.ylabel('Policy loss $\mathcal{L}_{\pi}$')
+    plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
-    plt.title('Policy loss')
     plt.tight_layout()
 
     plt.show()
