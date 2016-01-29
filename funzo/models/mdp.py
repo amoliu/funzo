@@ -20,8 +20,9 @@ from ..base import Model
 
 __all__ = [
     'MDP',
-    'MDPReward',
-    'MDPRewardLFA',
+    'RewardFunction',
+    'LinearRewardFunction',
+    'TabularRewardFunction',
     'MDPTransition',
     'MDPState',
     'MDPAction'
@@ -44,7 +45,7 @@ class MDP(Model):
     ------------
     discount : float
         MDP discount factor
-    reward : :class:`MDPReward` object
+    reward : :class:`RewardFunction` object
         Reward function for the MDP with all the relavant parameters
     transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
@@ -168,7 +169,7 @@ class MDP(Model):
 ########################################################################
 
 
-class MDPReward(six.with_metaclass(ABCMeta, Model)):
+class RewardFunction(six.with_metaclass(ABCMeta, Model)):
     """ Markov decision process reward  function interface
 
     Rewards are as functions of state and action spaces of MDPs, i.e.
@@ -213,14 +214,48 @@ class MDPReward(six.with_metaclass(ABCMeta, Model)):
         """ Dimension of the reward function """
         raise NotImplementedError('Abstract method')
 
+    @abstractmethod
+    def update_parameters(self, **kwargs):
+        """ Update the parameters of the reward function model """
+        raise NotImplementedError('Abstract method')
+
     @property
     def rmax(self):
         """ Reward upper bound """
         return self._rmax
 
 
-class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
-    """ MDPReward using Linear Function Approximation
+class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
+    """ Reward function with a tabular representation
+
+    A basic reward function with full tabular representation, mainly suitable
+    for discrete and small size domains. i.e. :math:`r(s, a) = R[s, a]` where
+    :math:`R` is a tensor.
+
+    """
+    def __init__(self, domain, rsa=False):
+        super(TabularRewardFunction, self).__init__(domain)
+        if rsa:
+            self._R = np.zeros(len(self), len(self._domain.A))
+        else:
+            self._R = np.zeros(len(self))
+
+    def update_parameters(self, **kwargs):
+        """ Update the internal reward representation parameters """
+        if 'reward' in kwargs:
+            r = np.asarray(kwargs['reward'])
+            assert r.shape == self._R.shape,\
+                'New reward array shape must match reward function dimension'
+            self._R = r
+
+    def __len__(self):
+        """ Dimension of the reward function """
+        return np.prod(self._R.shape)
+
+
+
+class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
+    """ RewardFunction using Linear Function Approximation
 
     The reward is given by;
 
@@ -229,24 +264,32 @@ class MDPRewardLFA(six.with_metaclass(ABCMeta, MDPReward)):
             r(s, a) = \sum_i w_i f_i(s, a)
 
     where :math:`f_(s, a)` is a reward feature defined over state and action
-    spaces of the underlying MDP
+    spaces of the underlying MDP. The *weights* are the parameters of the
+    model as usually sum to 1 to ensure that the reward remains bounded, a
+    typical assumption in RL.
 
     """
 
     _template = '_feature_'
 
     def __init__(self, domain, weights):
-        super(MDPRewardLFA, self).__init__(domain)
-        self._weights = weights
+        super(LinearRewardFunction, self).__init__(domain)
+        self._weights = np.asarray(weights)
+        assert self._weights.ndim == 1, 'Weights must be 1D arrays'
 
-    @property
-    def weights(self):
-        return self._weights
+        # ensure reward is bounded by normalizing the weights
+        self._weights /= np.sum(self._weights)
+        self._weights *= self.rmax
 
-    @weights.setter
-    def weights(self, value):
-        assert len(value) == len(self), 'Weights dim does not match reward'
-        self._weights = value
+    def update_parameters(self, **kwargs):
+        """ Update the weights parameters of the reward function model """
+        if 'weights' in kwargs:
+            w = np.asarray(kwargs['weights'])
+            assert w.shape == self._weights.shape,\
+                'New weight array size must match reward function dimension'
+            w /= np.sum(w)
+            w *= self.rmax
+            self._weights = w
 
     def __len__(self):
         """ Dimension of the reward function in the case of LFA """

@@ -13,7 +13,7 @@ from matplotlib.patches import Rectangle
 
 from ..models.domain import Domain
 from ..models.mdp import MDP
-from ..models.mdp import MDPReward, MDPRewardLFA
+from ..models.mdp import TabularRewardFunction, LinearRewardFunction
 from ..models.mdp import MDPTransition, MDPState, MDPAction
 from ..utils.validation import check_random_state
 
@@ -24,26 +24,27 @@ BLOCKED = 'blocked'
 TERMINAL = 'terminal'
 
 
-class GReward(MDPReward):
+class GReward(TabularRewardFunction):
     """ Grid world MDP reward function """
     def __init__(self, domain):
         super(GReward, self).__init__(domain)
+        R = np.zeros(len(self))
+        for s in self._domain.S:
+            state_ = self._domain.S[s]
+            if state_.status == TERMINAL:
+                R[s] = 1.0
+            elif state_.status == BLOCKED:
+                R[s] = -0.1
+            else:
+                R[s] = -0.001
+        self.update_parameters(reward=R)
 
     def __call__(self, state, action):
-        state_ = self._domain.S[state]
-        reward = -0.001
-        if state_.status == TERMINAL:
-            reward = 1.0
-        elif state_.status == BLOCKED:
-            reward = -0.1
-
-        return reward
-
-    def __len__(self):
-        return len(self._domain.S)
+        assert state in self._domain.S, 'State does not exist in Gdomain'
+        return self._R[state]
 
 
-class GRewardLFA(MDPRewardLFA):
+class GRewardLFA(LinearRewardFunction):
     """ Gridworl reward using linear function approximation """
     def __init__(self, domain, weights):
         super(GRewardLFA, self).__init__(domain, weights)
@@ -53,7 +54,7 @@ class GRewardLFA(MDPRewardLFA):
         phi = [self._feature_free(state_),
                self._feature_blocked(state_),
                self._feature_goal(state_)]
-        return np.dot(self.weights, phi)
+        return np.dot(self._weights, phi)
 
     def __len__(self):
         return 3
