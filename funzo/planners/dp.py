@@ -10,6 +10,7 @@ import logging
 import copy
 
 from tqdm import tqdm
+from six.moves import range
 import numpy as np
 
 from ..utils.validation import check_random_state
@@ -17,6 +18,7 @@ from ..utils.validation import check_random_state
 logger = logging.getLogger(__name__)
 
 # TODO - define a planner interface
+
 
 def policy_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4,
                      random_state=None):

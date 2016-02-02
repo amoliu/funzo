@@ -7,6 +7,7 @@ import pickle
 
 import networkx as nx
 
+from six.moves import filter
 from numpy import asarray, sqrt
 
 

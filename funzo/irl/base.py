@@ -71,4 +71,3 @@ class RewardLoss(Loss):
         r_pi = np.asarray(r_pi)
         assert r_e.shape == r_pi.shape, 'Expecting same shapes'
         return np.linalg.norm(r_e - r_pi, ord=self._p)
-

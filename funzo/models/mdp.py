@@ -254,7 +254,6 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
         return len(self._domain.S)
 
 
-
 class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     """ RewardFunction using Linear Function Approximation
 
