@@ -13,23 +13,25 @@ from tqdm import tqdm
 from six.moves import range
 import numpy as np
 
+from .base import Planner
 from ..utils.validation import check_random_state
 
 logger = logging.getLogger(__name__)
 
-# TODO - define a planner interface
+
+__all__ = [
+    'PolicyIteration',
+    'ValueIteration'
+]
 
 
-def policy_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4,
-                     random_state=None):
+class PolicyIteration(Planner):
     """ Policy iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
 
     Parameters
     ------------
-    mdp : :class:`MDP` variant or derivative
-        The MDP to plan on.
     max_iter : int, optional (default: 500)
         Maximum number of iterations of the algorithm
     epsilon : float, optional (default: 1e-08)
@@ -39,50 +41,72 @@ def policy_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4,
     random_state : :class:`numpy.RandomState`, optional (default: None)
         Random number generation seed control
 
-    Returns
-    --------
-    plan : dict
-        Dictionary containing the optimal Q, V and pi found
+
+    Attributes
+    ------------
+    _max_iter : int
+        Maximum number of iterations of the algorithm
+    _epsilon : float
+        Threshold for policy change in policy evaluation
+    _rng : :class:`numpy.RandomState`
+        Random number generator
 
     """
-    logging.basicConfig(level=verbose)
+    def __init__(self, max_iter=200, epsilon=1e-05, verbose=4,
+                 random_state=None):
+        self._max_iter = max_iter
+        self._epsilon = epsilon
+        self._rng = check_random_state(random_state)
 
-    V = np.zeros(len(mdp.S))
-    rng = check_random_state(random_state)
-    policy = [rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-    iteration = 0
-    for iteration in tqdm(range(0, max_iter)):
-        V = _policy_evaluation(mdp, policy, max_iter, epsilon)
+        logging.basicConfig(level=verbose)
 
-        # policy improvement
-        unchanged = True
-        for s in mdp.S:
-            a = np.argmax([_expected_utility(mdp, a, s, V)
-                          for a in mdp.actions(s)])
-            if a != policy[s]:
-                policy[s] = a
-                unchanged = False
-        if unchanged:
-            break
+    def __call__(self, mdp):
+        """ Standard dynamic programming using policy iteration algorithm
 
-        # logger.debug('PI, iteration: %s' % iteration)
+        Parameters
+        ------------
+        mdp : :class:`MDP` variant or derivative
+            The MDP to plan on.
 
-    result = dict()
-    result['pi'] = np.asarray(policy)
-    result['V'] = V
-    result['Q'] = _compute_Q(mdp, V)
-    return result
+        Returns
+        --------
+        plan : dict
+            Dictionary containing the optimal Q, V and pi found
+
+        """
+        V = np.zeros(len(mdp.S))
+        policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
+        iteration = 0
+        for iteration in tqdm(range(0, self._max_iter)):
+            V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
+
+            # policy improvement
+            unchanged = True
+            for s in mdp.S:
+                a = np.argmax([_expected_utility(mdp, a, s, V)
+                              for a in mdp.actions(s)])
+                if a != policy[s]:
+                    policy[s] = a
+                    unchanged = False
+            if unchanged:
+                break
+
+            # logger.debug('PI, iteration: %s' % iteration)
+
+        result = dict()
+        result['pi'] = np.asarray(policy)
+        result['V'] = V
+        result['Q'] = _compute_Q(mdp, V)
+        return result
 
 
-def value_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4):
+class ValueIteration(Planner):
     """ Value iteraction for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
 
     Parameters
     ------------
-    mdp : :class:`MDP` variant or derivative
-        The MDP to plan on.
     max_iter : int, optional (default: 500)
         Maximum number of iterations of the algorithm
     epsilon : float, optional (default: 1e-08)
@@ -90,6 +114,12 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4):
     verbose : int, optional (default: 4)
         Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)
 
+    Attributes
+    ------------
+    _max_iter : int
+        Maximum number of iterations of the algorithm
+    _epsilon : float
+        Threshold for policy change in policy evaluation
 
     Returns
     --------
@@ -97,31 +127,49 @@ def value_iteration(mdp, max_iter=200, epsilon=1e-05, verbose=4):
         Dictionary containing the optimal Q, V and pi found
 
     """
-    logging.basicConfig(level=verbose)
+    def __init__(self, max_iter=200, epsilon=1e-05, verbose=4):
+        self._max_iter = max_iter
+        self._epsilon = epsilon
 
-    V = np.zeros(len(mdp.S))
-    stable = False
-    iteration = 0
-    while not stable and iteration < max_iter:
-        V_old = copy.deepcopy(V)
-        delta = 0
-        for s in mdp.S:
-            V[s] = mdp.R(s, None) + mdp.gamma * \
-                max([np.sum([p * V_old[s1]
-                    for (p, s1) in mdp.T(s, a)])
-                    for a in mdp.actions(s)])
-            delta = max(delta, np.abs(V[s] - V_old[s]))
-        if delta < epsilon * (1 - mdp.gamma) / mdp.gamma:
-            stable = True
+        logging.basicConfig(level=verbose)
 
-        iteration += 1
-        logger.info('VI, iter: %s' % iteration)
+    def __call__(self, mdp):
+        """ Standard dynamic programming using  value iteration algorithm
 
-    result = dict()
-    result['V'] = V
-    result['Q'] = _compute_Q(mdp, V)
-    result['pi'] = np.argmax(result['Q'], axis=0)
-    return result
+        Parameters
+        ------------
+        mdp : :class:`MDP` variant or derivative
+            The MDP to plan on.
+
+        Returns
+        --------
+        plan : dict
+            Dictionary containing the optimal Q, V and pi found
+
+        """
+        V = np.zeros(len(mdp.S))
+        stable = False
+        iteration = 0
+        while not stable and iteration < self._max_iter:
+            V_old = copy.deepcopy(V)
+            delta = 0
+            for s in mdp.S:
+                V[s] = mdp.R(s, None) + mdp.gamma * \
+                    max([np.sum([p * V_old[s1]
+                        for (p, s1) in mdp.T(s, a)])
+                        for a in mdp.actions(s)])
+                delta = max(delta, np.abs(V[s] - V_old[s]))
+            if delta < self._epsilon * (1 - mdp.gamma) / mdp.gamma:
+                stable = True
+
+            iteration += 1
+            logger.info('VI, iter: %s' % iteration)
+
+        result = dict()
+        result['V'] = V
+        result['Q'] = _compute_Q(mdp, V)
+        result['pi'] = np.argmax(result['Q'], axis=0)
+        return result
 
 
 ##############################################################################
@@ -148,7 +196,6 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
             finished = True
 
         iteration += 1
-        # logger.info('Policy evaluation, iter: %s' % iteration)
 
     return value
 

@@ -1,24 +1,31 @@
 
 import argparse
+
+import matplotlib
+matplotlib.use('Qt4Agg')
+
 from matplotlib import pyplot as plt
 
 import numpy as np
 
-from funzo.domains.gridworld import GridWorld
-from funzo.planners.dp import value_iteration, policy_iteration
+from funzo.domains.gridworld import GridWorld, GReward
+from funzo.planners.dp import PolicyIteration, ValueIteration
 
 
 def main(map_name, planner):
     print(map_name)
     gmap = np.loadtxt(map_name)
 
-    g = GridWorld(gmap, discount=0.55)
+    g = GridWorld(gmap, discount=0.8)
+    rfunc = GReward(g)
+    g._reward = rfunc
 
     # ------------------------
-    if planner == 'PI':
-        res = policy_iteration(g, verbose=2)
-    else:
-        res = value_iteration(g)
+    mdp_planner = PolicyIteration(verbose=2)
+    if planner == 'VI':
+        mdp_planner = ValueIteration(verbose=2)
+
+    res = mdp_planner(g)
     V = res['V']
     print(V)
     # print(res['Q'])
