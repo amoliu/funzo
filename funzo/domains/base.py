@@ -1,5 +1,7 @@
 """
-Base interfaces for domains (worlds) representing MDPs
+Base interfaces for domains (worlds) which contain all relavant information
+about the states and actions in MDPs used by the different functions (reward
+controller, transition)
 
 """
 
@@ -14,12 +16,17 @@ from ..base import Model
 
 class Domain(six.with_metaclass(ABCMeta, Model)):
 
-    """ Domain interface
+    """ Domain (World) interface
 
     Domains expand on the abstraction in the MDP, they represent the concrete
     details of the task. i.e. the environment.
 
     """
+
+    @abstractmethod
+    def terminal(self, state):
+        """ Check if a state is terminal (absorbing state) """
+        raise NotImplementedError('Abstract method')
 
     @abstractmethod
     def visualize(self, ax, **kwargs):
@@ -38,4 +45,4 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
             The axis with the visual elements on the domain drawn
 
         """
-        return NotImplementedError('This method is abstract')
+        raise NotImplementedError('This method is abstract')

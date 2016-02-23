@@ -44,13 +44,28 @@ class MDP(Model):
 
     Parameters
     ------------
+    domain : :class:`Domain` object
+        The underlying domain (world) on which the MDP operates on
     discount : float
-        MDP discount factor
+        MDP discount factor in the range [0, 1)
     reward : :class:`RewardFunction` object
         Reward function for the MDP with all the relavant parameters
     transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochaticity are handled therein.
+
+    Attributes
+    ------------
+    _domain : :class:`Domain` object
+        The underlying domain (world) on which the MDP operates on
+    gamma : float
+        MDP discount factor
+    _reward : :class:`RewardFunction` object
+        Reward function for the MDP with all the relavant parameters
+    _transition : :class:`MDPTransition` object
+        Represents the transition function for the MDP. All transition relevant
+        details such as stochaticity are handled therein.
+
 
     Notes
     ------
@@ -63,13 +78,14 @@ class MDP(Model):
 
     """
 
-    def __init__(self, discount, reward, transition):
-        self.gamma = discount
-        self._reward = reward  # keep a reference to reward function object
+    def __init__(self, domain, reward, transition, discount=0.9):
+        self._domain = domain
+        self._reward = reward
         self._transition = transition
+        self.gamma = discount
 
     def R(self, state, action):
-        """ Reward function
+        """ Evaluate the reward function
 
         The reward for performing `action` in `state`. Additional reward
         parameters can be included in the definition of the reward class
@@ -91,7 +107,7 @@ class MDP(Model):
         return self._reward(state, action)
 
     def T(self, state, action):
-        """ Transition from `state` with `action`
+        """ Evaluate the transition function
 
         Perform a transition from a state using the action specified. The
         result is all reachable states with their respective "reach"
@@ -137,19 +153,18 @@ class MDP(Model):
         """
         raise NotImplementedError('Abstract method')
 
-    @abstractmethod
     def terminal(self, state):
         """ Check if a state is terminal (absorbing state) """
-        raise NotImplementedError('Abstract method')
+        return self._domain.terminal(state)
 
     @abstractproperty
     def S(self):
-        """ States of the MDP in an indexable container """
+        """ States of the MDP in an iterable container """
         raise NotImplementedError('Abstract property')
 
     @abstractproperty
     def A(self):
-        """ Actions of the MDP in an indexable container """
+        """ Actions of the MDP in an iterable container """
         raise NotImplementedError('Abstract property')
 
     @property
@@ -234,12 +249,18 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     :math:`R` is a tensor.
 
     """
-    def __init__(self, domain, rsa=False):
+    def __init__(self, domain, n_s, n_a=None):
+        # If n_a is 0, assume only state based reward function
         super(TabularRewardFunction, self).__init__(domain)
-        if rsa:
-            self._R = np.zeros(len(self), len(self._domain.A))
+        assert n_s > 0, 'Number of states must be greater than 0'
+        self._n_s = n_s
+
+        if n_a is not None:
+            assert n_a > 0, 'Number of actions must be greater than 0'
+            self._n_a = n_a
+            self._R = np.zeros(self._n_s, self._n_a)
         else:
-            self._R = np.zeros(len(self))
+            self._R = np.zeros(self._n_s)
 
     def update_parameters(self, **kwargs):
         """ Update the internal reward representation parameters """
@@ -251,7 +272,7 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     def __len__(self):
         """ Dimension of the reward function """
-        return len(self._domain.S)
+        return self._R.size
 
 
 class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):

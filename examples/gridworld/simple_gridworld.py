@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from funzo.domains.gridworld import GridWorld, GReward
+from funzo.domains.gridworld import GridWorld, GridWorldMDP
+from funzo.domains.gridworld import GReward, GTransition
 from funzo.planners.dp import PolicyIteration, ValueIteration
 
 
@@ -16,9 +17,11 @@ def main(map_name, planner):
     print(map_name)
     gmap = np.loadtxt(map_name)
 
-    g = GridWorld(gmap, discount=0.8)
-    rfunc = GReward(g)
-    g._reward = rfunc
+    world = GridWorld(gmap)
+    R = GReward(domain=world)
+    T = GTransition(domain=world)
+
+    g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.8)
 
     # ------------------------
     mdp_planner = PolicyIteration(verbose=2)
@@ -33,7 +36,7 @@ def main(map_name, planner):
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()
-    ax = g.visualize(ax, policy=res['pi'])
+    ax = world.visualize(ax, policy=res['pi'])
 
     # ------------------------
 
