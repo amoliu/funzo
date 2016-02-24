@@ -13,8 +13,8 @@ from funzo.domains.gridworld import GRewardLFA, GReward, GTransition
 from funzo.planners.dp import PolicyIteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
-from funzo.irl.birl.base import GaussianRewardPrior
-from funzo.irl.base import PolicyLoss, RewardLoss
+from funzo.irl.birl import GaussianRewardPrior
+from funzo.irl import PolicyLoss, RewardLoss
 
 SEED = None
 
@@ -25,12 +25,12 @@ def main():
     w = np.array([-0.001, -0.1, 1.0])
 
     world = GridWorld(gmap=gmap)
-    rfunc = GReward(domain=world)
-    # rfunc = GRewardLFA(g, weights=w)
+    # rfunc = GReward(domain=world)
+    rfunc = GRewardLFA(domain=world, weights=w)
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.7)
 
-    w = rfunc._R
+    # w = rfunc._R
 
     # ------------------------
     planner = PolicyIteration(verbose=2)

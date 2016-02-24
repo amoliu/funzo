@@ -10,12 +10,6 @@ import numpy as np
 from ..base import Model
 
 
-__all__ = [
-    'PolicyLoss',
-    'RewardLoss',
-]
-
-
 ########################################################################
 # Loss functions
 # ######################################################################
@@ -36,6 +30,8 @@ class PolicyLoss(Loss):
     """ Policy loss with respect to a reward function
 
     L_p = || V^*(r) - V^{\pi}(r) ||_p
+
+    Roughly corresponds to apprentiship learning
 
     """
     def __init__(self, mdp, planner, order=2):
