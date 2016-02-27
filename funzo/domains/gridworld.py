@@ -116,9 +116,10 @@ class GTransition(MDPTransition):
                 (p_f, self._move(state_, self._left(action_, A)))]
 
     def _move(self, state, action):
-        """ Return the state that results from going in this direction. Stays
-        in the same state if action os leading to go outside the world or to
-        obstacles
+        """ Return the state that results from going in this direction.
+
+        Stay in the same state if action os leading to go outside the world or
+        to obstacles
 
         Returns
         --------

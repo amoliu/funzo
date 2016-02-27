@@ -364,15 +364,13 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ State on an MDP
 
-    A state in an MDP with all the relavant domain specific data. The state
-    object must be hashable and comparable.
+    A state in an MDP with the relavant domain specific data not speficied in
+    the domain object. The action object must be comparable. In case all the
+    relavant domain specific information is available in the :class:`Domain`
+    object which is referenced in :class:`RewardFunction` and other function
+    objects like transition, then this can be a simple id.
 
     """
-
-    @abstractmethod
-    def __hash__(self):
-        raise NotImplementedError('Implement state hash')
-
     @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError('Implement equality of states')
@@ -381,15 +379,13 @@ class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
 class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ Action in an MDP
 
-    An action in an MDP with all the relavant domain specific data. The action
-    object must be hashable and comparable.
+    An action in an MDP with the relavant domain specific data not speficied in
+    the domain object. The action object must be comparable. In case all the
+    relavant domain specific information is available in the :class:`Domain`
+    object which is referenced in :class:`RewardFunction` and other function
+    objects like transition, then this can be a simple id.
 
     """
-
-    @abstractmethod
-    def __hash__(self):
-        raise NotImplementedError('Implement action hash')
-
     @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError('Implement equality of actions')
