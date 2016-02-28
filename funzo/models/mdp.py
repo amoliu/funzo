@@ -12,7 +12,6 @@ import six
 
 from abc import ABCMeta
 from abc import abstractmethod, abstractproperty
-from collections import Hashable
 
 import numpy as np
 
@@ -31,16 +30,16 @@ __all__ = [
 
 
 class MDP(Model):
-    """ Markov Decision Process Model
-
+    """ Markov Decision Process (MDP) model
 
     For general MDPs, states and action can be continuous making it hard to
     efficiently represent them using standard data strcutures. In the case of
-    discrete MDPs, it is straightforward to develop indexable data strcutures
-    to contain all possible states and actions (evne though these may be huge).
+    discrete MDPs, it is straightforward to use array of comparable objects to
+    represent the states.
+
     In the continuous cases, we assume that only a sample of the state and
-    action spaces will be used, and these can also be represented with relavant
-    indexable data strcutures.
+    action spaces will be used, and these can also be represented a simple
+    iterable data structure.
 
     Parameters
     ------------
@@ -92,11 +91,10 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : int
-            A state in an MDP represented as an object that is hashable and
-            comparable
-        action : int
-            MDP action that is hashable and comparable
+        state : :class:`MDPState` -like object
+            A state in an MDP
+        action : :class:`MDPAction` -like object
+            MDP action
 
         Returns
         --------
@@ -116,11 +114,10 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : int
-            A state in an MDP represented as an object that is hashable and
-            comparable
-        action : int
-            MDP action that is hashable and comparable
+        state : :class:`MDPState` -like object
+            A state in an MDP
+        action : :class:`MDPAction` -like object
+            MDP action
 
         Returns
         --------
@@ -141,14 +138,13 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : int
+        state : :class:`MDPState` -like object
             A state in the MDP
 
         Returns
         -------
         a_s : array-like, shape (|A|_s,)
-            The set of available actions represented by their action ids in an
-            array, the size of which may be dependent on the state.
+            The set of available actions at the given state
 
         """
         raise NotImplementedError('Abstract method')
@@ -245,7 +241,7 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     """ Reward function with a tabular representation
 
     A basic reward function with full tabular representation, mainly suitable
-    for discrete and small size domains. i.e. :math:`r(s, a) = R[s, a]` where
+    for discrete and small sized domains. i.e. :math:`r(s, a) = R[s, a]` where
     :math:`R` is a tensor.
 
     """
@@ -326,8 +322,8 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
     """ A MDP transition function
 
     A generic way of representing MDP transition operation for both discrete
-    and continuous spaces. A controller simply takes and `action` at a given
-    `state` and executes it based on the controller properties (which could
+    and continuous spaces. A T function simply takes and `action` at a given
+    `state` and executes it based on the transition properties (which could
     include stochaticity, etc)
 
     Parameters
@@ -349,7 +345,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
     @abstractmethod
     def __call__(self, state, action, **kwargs):
-        """ Execute a controller
+        """ Execute the transition function
 
         Run the controller at `state` using `action` with optional parameters
         given in `kwargs`
@@ -361,31 +357,43 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 ########################################################################
 
 
-class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
+class MDPState(six.with_metaclass(ABCMeta, Model)):
     """ State on an MDP
 
-    A state in an MDP with the relavant domain specific data not speficied in
-    the domain object. The action object must be comparable. In case all the
-    relavant domain specific information is available in the :class:`Domain`
-    object which is referenced in :class:`RewardFunction` and other function
-    objects like transition, then this can be a simple id.
+    A state in an MDP with all the relavant domain specific data. Such data
+    is used in the reward function and transition function for computing
+    various quantities. Every state must be a comparable object with an id
 
     """
+
+    def __init__(self, state_id):
+        self._id = state_id
+
+    @property
+    def id(self):
+        return self._id
+
     @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError('Implement equality of states')
 
 
-class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
+class MDPAction(six.with_metaclass(ABCMeta, Model)):
     """ Action in an MDP
 
-    An action in an MDP with the relavant domain specific data not speficied in
-    the domain object. The action object must be comparable. In case all the
-    relavant domain specific information is available in the :class:`Domain`
-    object which is referenced in :class:`RewardFunction` and other function
-    objects like transition, then this can be a simple id.
+    An action in an MDP with all the relavant domain specific data. Such data
+    is used in the reward function and transition function for computing
+    various quantities.
 
     """
+
+    def __init__(self, action_id):
+        self._id = action_id
+
+    @property
+    def id(self):
+        return self._id
+
     @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError('Implement equality of actions')

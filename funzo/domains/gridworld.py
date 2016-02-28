@@ -42,18 +42,18 @@ class GReward(TabularRewardFunction):
         super(GReward, self).__init__(domain, n_s=len(domain.states))
         R = np.zeros(len(self))
         for s in self._domain.states:
-            state_ = self._domain.states[s]
-            if state_.status == TERMINAL:
-                R[s] = 1.0
-            elif state_.status == BLOCKED:
-                R[s] = -0.1
+            # state_ = self._domain.states[s]
+            if s.status == TERMINAL:
+                R[s.id] = 1.0
+            elif s.status == BLOCKED:
+                R[s.id] = -0.1
             else:
-                R[s] = -0.001
+                R[s.id] = -0.001
         self.update_parameters(reward=R)
 
     def __call__(self, state, action):
         assert state in self._domain.states, 'State does not exist in domain'
-        return self._R[state]
+        return self._R[state.id]
 
 
 class GRewardLFA(LinearRewardFunction):
@@ -62,10 +62,10 @@ class GRewardLFA(LinearRewardFunction):
         super(GRewardLFA, self).__init__(domain, weights)
 
     def __call__(self, state, action):
-        state_ = self._domain.states[state]
-        phi = [self._feature_free(state_),
-               self._feature_blocked(state_),
-               self._feature_goal(state_)]
+        # state_ = self._domain.states[state]
+        phi = [self._feature_free(state),
+               self._feature_blocked(state),
+               self._feature_goal(state)]
         return np.dot(self._weights, phi)
 
     def __len__(self):
@@ -106,14 +106,14 @@ class GTransition(MDPTransition):
         A list of all possible next states [(prob, state)]
 
         """
-        state_ = self._domain.states[state]
-        action_ = self._domain.actions[action]
+        # state_ = self._domain.states[state]
+        # action_ = self._domain.actions[action]
         p_s = 1.0 - self._wind
         p_f = self._wind / 2.0
-        A = self._domain.actions.values()
-        return [(p_s, self._move(state_, action_)),
-                (p_f, self._move(state_, self._right(action_, A))),
-                (p_f, self._move(state_, self._left(action_, A)))]
+        A = self._domain.actions
+        return [(p_s, self._move(state, action)),
+                (p_f, self._move(state, self._right(action, A))),
+                (p_f, self._move(state, self._left(action, A)))]
 
     def _move(self, state, action):
         """ Return the state that results from going in this direction.
@@ -130,16 +130,25 @@ class GTransition(MDPTransition):
         """
         new_coords = (state.cell[0]+action.direction[0],
                       state.cell[1]+action.direction[1])
-        if new_coords in self._domain.state_map:
-            ns_id = self._domain.state_map[new_coords]
-            ns = self._domain.states[ns_id]
 
-            # avoid transitions to blocked cells
-            if ns.status == BLOCKED:
-                return self._domain.state_map[state.cell]
-            return ns_id
+        new_state = self._domain.find_state(new_coords[0], new_coords[1])
+        if new_state is not None:
+            # avoid blocked states
+            if new_state.status == BLOCKED:
+                return state
+            return new_state
+        return state
 
-        return self._domain.state_map[state.cell]
+        # if new_coords in self._domain.state_map:
+        #     ns_id = self._domain.state_map[new_coords]
+        #     ns = self._domain.states[ns_id]
+
+        #     # avoid transitions to blocked cells
+        #     if ns.status == BLOCKED:
+        #         return self._domain.state_map[state.cell]
+        #     return ns_id
+
+        # return self._domain.state_map[state.cell]
 
     def _heading(self, heading, inc, directions):
         return directions[(directions.index(heading) + inc) % len(directions)]
@@ -156,16 +165,15 @@ class GTransition(MDPTransition):
 
 class GState(MDPState):
     """ Gridworld state """
-    def __init__(self, cell, status=FREE):
+    def __init__(self, state_id, cell, status=FREE):
+        super(GState, self).__init__(state_id)
         self.cell = cell
         self.status = status
 
-    def __hash__(self):
-        return (self.cell[0], self.cell[1]).__hash__()
-
     def __eq__(self, other):
-        return np.hypot(self.cell[0] - other.cell[0],
-                        self.cell[1] - other.cell[1]) < 1e-05
+        return self.id == other.id
+        # return np.hypot(self.cell[0] - other.cell[0],
+        #                 self.cell[1] - other.cell[1]) < 1e-05
 
     def __str__(self):
         return '({}, {})'.format(self.cell[0], self.cell[1])
@@ -176,17 +184,16 @@ class GState(MDPState):
 
 class GAction(MDPAction):
     """ Grirdworld action """
-    def __init__(self, direction):
+    def __init__(self, action_id, direction):
+        super(GAction, self).__init__(action_id)
         self.direction = direction
 
-    def __hash__(self):
-        return (self.direction[0], self.direction[1]).__hash__()
-
     def __eq__(self, other):
-        try:
-            return all(self.direction == other.direction)
-        except Exception:
-            return False
+        return self.id == other.id
+        # try:
+        #     return all(self.direction == other.direction)
+        # except Exception:
+        #     return False
 
     def __str__(self):
         return '[{}, {}]'.format(self.direction[0], self.direction[1])
@@ -216,26 +223,26 @@ class GridWorld(Domain):
         self._height, self._width = gmap.shape
         assert self._height == self._width, 'Only square grids supported'
         self.grid = Grid(nrows=self._width, ncols=self._height)
-        self.states = dict()
-        self.state_map = dict()  # simple inverse map for transition
+        self.states = list()
+        # self.state_map = dict()  # simple inverse map for transition
 
         state_id = 0
         for i in range(self.grid.rows):
             for j in range(self.grid.cols):
                 if gmap[i, j] == 1:
                     self.grid.block_cell((j, i))
-                    self.states[state_id] = GState((j, i), BLOCKED)
+                    self.states.append(GState(state_id, (j, i), BLOCKED))
                 elif gmap[i, j] == 2:
                     self.goal = (j, i)
-                    self.states[state_id] = GState((j, i), TERMINAL)
+                    self.states.append(GState(state_id, (j, i), TERMINAL))
                 else:
-                    self.states[state_id] = GState((j, i), FREE)
+                    self.states.append(GState(state_id, (j, i), FREE))
 
-                self.state_map[(j, i)] = state_id
+                # self.state_map[(j, i)] = state_id
                 state_id += 1
 
-        self.actions = {0: GAction((1, 0)), 1: GAction((0, 1)),
-                        2: GAction((-1, 0)), 3: GAction((0, -1))}
+        self.actions = [GAction(0, (1, 0)), GAction(1, (0, 1)),
+                        GAction(2, (-1, 0)), GAction(3, (0, -1))]
 
     def terminal(self, state):
         """ Check if a state is terminal"""
@@ -249,6 +256,12 @@ class GridWorld(Domain):
 
         return ax
 
+    def find_state(self, x, y):
+        for s in self.states:
+            if np.hypot(s.cell[0] - x, s.cell[1] - y) < 1e-05:
+                return s
+        return None
+
     def _setup_visuals(self, ax):
         """ Setup the visual front end for gridworld
 
@@ -259,16 +272,27 @@ class GridWorld(Domain):
         cz = 1  # cell size
         for c in self.grid.cells:
             i, j = c[0], c[1]
-            if self.grid.blocked((i, j)):
+            s = self.find_state(i, j)
+            if s.status == BLOCKED:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
                               fc='r', ec='k'))
-            if self.terminal(self.state_map[(i, j)]):
+            elif s.status == TERMINAL:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
                               fc='g', ec='k'))
-            if not self.grid.blocked((i, j)) and\
-                    not self.terminal(self.state_map[(i, j)]):
+            else:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
                               fc='w', ec='k'))
+
+            # if self.grid.blocked((i, j)):
+            #     ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
+            #                   fc='r', ec='k'))
+            # if self.terminal(self.state_map[(i, j)]):
+            #     ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
+            #                   fc='g', ec='k'))
+            # if not self.grid.blocked((i, j)) and\
+            #         not self.terminal(self.state_map[(i, j)]):
+            #     ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
+            #                   fc='w', ec='k'))
 
         ax.set_xlim([0, self.grid.cols])
         ax.set_ylim([0, self.grid.rows])
@@ -347,15 +371,18 @@ class GridWorldMDP(MDP):
     @property
     def S(self):
         """ States of the MDP in an indexable container """
-        return self._domain.states.keys()
+        return self._domain.states
 
     @property
     def A(self):
         """ Actions of the MDP in an indexable container """
-        return self._domain.actions.keys()
+        return self._domain.actions
 
     def actions(self, state):
-        return self._domain.actions.keys()
+        return self._domain.actions
+
+    def ix(self, state_id):
+        return self._domain.actions[state_id]
 
 
 #############################################################################
