@@ -1,7 +1,7 @@
 """
 Base interfaces for Markov Decision Processes (MDP)
 
-These interfaces strive to define a contract for easily implementing relavant
+These interfaces strive to define a contract for easily implementing relevant
 algorithms regardless of the concrete task or domain.
 
 
@@ -33,7 +33,7 @@ class MDP(Model):
     """ Markov Decision Process (MDP) model
 
     For general MDPs, states and action can be continuous making it hard to
-    efficiently represent them using standard data strcutures. In the case of
+    efficiently represent them using standard data structures. In the case of
     discrete MDPs, it is straightforward to use array of comparable objects to
     represent the states.
 
@@ -48,10 +48,10 @@ class MDP(Model):
     discount : float
         MDP discount factor in the range [0, 1)
     reward : :class:`RewardFunction` object
-        Reward function for the MDP with all the relavant parameters
+        Reward function for the MDP with all the relevant parameters
     transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
-        details such as stochaticity are handled therein.
+        details such as stochasticity are handled therein.
 
     Attributes
     ------------
@@ -60,20 +60,20 @@ class MDP(Model):
     gamma : float
         MDP discount factor
     _reward : :class:`RewardFunction` object
-        Reward function for the MDP with all the relavant parameters
+        Reward function for the MDP with all the relevant parameters
     _transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
-        details such as stochaticity are handled therein.
+        details such as stochasticity are handled therein.
 
 
     Notes
     ------
     This design deliberately leaves out the details of *states* and *actions*
     to be handled by the domain object which includes a reference to an MDP
-    object. Additioanlly, transitions and reward which are in general functions
+    object. Additionally, transitions and reward which are in general functions
     are represented as separate *callable* objects with references to relevant
     data needed. This allows a unified interface for both *discrete* and
-    *continuos* MDPs and further extensions
+    *continuous* MDPs and further extensions
 
     """
 
@@ -109,7 +109,7 @@ class MDP(Model):
 
         Perform a transition from a state using the action specified. The
         result is all reachable states with their respective "reach"
-        probabilities. In the case of deteministic dynamics, the result will
+        probabilities. In the case of deterministic dynamics, the result will
         contain only one of the reachable states.
 
         Parameters
@@ -190,7 +190,7 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
 
         r: \mathcal{S} \\times \mathcal{A} \longrightarrow \mathbb{R}
 
-    Rewards are accessed via the `__call__` method with apppropriate
+    Rewards are accessed via the `__call__` method with appropriate
     parameters.
 
 
@@ -324,7 +324,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
     A generic way of representing MDP transition operation for both discrete
     and continuous spaces. A T function simply takes and `action` at a given
     `state` and executes it based on the transition properties (which could
-    include stochaticity, etc)
+    include stochasticity, etc)
 
     Parameters
     -----------
@@ -360,7 +360,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 class MDPState(six.with_metaclass(ABCMeta, Model)):
     """ State on an MDP
 
-    A state in an MDP with all the relavant domain specific data. Such data
+    A state in an MDP with all the relevant domain specific data. Such data
     is used in the reward function and transition function for computing
     various quantities. Every state must be a comparable object with an id
 
@@ -381,7 +381,7 @@ class MDPState(six.with_metaclass(ABCMeta, Model)):
 class MDPAction(six.with_metaclass(ABCMeta, Model)):
     """ Action in an MDP
 
-    An action in an MDP with all the relavant domain specific data. Such data
+    An action in an MDP with all the relevant domain specific data. Such data
     is used in the reward function and transition function for computing
     various quantities.
 
