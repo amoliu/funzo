@@ -85,8 +85,8 @@ class PolicyIteration(Planner):
             for s in mdp.S:
                 a = np.argmax([_expected_utility(mdp, a, s, V)
                               for a in mdp.actions(s)])
-                if a != policy[s.id]:
-                    policy[s.id] = a
+                if a != policy[s]:
+                    policy[s] = a
                     unchanged = False
             if unchanged:
                 break
@@ -189,9 +189,10 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
         v_old = copy.deepcopy(value)
         delta = 0
         for s in mdp.S:
-            value[s.id] = mdp.R(s, None) + mdp.gamma * \
-                sum([p * value[s1.id] for (p, s1) in mdp.T(s, mdp.ix(policy[s.id]))])
-            delta = max(delta, np.abs(value[s.id] - v_old[s.id]))
+            # TODO - check the R interface with None
+            value[s] = mdp.R(s, None) + mdp.gamma * \
+                sum([p * value[s1] for (p, s1) in mdp.T(s, policy[s])])
+            delta = max(delta, np.abs(value[s] - v_old[s]))
         if delta < epsilon:
             finished = True
 
@@ -202,7 +203,7 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
 
 def _expected_utility(mdp, a, s, value):
     """ The expected utility of performing `a` in `s`, using `value` """
-    return np.sum([p * mdp.gamma * value[s1.id] for (p, s1) in mdp.T(s, a)])
+    return np.sum([p * mdp.gamma * value[s1] for (p, s1) in mdp.T(s, a)])
 
 
 def _compute_Q(mdp, value):
@@ -210,5 +211,5 @@ def _compute_Q(mdp, value):
     Q = np.zeros(shape=(len(mdp.A), len(mdp.S)))
     for a in mdp.A:
         for s in mdp.S:
-            Q[a.id][s.id] = _expected_utility(mdp, a, s, value)
+            Q[a][s] = _expected_utility(mdp, a, s, value)
     return Q

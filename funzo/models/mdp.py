@@ -12,6 +12,7 @@ import six
 
 from abc import ABCMeta
 from abc import abstractmethod, abstractproperty
+from collections import Hashable
 
 import numpy as np
 
@@ -39,7 +40,7 @@ class MDP(Model):
 
     In the continuous cases, we assume that only a sample of the state and
     action spaces will be used, and these can also be represented a simple
-    iterable data structure.
+    hashable data structure (indexed by state or action ids).
 
     Parameters
     ------------
@@ -91,10 +92,10 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : :class:`MDPState` -like object
-            A state in an MDP
-        action : :class:`MDPAction` -like object
-            MDP action
+        state : int
+            state id for a state object in the MDP
+        action : int
+            id for an MDP action
 
         Returns
         --------
@@ -114,10 +115,10 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : :class:`MDPState` -like object
-            A state in an MDP
-        action : :class:`MDPAction` -like object
-            MDP action
+        state : int
+            state id for a state object in the MDP
+        action : int
+            id for an MDP action
 
         Returns
         --------
@@ -138,8 +139,8 @@ class MDP(Model):
 
         Parameters
         -----------
-        state : :class:`MDPState` -like object
-            A state in the MDP
+        state : int
+            state id for a state object in the MDP
 
         Returns
         -------
@@ -155,12 +156,12 @@ class MDP(Model):
 
     @abstractproperty
     def S(self):
-        """ States of the MDP in an iterable container """
+        """ States of the MDP in an hashable container """
         raise NotImplementedError('Abstract property')
 
     @abstractproperty
     def A(self):
-        """ Actions of the MDP in an iterable container """
+        """ Actions of the MDP in an hashable container """
         raise NotImplementedError('Abstract property')
 
     @property
@@ -357,7 +358,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 ########################################################################
 
 
-class MDPState(six.with_metaclass(ABCMeta, Model)):
+class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ State on an MDP
 
     A state in an MDP with all the relevant domain specific data. Such data
@@ -369,6 +370,10 @@ class MDPState(six.with_metaclass(ABCMeta, Model)):
     def __init__(self, state_id):
         self._id = state_id
 
+    @abstractmethod
+    def __hash__(self):
+        raise ValueError('Implement a hash function')
+
     @property
     def id(self):
         return self._id
@@ -378,7 +383,7 @@ class MDPState(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Implement equality of states')
 
 
-class MDPAction(six.with_metaclass(ABCMeta, Model)):
+class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
     """ Action in an MDP
 
     An action in an MDP with all the relevant domain specific data. Such data
@@ -389,6 +394,10 @@ class MDPAction(six.with_metaclass(ABCMeta, Model)):
 
     def __init__(self, action_id):
         self._id = action_id
+
+    @abstractmethod
+    def __hash__(self):
+        raise ValueError('Implement a hash function')
 
     @property
     def id(self):
