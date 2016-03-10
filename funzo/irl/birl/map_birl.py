@@ -50,8 +50,7 @@ class MAPBIRL(BIRL):
         self._data['iter'].append(self._iter)
 
         rmax = self._mdp.reward.rmax
-        bounds = tuple((-rmax, rmax)
-                       for _ in range(len(self._mdp.reward)))
+        bounds = tuple((-rmax, rmax) for _ in range(len(self._mdp.reward)))
 
         # sum to 1 (or 1 - sum = 0)
         # only used with linear function approximation reward
