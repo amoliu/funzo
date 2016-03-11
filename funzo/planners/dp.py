@@ -26,7 +26,7 @@ __all__ = [
 
 
 class PolicyIteration(Planner):
-    """ Policy iteraction for computing optimal MDP policy
+    """ Policy iteration for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
 
@@ -91,8 +91,6 @@ class PolicyIteration(Planner):
             if unchanged:
                 break
 
-            # logger.debug('PI, iteration: %s' % iteration)
-
         result = dict()
         result['pi'] = np.asarray(policy)
         result['V'] = V
@@ -101,7 +99,7 @@ class PolicyIteration(Planner):
 
 
 class ValueIteration(Planner):
-    """ Value iteraction for computing optimal MDP policy
+    """ Value iteration for computing optimal MDP policy
 
     Standard Dynamic Programming (DP) using Bellman operator backups
 
@@ -163,7 +161,6 @@ class ValueIteration(Planner):
                 stable = True
 
             iteration += 1
-            logger.info('VI, iter: %s' % iteration)
 
         result = dict()
         result['V'] = V

@@ -20,15 +20,15 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_b.txt')
+    gmap = np.loadtxt('maps/map_c.txt')
     # w = np.array([0.001, -0.1, 1.0])
-    w = np.array([-0.001, -0.1, 1.0])
+    # w = np.array([-0.001, -0.1, 1.0])
 
     world = GridWorld(gmap=gmap)
-    # rfunc = GReward(domain=world)
-    rfunc = GRewardLFA(domain=world, weights=w)
+    rfunc = GReward(domain=world)
+    # rfunc = GRewardLFA(domain=world, weights=w)
     T = GTransition(domain=world)
-    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.7)
+    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
 
     # w = rfunc._R
 
@@ -44,7 +44,6 @@ def main():
     # plt.show()
 
     demos = world.generate_trajectories(policy, num=50, random_state=SEED)
-    # demos = g.generate_trajectories(policy, starts=[1, 4, 3], random_state=SEED)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
     # print(demos)
@@ -62,7 +61,7 @@ def main():
     V = r_plan['V']
 
     # compute the loss
-    # loss_func = PolicyLoss(mdp=g, planner=policy_iteration, order=1)
+    # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
     pi_loss = [loss_func(w, w_pi) for w_pi in data['rewards']]
 

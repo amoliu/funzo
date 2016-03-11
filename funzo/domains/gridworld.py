@@ -230,7 +230,8 @@ class GridWorld(Domain):
                 state_id += 1
 
         self.actions = {0: GAction(0, (1, 0)), 1: GAction(1, (0, 1)),
-                        2: GAction(2, (-1, 0)), 3: GAction(3, (0, -1))}
+                        2: GAction(2, (-1, 0)), 3: GAction(3, (0, -1)),
+                        4: GAction(4, (0, 0))}
 
     def terminal(self, state):
         """ Check if a state is terminal"""
@@ -278,24 +279,22 @@ class GridWorld(Domain):
         return ax
 
     def show_policy(self, ax, policy=None):
-        """
-        Show a policy on the gridworld interface
-        """
+        """ Show a policy on the gridworld interface """
         if policy is not None:
             assert len(policy) == len(self.states),\
                 'Policy not compatible with state space dimensions'
             for s in range(policy.shape[0]):
                 a = policy[s]
-                if self.actions[int(a)].direction == (1, 0):
+                if self.actions[a].direction == (1, 0):
                     text = '$\\rightarrow$'
-                elif self.actions[int(a)].direction == (0, 1):
+                elif self.actions[a].direction == (0, 1):
                     text = '$\\uparrow$'
-                elif self.actions[int(a)].direction == (-1, 0):
+                elif self.actions[a].direction == (-1, 0):
                     text = '$\\leftarrow$'
-                elif self.actions[int(a)].direction == (0, -1):
+                elif self.actions[a].direction == (0, -1):
                     text = '$\\downarrow$'
                 else:
-                    text = 'O'
+                    text = '$S$'
                 ss = self.states[s]
                 ax.text((ss.cell[0] * 1) + (1 / 2.),
                         (ss.cell[1] * 1) + (1 / 2.),

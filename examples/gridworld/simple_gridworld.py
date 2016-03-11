@@ -16,15 +16,16 @@ from funzo.planners.dp import PolicyIteration, ValueIteration
 def main(map_name, planner):
     print(map_name)
     gmap = np.loadtxt(map_name)
+    # gmap[12, 12] = 2
 
     world = GridWorld(gmap)
     R = GReward(domain=world)
-    T = GTransition(domain=world)
+    T = GTransition(domain=world, wind=0.2)
 
-    g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.8)
+    g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.6)
 
     # ------------------------
-    mdp_planner = PolicyIteration(verbose=2)
+    mdp_planner = PolicyIteration(verbose=0)
     if planner == 'VI':
         mdp_planner = ValueIteration(verbose=2)
 
