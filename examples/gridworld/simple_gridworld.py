@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('Qt4Agg')
 
 from matplotlib import pyplot as plt
+from joblib import Parallel, delayed
 
 import numpy as np
 
@@ -29,6 +30,7 @@ def main(map_name, planner):
     if planner == 'VI':
         mdp_planner = ValueIteration(verbose=2)
 
+    # res = Parallel(n_jobs=4)(mdp_planner(g))
     res = mdp_planner(g)
     V = res['V']
     print(V)

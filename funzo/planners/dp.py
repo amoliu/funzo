@@ -11,6 +11,7 @@ import copy
 
 from tqdm import tqdm
 from six.moves import range
+
 import numpy as np
 
 from .base import Planner
@@ -186,9 +187,9 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
         v_old = copy.deepcopy(value)
         delta = 0
         for s in mdp.S:
-            # TODO - check the R interface with None
-            value[s] = mdp.R(s, None) + mdp.gamma * \
-                sum([p * value[s1] for (p, s1) in mdp.T(s, policy[s])])
+            # TODO - check the R interface with None/policy[s]
+            value[s] = mdp.R(s, policy[s]) + mdp.gamma * \
+                np.sum([p * value[s1] for (p, s1) in mdp.T(s, policy[s])])
             delta = max(delta, np.abs(value[s] - v_old[s]))
         if delta < epsilon:
             finished = True
