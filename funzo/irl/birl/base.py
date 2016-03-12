@@ -5,6 +5,7 @@ Bayesian (type) inverse reinforcement learning
 from abc import ABCMeta, abstractmethod
 
 import six
+
 import numpy as np
 
 from scipy.stats import uniform, norm, laplace
@@ -153,3 +154,28 @@ class DirectionalRewardPrior(RewardPrior):
 ########################################################################
 # Common utilities
 # ######################################################################
+
+class Trace(object):
+    """ MCMC sampling trace """
+    def __init__(self, variables):
+        self.data = dict()
+        self.data['r'] = None
+        self.data['step'] = list()
+        self.data['sample'] = list()
+        self.data['accept'] = list()
+        self.data['Q_r'] = list()
+
+    def record(self, r, step, sample, accept, Q):
+        self.data['r'] = r
+        self.data['step'].append(step)
+        self.data['sample'].append(sample)
+        self.data['accept'].append(accept)
+        self.data['Q_r'].append(Q)
+
+    def save(self, filename='trace'):
+        """ Save as HDF5 """
+        # get the time and append to name
+        pass
+
+    def plot(self, axes):
+        pass
