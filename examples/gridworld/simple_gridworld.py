@@ -5,7 +5,10 @@ import matplotlib
 matplotlib.use('Qt4Agg')
 
 from matplotlib import pyplot as plt
-from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
+
+plt.style.use('fivethirtyeight')
+# import seaborn as sns
 
 import numpy as np
 
@@ -23,7 +26,7 @@ def main(map_name, planner):
     R = GReward(domain=world)
     T = GTransition(domain=world, wind=0.2)
 
-    g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.6)
+    g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.9)
 
     # ------------------------
     mdp_planner = PolicyIteration(verbose=0)
@@ -33,22 +36,25 @@ def main(map_name, planner):
     # res = Parallel(n_jobs=4)(mdp_planner(g))
     res = mdp_planner(g)
     V = res['V']
-    print(V)
+    # print(V)
     # print(res['Q'])
-    print(res['pi'])
+    # print(res['pi'])
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()
     ax = world.visualize(ax, policy=res['pi'])
+    # plt.savefig('world.svg')
 
     # ------------------------
 
     plt.figure(figsize=(8, 8))
     plt.imshow(V.reshape(gmap.shape),
-               interpolation='nearest', cmap='viridis', origin='lower',
+               interpolation='nearest', cmap='inferno', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
+    plt.grid(False)
     plt.title('Value function')
-    plt.colorbar()
+    plt.colorbar(orientation='horizontal')
+    # plt.savefig('world_value.svg')
 
     plt.show()
 

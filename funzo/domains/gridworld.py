@@ -131,11 +131,12 @@ class GTransition(MDPTransition):
 
         if new_coords in self._domain.state_map:
             ns_id = self._domain.state_map[new_coords]
-            ns = self._domain.states[ns_id]
 
             # avoid transitions to blocked cells
+            ns = self._domain.states[ns_id]
             if ns.status == BLOCKED:
                 return self._domain.state_map[state.cell]
+
             return ns_id
 
         return self._domain.state_map[state.cell]
@@ -264,10 +265,10 @@ class GridWorld(Domain):
             i, j = s.cell[0], s.cell[1]
             if s.status == BLOCKED:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
-                              fc='r', ec='k'))
+                              fc='brown', ec='brown', alpha=0.7))
             elif s.status == TERMINAL:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
-                              fc='g', ec='k'))
+                              fc='g', ec='g', alpha=0.7))
             else:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
                               fc='w', ec='k'))
@@ -294,10 +295,10 @@ class GridWorld(Domain):
                 elif self.actions[a].direction == (0, -1):
                     text = '$\\downarrow$'
                 else:
-                    text = '$S$'
+                    text = 'G'
                 ss = self.states[s]
                 ax.text((ss.cell[0] * 1) + (1 / 2.),
-                        (ss.cell[1] * 1) + (1 / 2.),
+                        (ss.cell[1] * 1) + (1 / 2.3),
                         text, ha="center", size=14)
         return ax
 

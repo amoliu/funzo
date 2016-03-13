@@ -21,16 +21,16 @@ SEED = None
 
 def main():
     gmap = np.loadtxt('maps/map_c.txt')
-    # w = np.array([0.001, -0.1, 1.0])
-    # w = np.array([-0.001, -0.1, 1.0])
+    # w_expert = np.array([0.001, -0.1, 1.0])
+    w_expert = np.array([-0.001, -0.1, 1.0])
 
     world = GridWorld(gmap=gmap)
-    rfunc = GReward(domain=world)
-    # rfunc = GRewardLFA(domain=world, weights=w)
+    # rfunc = GReward(domain=world)
+    rfunc = GRewardLFA(domain=world, weights=w_expert)
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
 
-    # w = rfunc._R
+    # w_expert = rfunc._R
 
     # ------------------------
     planner = PolicyIteration(verbose=2)
@@ -63,7 +63,7 @@ def main():
     # compute the loss
     # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
-    pi_loss = [loss_func(w, w_pi) for w_pi in data['rewards']]
+    loss = [loss_func(w_expert, w_pi) for w_pi in data['rewards']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
@@ -79,7 +79,7 @@ def main():
     plt.colorbar()
 
     plt.figure(figsize=(8, 6))
-    plt.plot(data['iter'], pi_loss)
+    plt.plot(data['iter'], loss)
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
     plt.tight_layout()
