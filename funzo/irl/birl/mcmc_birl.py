@@ -11,8 +11,11 @@ from __future__ import division
 import numpy as np
 
 from copy import deepcopy
+from scipy.misc import logsumexp
+
 from .base import BIRL
 from ...utils.validation import check_random_state
+from ...utils.data_structures import Trace
 
 
 class Proposal(object):
@@ -89,16 +92,16 @@ class PolicyWalkBIRL(BIRL):
         assert 0.0 <= burn_ratio < 1.0, 'burn ratio must be in [0, 1)'
         self._burn_point = int(self._max_iter * burn_ratio / 100.0)
 
-        self._trace = dict()
-
     def run(self, **kwargs):
         r = self._initialize_reward(random_state=None)
+        r_mean = deepcopy(r)
 
         # get policy and posterior for current reward
         Q_r, log_p_r = self._compute_log_posterior(r)
 
         proposal = PolicyWalkProposal(dim=3, delta=0.2)
 
+        trace = Trace(save_interval=self._max_iter//10)
         step = 1
         while step < self._max_iter:
             r_new = proposal(r)
@@ -109,8 +112,13 @@ class PolicyWalkBIRL(BIRL):
             next_r, pr = pw_metrop_select(r, r_new, log_p_r, log_p_r_new)
 
             r = deepcopy(next_r)
-            # save
-            # trace.record(...)
+            r_mean = self._iterative_reward_mean(r_mean, r, step)
+
+            trace.record(r, r_new, step, pr, Q_r_new, log_p_r_new)
+
+            step += 1
+
+        return trace, r_mean
 
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
@@ -123,12 +131,34 @@ class PolicyWalkBIRL(BIRL):
         # solve MDP to get Q_r, Q_r_new
         self._mdp.reward.update_parameters(reward=r)
         Q_r = self._planner(self._mdp)['Q']
-        llk = 0
+
+        M = len(self._demos)
+        llk = 0.0
+        for traj in self._demos:
+            if traj:
+                H = len(traj)
+                alpha_H = 0.0
+                for (s, a) in traj:
+                    alpha_H += self._beta * Q_r[a, s]
+                    beta_Hs = list()
+                    for b in self._mdp.A:
+                        beta_Hs.append(self._beta * Q_r[b, s])
+                    beta_H = logsumexp(beta_Hs)
+
+                llk += (alpha_H - beta_H) / float(H+1)
+        llk /= float(M)
 
         # compute log priors
-        lop_prior = 0
+        log_prior = np.sum(self._prior.log_p(r))
 
         # compute full posterior
-        log_p = llk + lop_prior
+        log_p = llk + log_prior
 
         return Q_r, log_p
+
+    def _iterative_reward_mean(self, r_mean, r_new, iteration):
+        """ Compute the iterative mean of the reward """
+        r_mean = [((iteration - 1) / float(iteration)) *
+                  m_r + 1.0 / iteration * r for m_r, r in zip(r_mean, r_new)]
+
+        return np.array(r_mean)
