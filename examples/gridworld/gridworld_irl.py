@@ -44,7 +44,7 @@ def main():
     # ax = g.visualize(ax, policy=policy)
     # plt.show()
 
-    demos = world.generate_trajectories(policy, num=10, random_state=None)
+    demos = world.generate_trajectories(policy, num=200, random_state=None)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
     # print(demos)

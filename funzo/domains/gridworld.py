@@ -265,13 +265,13 @@ class GridWorld(Domain):
             i, j = s.cell[0], s.cell[1]
             if s.status == BLOCKED:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
-                              fc='brown', ec='brown', alpha=0.7))
+                              fc='#b91d47', ec='#2b5797', alpha=0.7))
             elif s.status == TERMINAL:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
-                              fc='g', ec='g', alpha=0.7))
+                              fc='#00a300', ec='#2b5797', alpha=0.7))
             else:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
-                              fc='w', ec='k'))
+                              fc='w', ec='#2b5797'))
 
         ax.set_xlim([0, self._width])
         ax.set_ylim([0, self._height])
