@@ -232,6 +232,10 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
         """ Update the parameters of the reward function model """
         raise NotImplementedError('Abstract method')
 
+    @abstractproperty
+    def kind(self):
+        raise NotImplementedError('Abstract property')
+
     @property
     def rmax(self):
         """ Reward upper bound """
@@ -266,6 +270,10 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
             assert r.shape == self._R.shape,\
                 'New reward array shape must match reward function dimension'
             self._R = r
+
+    @property
+    def kind(self):
+        return 'Tabular'
 
     def __len__(self):
         """ Dimension of the reward function """
@@ -308,6 +316,10 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
             w /= np.sum(w)
             w *= self.rmax
             self._weights = w
+
+    @property
+    def kind(self):
+        return 'LFA'
 
     def __len__(self):
         """ Dimension of the reward function in the case of LFA """
