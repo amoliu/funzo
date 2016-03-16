@@ -43,15 +43,28 @@ class PolicyWalkProposal(Proposal):
 
     def __call__(self, loc):
         sample = np.asarray(loc)
-        changed = False
-        while not changed:
-            d = self.rng.choice([-self.delta, 0, self.delta])
-            i = self.rng.randint(self.dim)
-            if -self.rmax <= sample[i]+d <= self.rmax:
-                sample[i] += d
-                changed = True
 
+        d = self.rng.choice([-self.delta, self.delta])
+        i = self.rng.randint(self.dim)
+        sample[i] += d
+        sample /= np.sum(sample)
+        print(sample)
         return sample
+
+        # changed = False
+        # while not changed:
+        #     # d = self.rng.choice([-self.delta, self.delta])
+        #     d = [-self.delta, self.delta][self.rng.randint(2)]
+        #     i = self.rng.randint(self.dim)
+        #     if -self.rmax < sample[i]+d < self.rmax:
+        #         sample[i] += d
+        #         changed = True
+
+        # # options = []
+        # # for d in sample.shape[0]:
+        # #     options.append(np.array(sample[d]))
+
+        # return sample
 
 
 #############################################################################

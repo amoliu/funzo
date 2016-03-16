@@ -58,9 +58,9 @@ class Trace(object):
             f[key] = self.data[key]
         f.close()
 
-        if self._old_save is not None:
-            os.remove(self._old_save)
-        self._old_save = saved_name
+        # if self._old_save is not None:
+        #     os.remove(self._old_save)
+        # self._old_save = saved_name
 
         return saved_name
 
