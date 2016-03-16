@@ -15,7 +15,7 @@ import warnings
 
 class Trace(object):
 
-    """ MCMC sampling trace """
+    """ Reward learning trace containing relevant data about the progress """
 
     def __init__(self, save_interval=100):
         if save_interval < 0:
@@ -25,27 +25,24 @@ class Trace(object):
                           loss of data in a crash')
 
         self._save_interval = save_interval
+        self._vars = ['step', 'r', 'sample', 'a_ratio', 'Q_r', 'log_p']
 
         self.data = dict()
-        self.data['r'] = None
-        self.data['step'] = list()
-        self.data['sample'] = list()
-        self.data['accept'] = list()
-        self.data['Q_r'] = list()
-        self.data['logp'] = list()
+        for v in self._vars:
+            self.data[v] = list()
 
-    def record(self, r, sample, step, accept, Q, logp):
+    def record(self, step, r, sample, a_ratio, Q, log_p):
         if len(r) != len(sample):
             raise ValueError('Reward and sample must have same dim')
         if step <= 0:
             raise ValueError('Sample step cannot be < 0')
 
-        self.data['r'] = r
+        self.data['r'].append(r)
         self.data['step'].append(step)
         self.data['sample'].append(sample)
-        self.data['accept'].append(accept)
+        self.data['a_ratio'].append(a_ratio)
         self.data['Q_r'].append(Q)
-        self.data['logp'].append(logp)
+        self.data['log_p'].append(log_p)
 
         if step > 0 and step % self._save_interval == 0:
             self.save('trace')
@@ -58,6 +55,10 @@ class Trace(object):
             f[key] = self.data[key]
         f.close()
         return saved_name
+
+    @property
+    def vars(self):
+        return self._vars
 
     def plot(self, axes):
         """ Plot the trace to visually inspect convergence """
