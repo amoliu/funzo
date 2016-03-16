@@ -9,10 +9,9 @@ MDP planning using *dynamic programming* methods
 import logging
 import copy
 
-from tqdm import tqdm
-from six.moves import range
-
 import numpy as np
+
+from six.moves import range
 
 from .base import Planner
 from ..utils.validation import check_random_state
@@ -78,7 +77,7 @@ class PolicyIteration(Planner):
         V = np.zeros(len(mdp.S))
         policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
         iteration = 0
-        for iteration in tqdm(range(0, self._max_iter)):
+        for iteration in range(0, self._max_iter):
             V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
 
             # policy improvement

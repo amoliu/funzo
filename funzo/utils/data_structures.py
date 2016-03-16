@@ -8,6 +8,7 @@ Data structure helpers
 
 from __future__ import division, absolute_import
 
+import os
 import h5py
 import time
 import warnings
@@ -30,6 +31,8 @@ class Trace(object):
         self.data = dict()
         for v in self._vars:
             self.data[v] = list()
+
+        self._old_save = None
 
     def record(self, step, r, sample, a_ratio, Q, log_p):
         if len(r) != len(sample):
@@ -54,6 +57,11 @@ class Trace(object):
         for key in self.data:
             f[key] = self.data[key]
         f.close()
+
+        if self._old_save is not None:
+            os.remove(self._old_save)
+        self._old_save = saved_name
+
         return saved_name
 
     @property

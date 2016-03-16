@@ -10,12 +10,17 @@ from __future__ import division
 
 import numpy as np
 
+from tqdm import tqdm
 from copy import deepcopy
+from six.moves import range, zip
 from scipy.misc import logsumexp
 
 from .base import BIRL
 from ...utils.validation import check_random_state
 from ...utils.data_structures import Trace
+
+
+__all__ = ['PolicyWalkBIRL']
 
 
 class Proposal(object):
@@ -82,15 +87,22 @@ def pw_metrop_select(r, r_new, log_p_r, log_p_r_new):
 
 class PolicyWalkBIRL(BIRL):
     """ BIRL with inference done using PolicyWalk MCMC algorithm """
-    def __init__(self, mdp, prior, demos, planner, beta,
+    def __init__(self, mdp, prior, demos, planner, beta, delta=0.2,
                  burn_ratio=0.27, max_iter=100, verbose=4):
         super(PolicyWalkBIRL, self).__init__(mdp, prior, demos, planner, beta)
 
-        assert 0 < max_iter < np.inf, 'iterations must be in (0, inf)'
+        if 0 >= max_iter > np.inf:
+            raise ValueError('No. of iterations must be in (0, inf)')
         self._max_iter = max_iter
 
-        assert 0.0 <= burn_ratio < 1.0, 'burn ratio must be in [0, 1)'
-        self._burn_point = int(self._max_iter * burn_ratio / 100.0)
+        if 0.0 > burn_ratio >= 1.0:
+            raise ValueError('burn ratio must be in [0, 1)')
+        self._burn = int(self._max_iter * burn_ratio / 100.0)
+
+        if 0.0 >= delta > 1.0:
+            raise ValueError('Reward steps (delta) must be in (0, 1)')
+        self._proposal = PolicyWalkProposal(dim=len(self._mdp.reward),
+                                            delta=delta)
 
     def run(self, **kwargs):
         r = self._initialize_reward(random_state=None)
@@ -98,24 +110,22 @@ class PolicyWalkBIRL(BIRL):
 
         # get policy and posterior for current reward
         Q_r, log_p_r = self._compute_log_posterior(r)
+        trace = Trace(save_interval=self._max_iter//5)
 
-        proposal = PolicyWalkProposal(dim=3, delta=0.2)
-
-        trace = Trace(save_interval=self._max_iter//10)
-        step = 1
-        while step < self._max_iter:
-            r_new = proposal(r)
+        for step in tqdm(range(1, self._max_iter+1)):
+            r_new = self._proposal(r)
             Q_r_new, log_p_r_new = self._compute_log_posterior(r_new)
 
             # Add line 3 (c) from Ramachandran (only for AL), not needed??
+            # Cooling?
 
             next_r, pr = pw_metrop_select(r, r_new, log_p_r, log_p_r_new)
-
             r = deepcopy(next_r)
-            r_mean = self._iterative_reward_mean(r_mean, r, step)
 
-            trace.record(r, r_new, step, pr, Q_r_new, log_p_r_new)
+            if step > self._burn:
+                r_mean = self._iterative_mean(r_mean, r, step-self._burn)
 
+            trace.record(step, r, r_new, pr, Q_r_new, log_p_r_new)
             step += 1
 
         return trace, r_mean
@@ -156,9 +166,9 @@ class PolicyWalkBIRL(BIRL):
 
         return Q_r, log_p
 
-    def _iterative_reward_mean(self, r_mean, r_new, iteration):
+    def _iterative_mean(self, r_mean, r_new, iteration):
         """ Compute the iterative mean of the reward """
         r_mean = [((iteration - 1) / float(iteration)) *
-                  m_r + 1.0 / iteration * r for m_r, r in zip(r_mean, r_new)]
+                  r_m + 1.0 / iteration * r for r_m, r in zip(r_mean, r_new)]
 
         return np.array(r_mean)

@@ -231,8 +231,7 @@ class GridWorld(Domain):
                 state_id += 1
 
         self.actions = {0: GAction(0, (1, 0)), 1: GAction(1, (0, 1)),
-                        2: GAction(2, (-1, 0)), 3: GAction(3, (0, -1)),
-                        4: GAction(4, (0, 0))}
+                        2: GAction(2, (-1, 0)), 3: GAction(3, (0, -1))}
 
     def terminal(self, state):
         """ Check if a state is terminal"""
