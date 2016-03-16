@@ -20,15 +20,16 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_c.txt')
+    gmap = np.loadtxt('maps/map_b.txt')
     # w_expert = np.array([0.001, -0.1, 1.0])
-    w_expert = np.array([-0.001, -0.1, 1.0])
+    # w_expert = np.array([-0.001, -0.1, 1.0])
+    w_expert = np.array([0.01, -0.5, 1.0])
 
     world = GridWorld(gmap=gmap)
     # rfunc = GReward(domain=world)
     rfunc = GRewardLFA(domain=world, weights=w_expert)
     T = GTransition(domain=world)
-    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
+    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.7)
 
     # w_expert = rfunc._R
 
@@ -43,7 +44,7 @@ def main():
     # ax = g.visualize(ax, policy=policy)
     # plt.show()
 
-    demos = world.generate_trajectories(policy, num=50, random_state=SEED)
+    demos = world.generate_trajectories(policy, num=10, random_state=None)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
     # print(demos)
@@ -52,7 +53,7 @@ def main():
     r_prior = GaussianRewardPrior(sigma=0.15)
     irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
                          beta=0.6)
-    r, data = irl_solver.run(V_E=plan['V'], random_state=SEED)
+    r, data = irl_solver.run(V_E=plan['V'], random_state=None)
 
     g.reward.weights = r
     r_plan = planner(g)

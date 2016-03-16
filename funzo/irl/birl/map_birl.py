@@ -88,8 +88,9 @@ class MAPBIRL(BIRL):
         for traj in self._demos:
             if traj:
                 H = len(traj)
+                alpha_H = 0.0
                 for (s, a) in traj:
-                    alpha_H = self._beta * Q_r[a, s]
+                    alpha_H += self._beta * Q_r[a, s]
                     beta_Hs = list()
                     for b in self._mdp.A:
                         beta_Hs.append(self._beta * Q_r[b, s])
