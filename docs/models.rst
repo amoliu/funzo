@@ -7,30 +7,24 @@ This module contains the design of key models used throughout the package. The m
 
 MDP
 ======
+Markov decision processes
 
 .. autosummary::
    :toctree: generated/
    :nosignatures:
 
    ~mdp.MDP
-   ~mdp.MDPReward
-   ~mdp.MDPRewardLFA
+   ~mdp.RewardFunction
+   ~mdp.TabularRewardFunction
+   ~mdp.LinearRewardFunction
    ~mdp.MDPTransition
    ~mdp.MDPState
    ~mdp.MDPAction
 
-Domain
-===========
-
-.. autosummary::
-   :toctree: generated/
-   :nosignatures:
-
-   ~domain.Domain
-
 
 StateGraph
 ===========
+Generic graph based representation
 
 .. autosummary::
    :toctree: generated/

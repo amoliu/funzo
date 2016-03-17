@@ -15,9 +15,11 @@ Simple discrete 2D grid world
 
    ~gridworld.GridWorld
    ~gridworld.GReward
+   ~gridworld.GRewardLFA
    ~gridworld.GTransition
    ~gridworld.GState
    ~gridworld.GAction
+
 
 PuddleWorld
 =============

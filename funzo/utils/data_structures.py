@@ -35,6 +35,7 @@ class Trace(object):
         self._old_save = None
 
     def record(self, step, r, sample, a_ratio, Q, log_p):
+        """ Record new data into the trace """
         if len(r) != len(sample):
             raise ValueError('Reward and sample must have same dim')
         if step <= 0:
@@ -66,6 +67,7 @@ class Trace(object):
 
     @property
     def vars(self):
+        """ Variables in the trace data store """
         return self._vars
 
     def plot(self, axes):

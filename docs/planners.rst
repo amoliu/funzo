@@ -13,6 +13,6 @@ The set of planners that work exhaustively on the the state and action space of 
    :toctree: generated/
    :nosignatures:
 
-   ~dp.policy_iteration
-   ~dp.value_iteration
+   ~dp.PolicyIteration
+   ~dp.ValueIteration
 

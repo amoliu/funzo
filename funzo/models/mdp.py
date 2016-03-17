@@ -235,6 +235,7 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
 
     @abstractproperty
     def kind(self):
+        """ Type of reward function (e.g. tabular, LFA) """
         raise NotImplementedError('Abstract property')
 
     @property
@@ -274,6 +275,7 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     @property
     def kind(self):
+        """ Type of reward function (e.g. tabular, LFA) """
         return 'Tabular'
 
     def __len__(self):
@@ -320,6 +322,7 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     @property
     def kind(self):
+        """ Type of reward function (e.g. tabular, LFA) """
         return 'LFA'
 
     def __len__(self):
