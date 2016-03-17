@@ -60,6 +60,7 @@ def main():
                                 planner=planner, beta=0.6, max_iter=250)
     # r, data = irl_solver.run(random_state=SEED)
     trace, r = irl_solver.run(random_state=SEED)
+    trace.save('pw_trace')
 
     g.reward.weights = r
     r_plan = planner(g)
