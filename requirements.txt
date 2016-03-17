@@ -2,6 +2,6 @@ numpy>=1.6
 scipy
 matplotlib>=1.4
 six
-pytest
+nose
 tqdm
 networkx

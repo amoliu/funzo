@@ -135,9 +135,9 @@ class GTransition(MDPTransition):
             ns_id = self._domain.state_map[new_coords]
 
             # avoid transitions to blocked cells
-            ns = self._domain.states[ns_id]
-            if ns.status == BLOCKED:
-                return self._domain.state_map[state.cell]
+            # ns = self._domain.states[ns_id]
+            # if ns.status == BLOCKED:
+            #     return self._domain.state_map[state.cell]
 
             return ns_id
 

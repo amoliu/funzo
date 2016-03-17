@@ -53,14 +53,15 @@ lint:
 	flake8 funzo tests
 
 test:
-	# python setup.py test
-	py.test -v
+	nosetests -s -v funzo
 
 test-all:
 	tox
 
 coverage:
-	coverage run --source funzo setup.py test
+	rm -rf coverage .coverage
+	nosetests -s -v --with-coverage funzo
+	# coverage run --source funzo setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html

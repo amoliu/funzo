@@ -23,7 +23,7 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_a.txt')
+    gmap = np.loadtxt('maps/map_b.txt')
     w_expert = np.array([-0.001, -0.5, 1.0])
     # w_expert = np.array([0.0001, 0.0, 1.0])
 

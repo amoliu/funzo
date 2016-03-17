@@ -1,10 +1,10 @@
 
-import pytest
 import h5py
 import os
 
 import numpy as np
 
+from nose.tools import assert_raises
 from numpy.testing import assert_equal
 
 from funzo.utils.data_structures import Trace
@@ -27,10 +27,12 @@ def test_Trace_record():
     assert len(t['a_ratio']) == 3
 
     # check assertions in the code due to invalid mix of values
-    with pytest.raises(ValueError):
-        t.record(1, [1.0, 2.0, 3.0], [1.0, 2.0], 0.7, np.random.rand(5), 0.6)
-    with pytest.raises(ValueError):
-        t.record(-1, [1.0, 2.0], [1.0, 2.0], 0.7, np.random.rand(5), 0.6)
+    assert_raises(ValueError,
+                  t.record,
+                  1, [1.0, 2.0, 3.0], [1.0, 2.0], 0.7, np.random.rand(5), 0.6)
+    assert_raises(ValueError,
+                  t.record,
+                  -1, [1.0, 2.0], [1.0, 2.0], 0.7, np.random.rand(5), 0.6)
 
 
 def test_trace_save():
@@ -56,5 +58,4 @@ def test_trace_save():
 
 def test_trace_getitem():
     t = Trace()
-    with pytest.raises(ValueError):
-        t['V']
+    assert_raises(ValueError, t.__getitem__, 'V')
