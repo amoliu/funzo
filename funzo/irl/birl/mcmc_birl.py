@@ -15,6 +15,8 @@ from copy import deepcopy
 from six.moves import range, zip
 from scipy.misc import logsumexp
 
+from sklearn.preprocessing import minmax_scale
+
 from .base import BIRL
 from ...utils.validation import check_random_state
 from ...utils.data_structures import Trace
@@ -44,27 +46,29 @@ class PolicyWalkProposal(Proposal):
     def __call__(self, loc):
         sample = np.asarray(loc)
 
-        d = self.rng.choice([-self.delta, self.delta])
-        i = self.rng.randint(self.dim)
-        sample[i] += d
-        sample /= np.sum(sample)
-        print(sample)
-        return sample
-
-        # changed = False
-        # while not changed:
-        #     # d = self.rng.choice([-self.delta, self.delta])
-        #     d = [-self.delta, self.delta][self.rng.randint(2)]
-        #     i = self.rng.randint(self.dim)
-        #     if -self.rmax < sample[i]+d < self.rmax:
-        #         sample[i] += d
-        #         changed = True
-
-        # # options = []
-        # # for d in sample.shape[0]:
-        # #     options.append(np.array(sample[d]))
-
+        # d = self.rng.choice([-self.delta, self.delta])
+        # i = self.rng.randint(self.dim)
+        # sample[i] += d
+        # sample /= np.sum(sample)
         # return sample
+
+        print(sample)
+
+        changed = False
+        while not changed:
+            # d = self.rng.choice([-self.delta, self.delta])
+            d = [-self.delta, self.delta][self.rng.randint(2)]
+            i = self.rng.randint(self.dim)
+            if -self.rmax < sample[i]+d < self.rmax:
+                sample[i] += d
+                changed = True
+                break
+
+        # options = []
+        # for d in sample.shape[0]:
+        #     options.append(np.array(sample[d]))
+
+        return minmax_scale(sample, (-1, 1), axis=0)
 
 
 #############################################################################
