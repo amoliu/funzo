@@ -250,9 +250,9 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     :math:`R` is a tensor.
 
     """
-    def __init__(self, domain, n_s, n_a=None):
+    def __init__(self, domain, n_s, n_a=None, rmax=1.0):
         # If n_a is 0, assume only state based reward function
-        super(TabularRewardFunction, self).__init__(domain)
+        super(TabularRewardFunction, self).__init__(domain, rmax)
         assert n_s > 0, 'Number of states must be greater than 0'
         self._n_s = n_s
 
@@ -298,8 +298,8 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     _template = '_feature_'
 
-    def __init__(self, domain, weights):
-        super(LinearRewardFunction, self).__init__(domain)
+    def __init__(self, domain, weights, rmax=1.0):
+        super(LinearRewardFunction, self).__init__(domain, rmax)
         self._weights = np.asarray(weights)
         assert self._weights.ndim == 1, 'Weights must be 1D arrays'
 

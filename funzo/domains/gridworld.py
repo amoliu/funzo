@@ -36,8 +36,10 @@ TERMINAL = 'terminal'
 
 class GReward(TabularRewardFunction):
     """ Grid world MDP reward function """
-    def __init__(self, domain):
-        super(GReward, self).__init__(domain, n_s=len(domain.states))
+    def __init__(self, domain, rmax=1.0):
+        super(GReward, self).__init__(domain,
+                                      n_s=len(domain.states),
+                                      rmax=rmax)
         R = np.zeros(len(self))
         for s in self._domain.states:
             state_ = self._domain.states[s]
@@ -56,8 +58,8 @@ class GReward(TabularRewardFunction):
 
 class GRewardLFA(LinearRewardFunction):
     """ Gridworld reward using linear function approximation """
-    def __init__(self, domain, weights):
-        super(GRewardLFA, self).__init__(domain, weights)
+    def __init__(self, domain, weights, rmax=1.0):
+        super(GRewardLFA, self).__init__(domain, weights, rmax=rmax)
 
     def __call__(self, state, action):
         state_ = self._domain.states[state]
@@ -133,9 +135,9 @@ class GTransition(MDPTransition):
             ns_id = self._domain.state_map[new_coords]
 
             # avoid transitions to blocked cells
-            # ns = self._domain.states[ns_id]
-            # if ns.status == BLOCKED:
-            #     return self._domain.state_map[state.cell]
+            ns = self._domain.states[ns_id]
+            if ns.status == BLOCKED:
+                return self._domain.state_map[state.cell]
 
             return ns_id
 

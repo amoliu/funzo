@@ -24,15 +24,15 @@ SEED = None
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    # w_expert = np.array([0.001, -0.1, 1.0])
-    # w_expert = np.array([-0.001, -0.1, 1.0])
-    w_expert = np.array([0.0001, 0.0, 1.0])
+    w_expert = np.array([-0.001, -0.5, 1.0])
+    # w_expert = np.array([0.0001, 0.0, 1.0])
 
     world = GridWorld(gmap=gmap)
-    # rfunc = GReward(domain=world)
-    rfunc = GRewardLFA(domain=world, weights=w_expert)
+    # rfunc = GReward(domain=world, rmax=1.0/len(world.states))
+    rfunc = GRewardLFA(domain=world, weights=w_expert,
+                       rmax=1.0/len(world.states))
     T = GTransition(domain=world)
-    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
+    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.7)
 
     # w_expert = rfunc._R
 
