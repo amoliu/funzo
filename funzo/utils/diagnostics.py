@@ -33,7 +33,7 @@ def autocov(x, lag=1):
 def geweke(x, first=.1, last=.5, intervals=20):
     """Return z-scores for convergence diagnostics.
 
-    Compare the mean of the first % of series with the mean of the last % of
+    Compare the mean of the first \% of series with the mean of the last \% of
     series. x is divided into a number of segments for which this difference is
     computed. If the series is converged, this score should oscillate between
     -1 and 1.
@@ -59,10 +59,14 @@ def geweke(x, first=.1, last=.5, intervals=20):
     Notes
     -----
     The Geweke score on some series x is computed by:
-      .. math:: \frac{E[x_s] - E[x_e]}{\sqrt{V[x_s] + V[x_e]}}
+
+        .. math::
+            \\frac{E[x_s] - E[x_e]}{\sqrt{V[x_s] + V[x_e]}}
+
     where :math:`E` stands for the mean, :math:`V` the variance,
     :math:`x_s` a section at the start of the series and
     :math:`x_e` a section at the end of the series.
+
     This implementation is borrowed from pymc3
 
     References
