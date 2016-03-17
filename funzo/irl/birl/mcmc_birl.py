@@ -15,8 +15,6 @@ from copy import deepcopy
 from six.moves import range, zip
 from scipy.misc import logsumexp
 
-from sklearn.preprocessing import minmax_scale
-
 from .base import BIRL
 from ...utils.validation import check_random_state
 from ...utils.data_structures import Trace
@@ -46,29 +44,12 @@ class PolicyWalkProposal(Proposal):
     def __call__(self, loc):
         sample = np.asarray(loc)
 
-        # d = self.rng.choice([-self.delta, self.delta])
-        # i = self.rng.randint(self.dim)
-        # sample[i] += d
-        # sample /= np.sum(sample)
-        # return sample
+        d = self.rng.choice([-self.delta, self.delta])
+        i = self.rng.randint(self.dim)
+        if -self.rmax < sample[i]+d < self.rmax:
+            sample[i] += d
 
-        print(sample)
-
-        changed = False
-        while not changed:
-            # d = self.rng.choice([-self.delta, self.delta])
-            d = [-self.delta, self.delta][self.rng.randint(2)]
-            i = self.rng.randint(self.dim)
-            if -self.rmax < sample[i]+d < self.rmax:
-                sample[i] += d
-                changed = True
-                break
-
-        # options = []
-        # for d in sample.shape[0]:
-        #     options.append(np.array(sample[d]))
-
-        return minmax_scale(sample, (-1, 1), axis=0)
+        return sample
 
 
 #############################################################################
@@ -119,7 +100,8 @@ class PolicyWalkBIRL(BIRL):
         if 0.0 >= delta > 1.0:
             raise ValueError('Reward steps (delta) must be in (0, 1)')
         self._proposal = PolicyWalkProposal(dim=len(self._mdp.reward),
-                                            delta=delta)
+                                            delta=delta,
+                                            rmax=1.0)
 
     def run(self, **kwargs):
         r = self._initialize_reward(random_state=None)
@@ -149,9 +131,17 @@ class PolicyWalkBIRL(BIRL):
 
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
-        rng = check_random_state(random_state)
-        r = rng.rand(len(self._mdp.reward))
-        return self._prior(r)
+        # rng = check_random_state(random_state)
+        # # todo - ensure we sample uniformly from hypercube of -rmax, rmax
+        # r = rng.rand(len(self._mdp.reward))
+        # return self._prior(r)
+
+        rmax = self._mdp.reward.rmax
+        tp = [-rmax + i * 0.2 for i in xrange(int(rmax * 2 / 0.2 + 1))]
+        Theta = []
+        for i in range(len(self._mdp.reward)):
+            Theta.append(tp[np.random.randint(int(rmax * 2 / 0.2 + 1))])
+        return Theta
 
     def _compute_log_posterior(self, r):
         """ Evaluate the log posterior probability w.r.t reward """
