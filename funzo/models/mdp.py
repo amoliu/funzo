@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 
-class MDP(Model):
+class MDP(six.with_metaclass(ABCMeta, Model)):
     """ Markov Decision Process (MDP) model
 
     For general MDPs, states and action can be continuous making it hard to
@@ -175,7 +175,8 @@ class MDP(Model):
 
     @gamma.setter
     def gamma(self, value):
-        assert 0.0 <= value < 1.0, 'MDP `discount` must be in [0, 1)'
+        if 0.0 > value >= 1.0:
+            raise ValueError('MDP `discount` must be in [0, 1)')
         self._discount = value
 
 
@@ -304,8 +305,8 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
         assert self._weights.ndim == 1, 'Weights must be 1D arrays'
 
         # ensure reward is bounded by normalizing the weights
-        self._weights /= np.sum(self._weights)
-        self._weights *= self.rmax
+        # self._weights /= np.sum(self._weights)
+        # self._weights *= self.rmax
 
     def update_parameters(self, **kwargs):
         """ Update the weights parameters of the reward function model """
