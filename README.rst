@@ -9,10 +9,7 @@ funzo
         :target: https://pypi.python.org/pypi/funzo
 
 
-Python package for inverse reinforcement learning
-
-* Free software: MIT license
-* Documentation: https://funzo.readthedocs.org.
+Python package for inverse reinforcement learning. Documentation: https://funzo.readthedocs.org
 
 Features
 --------
@@ -37,4 +34,4 @@ See docs/usage
 
 What about the name?
 ----------------------
-*funzo* is a swahili word for instruction or doctrine or simply teaching, which is what we try to achieve here using IRL. If we do not succeed, the end result may not be desirable as Homer Simpson found out with [Homer's funzo](http://simpsons.wikia.com/wiki/Funzo).
+**funzo** is a Swahili word for instruction or doctrine or simply teaching, which is what we try to achieve here using IRL. If we do not succeed, the end result may not be desirable as Homer Simpson found out with `Homer's funzo` <http://simpsons.wikia.com/wiki/Funzo>_.
