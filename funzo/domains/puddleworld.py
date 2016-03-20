@@ -2,7 +2,8 @@
 PuddleWorld Domain
 ===================
 
-A continuous environment in which the agent has to avoid getting into various puddles on the way to the goal.
+A continuous environment in which the agent has to avoid getting into various
+puddles on the way to the goal.
 
 """
 
@@ -33,14 +34,14 @@ class Agent(object):
 
 
 class Puddle(object):
-    """ A puddle in a continous puddle world
+    """ A puddle in a continuous puddle world
 
     Represented by combinations of a line and semi-circles at each end,
 
     Parameters
     -----------
     x1, x2, y1, y2 : float
-        Coordinates of the puddle midline
+        Coordinates of the puddle mid-line
     radius : float
         Thickness/breadth of the puddle in all directions
 
