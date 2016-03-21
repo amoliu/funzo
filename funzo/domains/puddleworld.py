@@ -12,8 +12,8 @@ from __future__ import division
 import numpy as np
 
 from six.moves import range
-from collections import Iterable
-from matplotlib.patches import Rectangle
+from matplotlib import pyplot as plt
+from matplotlib.patches import Rectangle, Wedge, Circle
 
 from .base import Domain
 
@@ -21,8 +21,9 @@ from ..models.mdp import MDP
 from ..models.mdp import TabularRewardFunction
 from ..models.mdp import MDPTransition, MDPState, MDPAction
 
-from ..utils.validation import check_random_state
 from ..utils.geometry import distance_to_segment, edist
+
+from .geometry import discretize_space
 
 
 class Agent(object):
@@ -100,7 +101,7 @@ class PuddleReward(TabularRewardFunction):
 
     def __call__(self, state, action):
         state_ = self._domain.states[state]
-        p_cost = np.sum(p.cost(state_[0], state_[1])
+        p_cost = np.sum(p.cost(state_.location[0], state_.location[1])
                         for p in self._domain.puddles)
         return -self._sr + p_cost
 
@@ -130,6 +131,12 @@ class PWState(MDPState):
     def __hash__(self):
         return (self.location[0], self.location[1]).__hash__()
 
+    def __str__(self):
+        return 'State {}:({}, {})'.format(self.id, self._s[0], self._s[1])
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class PWAction(MDPAction):
     """ PuddleWorld action """
@@ -144,6 +151,7 @@ class PWAction(MDPAction):
             self._a = (step, 0.0)
         elif direction == 'DOWN':
             self._a = (0.0, -step)
+        self.name = direction
 
     @property
     def direction(self):
@@ -154,6 +162,12 @@ class PWAction(MDPAction):
 
     def __hash__(self):
         return (self.direction[0], self.direction[1]).__hash__()
+
+    def __str__(self):
+        return 'Action {}:({}, {})'.format(self.id, self._a[0], self._a[1])
+
+    def __repr__(self):
+        return self.__str__()
 
 
 #############################################################################
@@ -176,10 +190,163 @@ class PWTransition(MDPTransition):
         state_ = self._domain.states[state]
         action_ = self._domain.actions[action]
 
-        action_vector = action_.direction * np.random.normal(0.0, scale=0.01)
+        # noise = np.random.normal(0.0, scale=0.01)
+        # TODO - fixme (the noise should only be in the chosen direction)
+        action_vector = action_.direction
         next_state = state_.location + action_vector
 
         # check if in world,, find its id
-        ns_id = self._domain.state_map[next_state]
+        if self._domain.in_domain(next_state):
+            ns_id = self._domain.find_state(next_state[0], next_state[1])
+            if ns_id is not None:
+                return [(1.0, ns_id)]
+        return [(1.0, state)]
 
-        return (1.0, ns_id)
+
+#############################################################################
+
+
+class PuddleWorld(Domain):
+    """ PuddleWorld domain """
+
+    def __init__(self, start, resolution=0.1):
+        self._start = start
+
+        self.states = dict()
+        state_id = 0
+
+        a, b = discretize_space((0, 1, resolution), (0, 1, resolution))
+        self.w, self.h = a.shape
+        for i in range(self.w):
+            for j in range(self.h):
+                x, y = a[i, j] + resolution/2., b[i, j] + resolution/2.
+                self.states[state_id] = PWState(state_id, (x, y))
+                state_id += 1
+
+        self.actions = {
+            0: PWAction(0, 'UP', step=resolution),
+            1: PWAction(1, 'DOWN', step=resolution),
+            2: PWAction(2, 'LEFT', step=resolution),
+            3: PWAction(3, 'RIGHT', step=resolution)
+        }
+
+        self.puddles = list()
+        self.puddles.append(Puddle(0.1, 0.75, 0.45, 0.75, 0.1))
+        self.puddles.append(Puddle(0.45, 0.4, 0.45, 0.8, 0.1))
+
+    def terminal(self, state):
+        """ Check if a state is terminal"""
+        state_ = self.states[state]
+        return state_[0] > 0.95 and state_[1] > 0.95
+
+    def in_domain(self, location):
+        return 0.0 < location[0] < 1.0 and 0.0 < location[1] < 1.0
+
+    def visualize(self, ax, **kwargs):
+        ax = self._setup_visuals(ax)
+
+        if 'policy' in kwargs:
+            self.show_policy(ax, kwargs['policy'])
+
+        return ax
+
+    def find_state(self, x, y):
+        for s in self.states:
+            if edist(self.states[s].location, (x, y)) < 1e-07:
+                return s
+        return None
+
+    @property
+    def shape(self):
+        return self.w, self.h
+
+    def _setup_visuals(self, ax):
+        """Setup visual elements
+        """
+        # Main rectangle showing the environment
+        ax.add_artist(Rectangle((0, 0), width=1, height=1, color='c',
+                                zorder=0, ec='k', lw=8, fill=False))
+
+        # draw goal region
+        points = [[1, 1], [1, 0.95], [0.95, 1]]
+        goal_polygon = plt.Polygon(points, color='green')
+        ax.add_patch(goal_polygon)
+
+        # draw puddles
+        x1 = self.puddles[0].start[0]
+        y1 = self.puddles[0].start[1]-0.05
+        width = self.puddles[0].length
+        height = self.puddles[1].length
+        pd1 = Rectangle((x1, y1), height=0.1, width=width,
+                        color='brown', alpha=0.7, aa=True, lw=0)
+        ax.add_artist(pd1)
+        ax.add_artist(Wedge(self.puddles[0].start, 0.05, 90, 270,
+                            fc='brown', alpha=0.7, aa=True, lw=0))
+        ax.add_artist(Wedge(self.puddles[0].end, 0.05, 270, 90,
+                            fc='brown', alpha=0.7, aa=True, lw=0))
+
+        x2 = self.puddles[1].start[0]-0.05
+        y2 = self.puddles[1].start[1]
+        pd2 = Rectangle((x2, y2), width=0.1, height=height,
+                        color='brown', alpha=0.7)
+        ax.add_artist(pd2)
+        ax.add_artist(Wedge(self.puddles[1].start, 0.05, 180, 360,
+                            fc='brown', alpha=0.7, aa=True, lw=0))
+        ax.add_artist(Wedge(self.puddles[1].end, 0.05, 0, 180,
+                            fc='brown', alpha=0.7, aa=True, lw=0))
+
+        # draw the agent at initial pose
+        robot_start = (0.3, 0.65)
+        robot_visual = Circle(robot_start, 0.01, fc='b', ec='k', zorder=3)
+        ax.add_artist(robot_visual)
+        self.robot = Agent(position=robot_start, orientation=(1, 1),
+                           visual=robot_visual)
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+        return ax
+
+    def show_policy(self, ax, policy):
+        """ Show a policy on the interface """
+        if len(policy) != len(self.states):
+            raise ValueError('Policy not compatible with state dimensions')
+        for s in range(policy.shape[0]):
+            a = policy[s]
+            if self.actions[a].name == 'RIGHT':
+                text = '$\\rightarrow$'
+            elif self.actions[a].name == 'UP':
+                text = '$\\uparrow$'
+            elif self.actions[a].name == 'LEFT':
+                text = '$\\leftarrow$'
+            elif self.actions[a].name == 'DOWN':
+                text = '$\\downarrow$'
+            else:
+                text = 'G'
+            ss = self.states[s]
+            ax.text((ss.location[0] * 1), (ss.location[1] * 1),
+                    text, ha="center", size=10)
+        return ax
+
+
+class PuddleWorldMDP(MDP):
+    """ PuddleWorld MDP representing the decision making process """
+    def __init__(self, domain, reward, transition, discount=0.9):
+        super(PuddleWorldMDP, self).__init__(domain,
+                                             reward,
+                                             transition,
+                                             discount)
+
+    @property
+    def S(self):
+        """ States of the MDP in an indexable container """
+        return self._domain.states.keys()
+
+    @property
+    def A(self):
+        """ Actions of the MDP in an indexable container """
+        return self._domain.actions.keys()
+
+    def actions(self, state):
+        return self._domain.actions.keys()

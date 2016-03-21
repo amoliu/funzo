@@ -189,7 +189,7 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
             # TODO - check the R interface with None/policy[s]
             value[s] = mdp.R(s, policy[s]) + mdp.gamma * \
                 np.sum([p * value[s1] for (p, s1) in mdp.T(s, policy[s])])
-            delta = max(delta, np.abs(value[s] - v_old[s]))
+            delta = max(delta, np.fabs(value[s] - v_old[s]))
         if delta < epsilon:
             finished = True
 
