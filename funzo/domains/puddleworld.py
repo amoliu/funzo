@@ -114,7 +114,15 @@ class PWState(MDPState):
     """ PuddleWorld state """
     def __init__(self, state_id, location):
         super(PWState, self).__init__(state_id)
-        self.location = location
+        x_check = 0.0 <= location[0] <= 1.0
+        y_check = 0.0 <= location[1] <= 1.0
+        if not x_check or not y_check:
+            raise ValueError('Puddle state locations must be in [0, 1]')
+        self._s = location
+
+    @property
+    def location(self):
+        return np.array(self._s)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -125,9 +133,21 @@ class PWState(MDPState):
 
 class PWAction(MDPAction):
     """ PuddleWorld action """
-    def __init__(self, action_id, direction):
+    def __init__(self, action_id, direction, step=0.05):
         super(PWAction, self).__init__(action_id)
-        self.direction = direction
+        if not 0.0 < step < 1.0:
+            raise ValueError('PW Action step must be in (0, 1)')
+        self._a = (0.0, step)
+        if direction == 'LEFT':
+            self._a = (-step, 0.0)
+        elif direction == 'RIGHT':
+            self._a = (step, 0.0)
+        elif direction == 'DOWN':
+            self._a = (0.0, -step)
+
+    @property
+    def direction(self):
+        return np.array(self._a)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -155,10 +175,9 @@ class PWTransition(MDPTransition):
         """
         state_ = self._domain.states[state]
         action_ = self._domain.actions[action]
-        action_vector = np.array(action_.direction) *\
-            np.random.normal(0.0, scale=0.01)
 
-        next_state = np.array(state_.location) + action_vector
+        action_vector = action_.direction * np.random.normal(0.0, scale=0.01)
+        next_state = state_.location + action_vector
 
         # check if in world,, find its id
         ns_id = self._domain.state_map[next_state]
