@@ -26,6 +26,16 @@ from ..utils.geometry import distance_to_segment, edist
 from .geometry import discretize_space
 
 
+__all__ = [
+    'PuddleWorld',
+    'PuddleWorldMDP',
+    'PuddleReward',
+    'PWTransition',
+    'PWAction',
+    'PWState',
+]
+
+
 class Agent(object):
     """ A agent object """
     def __init__(self, position, orientation, visual, **kwargs):

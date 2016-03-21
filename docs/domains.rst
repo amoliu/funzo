@@ -14,6 +14,7 @@ Simple discrete 2D grid world
    :nosignatures:
 
    ~gridworld.GridWorld
+   ~gridworld.GridWorldMDP
    ~gridworld.GReward
    ~gridworld.GRewardLFA
    ~gridworld.GTransition
@@ -23,6 +24,17 @@ Simple discrete 2D grid world
 
 PuddleWorld
 =============
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   ~puddleworld.PuddleWorld
+   ~puddleworld.PuddleWorldMDP
+   ~puddleworld.PuddleReward
+   ~puddleworld.PWTransition
+   ~puddleworld.PWState
+   ~puddleworld.PWAction
 
 
 Social Navigation
