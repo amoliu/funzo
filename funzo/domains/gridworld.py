@@ -52,7 +52,8 @@ class GReward(TabularRewardFunction):
         self.update_parameters(reward=R)
 
     def __call__(self, state, action):
-        assert state in self._domain.states, 'State does not exist in domain'
+        if state not in self._domain.states:
+            raise IndexError('State does not exist in domain')
         return self._R[state]
 
 
