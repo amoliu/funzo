@@ -14,9 +14,34 @@ from __future__ import division
 import numpy as np
 
 __all__ = [
+    'discretize_space',
     'distance_to_segment',
     'edist',
 ]
+
+
+def discretize_space(*extents, **kwargs):
+    """ Discretize a continuous space
+
+    Transform an N-dimensional continuous space represented by linear extents
+    in each axis.
+
+    Parameters
+    -----------
+    extents : tuples
+        1D tuples representing (min, max, step) for each coordinate axis of the
+        the continuous space
+
+    Returns
+    --------
+    X1, X2, ..., XN : numpy.ndarray
+        N dimensional arrays for traversing the discretized cells of the final
+        space
+
+    """
+    coords = (np.arange(e[0], e[1], e[2]) for e in extents)
+    cell_indices = np.meshgrid(*coords, indexing='ij')
+    return cell_indices
 
 
 def edist(v1, v2):

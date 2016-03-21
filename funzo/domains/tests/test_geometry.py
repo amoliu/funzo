@@ -2,8 +2,11 @@
 import numpy as np
 
 from nose.tools import assert_equal
+from numpy.testing import assert_array_equal
 
-from funzo.domains.geometry import edist, distance_to_segment
+from funzo.domains.geometry import discretize_space
+from funzo.domains.geometry import edist
+from funzo.domains.geometry import distance_to_segment
 
 
 def test_distance_to_segment():
@@ -37,6 +40,12 @@ def test_edist():
     assert_equal(10, edist(pose1, pose2))
     assert_equal(10, edist(pose1.tolist(), pose2.tolist()))
     assert_equal(10, edist((2, 2), (12, 2)))
+
+
+def test_discretize_space():
+    x = np.arange(0.0, 10.0, 1.0)
+    x_d = discretize_space((0.0, 10.0, 1.0))
+    assert_array_equal(x, x_d[0])
 
 
 if __name__ == '__main__':
