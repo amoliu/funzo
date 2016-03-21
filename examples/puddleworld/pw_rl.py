@@ -16,7 +16,7 @@ from funzo.planners.dp import PolicyIteration, ValueIteration
 
 
 def main():
-    world = PuddleWorld(start=(0.5, 0.5), resolution=0.05)
+    world = PuddleWorld(start=(0.5, 0.5), resolution=0.1)
     R = PuddleReward(domain=world)
     T = PWTransition(domain=world)
 

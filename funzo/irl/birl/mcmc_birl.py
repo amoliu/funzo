@@ -106,6 +106,9 @@ class PolicyWalkBIRL(BIRL):
         r = self._initialize_reward(random_state=None)
         r_mean = deepcopy(r)
 
+        mr = list()
+        mr.append(r_mean)
+
         # get policy and posterior for current reward
         Q_r, log_p_r = self._compute_log_posterior(r)
         trace = Trace(save_interval=self._max_iter//2)
@@ -122,9 +125,10 @@ class PolicyWalkBIRL(BIRL):
                 r_mean = self._iterative_mean(r_mean, r, step-self._burn)
 
             trace.record(step, r, r_new, pr, Q_r_new, log_p_r_new)
+            mr.append(r_mean)
             step += 1
 
-        return trace, r_mean
+        return trace, mr
 
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
