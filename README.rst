@@ -1,4 +1,3 @@
-===============================
 funzo
 ===============================
 
@@ -9,29 +8,27 @@ funzo
         :target: https://pypi.python.org/pypi/funzo
 
 
-Python package for inverse reinforcement learning. Documentation: https://funzo.readthedocs.org
+Python toolkit for inverse reinforcement learning (IRL).
+Documentation: https://funzo.readthedocs.org
 
 Features
---------
-
+---------
+* Flexible interfaces allowing easy extensions
 * Inverse Reinforcement Learning
     - Bayesian IRL (including TBIRL for finite and infinite domains)
-    - MaxEnt IRL
 * RL Domains
     - GridWorld (discrete)
     - PuddleWorld (continuous)
-    - ChainWorld (discrete)
     - Social Navigation (continuous)
 * MDP solvers
     - Exact methods, PI, VI
-    - Sampled based methods, Sparse Sampling, FSSS, etc
 
 
-Getting started
+Usage
 ---------------
-See docs/usage
+See the examples folder for now
 
 
 What about the name?
 ----------------------
-**funzo** is a Swahili word for instruction or doctrine or simply teaching, which is what we try to achieve here using IRL. If we do not succeed, the end result may not be desirable as Homer Simpson found out with `Homer's funzo` <http://simpsons.wikia.com/wiki/Funzo>_.
+**funzo** is a Swahili word for instruction or doctrine or simply teaching, which is what we try to achieve here using IRL. If we do not succeed, the end result may not be desirable as Homer Simpson found out with `Homers funzo <http://simpsons.wikia.com/wiki/Funzo>`__
