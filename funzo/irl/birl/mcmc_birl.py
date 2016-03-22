@@ -136,13 +136,10 @@ class PolicyWalkBIRL(BIRL):
                 r_mean = self._iterative_mean(r_mean, r, step-self._burn)
 
             trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
-                         a_ratio=pr, Q_r=Q_r_new, lop_p=log_p_r_new)
+                         a_ratio=pr, Q_r=Q_r_new, log_p=log_p_r_new)
             step += 1
 
         return trace
-
-    def _scale(self, r):
-        """ Scale the reward to be in right range """
 
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """

@@ -136,7 +136,7 @@ def plot_variable_histograms(trace, burnin=0.27, **metadata):
     """ Plot the different histograms for each variable """
     burnin = float(burnin)
     burn = int(trace.shape[0] * (burnin / 100.0))
-    no_variables = trace.shape[1] - 1
+    no_variables = trace.shape[1]
 
     fig, axes = plt.subplots(1, no_variables, figsize=(12, 6))
     axes = axes.ravel()
