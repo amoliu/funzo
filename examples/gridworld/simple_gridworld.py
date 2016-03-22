@@ -13,23 +13,25 @@ plt.style.use('fivethirtyeight')
 import numpy as np
 
 from funzo.domains.gridworld import GridWorld, GridWorldMDP
-from funzo.domains.gridworld import GReward, GTransition
+from funzo.domains.gridworld import GReward, GRewardLFA, GTransition
 from funzo.planners.dp import PolicyIteration, ValueIteration
 
 
 def main(map_name, planner):
     print(map_name)
     gmap = np.loadtxt(map_name)
-    # gmap[12, 12] = 2
+    w_expert = np.array([-0.01, -10.0, 1.0])
 
     world = GridWorld(gmap)
-    R = GReward(domain=world)
-    T = GTransition(domain=world, wind=0.2)
+    # R = GReward(domain=world)
+    R = GRewardLFA(domain=world, weights=w_expert, rmax=1.0)
+    T = GTransition(domain=world, wind=0.1)
 
     g = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.9)
 
     # ------------------------
-    mdp_planner = PolicyIteration(verbose=0)
+    mdp_planner = PolicyIteration(verbose=0, max_iter=200,
+                                  epsilon=1e-05, random_state=None)
     if planner == 'VI':
         mdp_planner = ValueIteration(verbose=2)
 
@@ -55,6 +57,21 @@ def main(map_name, planner):
     plt.title('Value function')
     plt.colorbar(orientation='horizontal')
     # plt.savefig('world_value.svg')
+
+    plt.figure()
+    plt.plot(res['cR'])
+    plt.xlabel('Iterations [t]')
+    plt.ylabel('Accumulated rewards using $\pi_t$')
+    plt.tight_layout()
+
+    # rfunc = np.array([g.R(s, 4) for s in g.S])
+    # plt.figure(figsize=(8, 8))
+    # plt.imshow(rfunc.reshape(gmap.shape),
+    #            interpolation='nearest', cmap='inferno', origin='lower',
+    #            vmin=np.min(rfunc), vmax=np.max(rfunc))
+    # plt.title('Reward function')
+    # plt.grid(False)
+    # plt.colorbar(orientation='horizontal')
 
     plt.show()
 

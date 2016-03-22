@@ -12,6 +12,7 @@ import copy
 import numpy as np
 
 from six.moves import range
+from tqdm import tqdm
 
 from .base import Planner
 from ..utils.validation import check_random_state
@@ -71,13 +72,14 @@ class PolicyIteration(Planner):
         Returns
         --------
         plan : dict
-            Dictionary containing the optimal Q, V and pi found
+            Dictionary containing the optimal Q, V, pi and cR found
 
         """
         V = np.zeros(len(mdp.S))
         policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
         iteration = 0
-        for iteration in range(0, self._max_iter):
+        cum_R = list()
+        for iteration in tqdm(range(0, self._max_iter)):
             V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
 
             # policy improvement
@@ -91,10 +93,13 @@ class PolicyIteration(Planner):
             if unchanged:
                 break
 
+            cum_R.append(np.sum(mdp.R(s, policy[s]) for s in mdp.S))
+
         result = dict()
         result['pi'] = np.asarray(policy)
         result['V'] = V
         result['Q'] = _compute_Q(mdp, V)
+        result['cR'] = cum_R
         return result
 
 
@@ -186,8 +191,8 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
         v_old = copy.deepcopy(value)
         delta = 0
         for s in mdp.S:
-            # TODO - check the R interface with None/policy[s]
-            value[s] = mdp.R(s, policy[s]) + mdp.gamma * \
+            # TODO - verify policy[s] or no action
+            value[s] = mdp.R(s, None) + mdp.gamma * \
                 np.sum([p * value[s1] for (p, s1) in mdp.T(s, policy[s])])
             delta = max(delta, np.fabs(value[s] - v_old[s]))
         if delta < epsilon:

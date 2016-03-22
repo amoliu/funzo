@@ -1,5 +1,15 @@
 """
 GridWorld Domain
+
+An agent moves in the world using a choice of 5 actions:
+(LEFT, RIGHT, UP, DOWN and STAY).
+
+The agent gets a reward that based on the action taken (i.e. depending on the
+resulting state). The goal state provides a large positive reward, obstacles
+provide large negative reward whiles the remaining states incur a small
+constant negative reward (the cost of movement). Additionally, actions that
+make the agent go outside of the domain limits incur a negative cost
+
 """
 
 from __future__ import division
@@ -30,7 +40,7 @@ __all__ = [
 
 # Cell status
 FREE = 'free'
-BLOCKED = 'blocked'
+OBSTACLE = 'obstacle'
 TERMINAL = 'terminal'
 
 
@@ -45,27 +55,42 @@ class GReward(TabularRewardFunction):
             state_ = self._domain.states[s]
             if state_.status == TERMINAL:
                 R[s] = 1.0
-            elif state_.status == BLOCKED:
-                R[s] = -0.1
+            elif state_.status == OBSTACLE:
+                R[s] = -10.0
             else:
-                R[s] = -0.001
+                R[s] = -0.01
         self.update_parameters(reward=R)
 
+        self._T = GTransition(domain=domain)
+
     def __call__(self, state, action):
-        if state not in self._domain.states:
-            raise IndexError('State does not exist in domain')
-        return self._R[state]
+        """ Evaluate reward function """
+        if action is None:
+            return self._R[state]
+        s_p = self._T(state, action)[0][1]
+        if s_p == state and action != 4:  # out or domain movements penalty
+            return -10.0
+        return self._R[s_p]
 
 
 class GRewardLFA(LinearRewardFunction):
     """ Gridworld reward using linear function approximation """
     def __init__(self, domain, weights, rmax=1.0):
         super(GRewardLFA, self).__init__(domain, weights, rmax=rmax)
+        self._T = GTransition(domain=domain)
 
     def __call__(self, state, action):
-        state_ = self._domain.states[state]
+        """ Evaluate reward function """
+        if action is None:
+            return self.__call__(state, 4)
+        # get the resulting state to determine if movement occurred
+        s_p = self._T(state, action)[0][1]
+        if s_p == state and action != 4:  # out or domain movements penalty
+            return -10.0
+
+        state_ = self._domain.states[s_p]
         phi = [self._feature_free(state_),
-               self._feature_blocked(state_),
+               self._feature_obstacle(state_),
                self._feature_goal(state_)]
         return np.dot(self._weights, phi)
 
@@ -78,9 +103,9 @@ class GRewardLFA(LinearRewardFunction):
             return 1.0
         return 0.0
 
-    def _feature_blocked(self, state):
-        """ Check is the agent is in a blocked cell """
-        if state.status == BLOCKED:
+    def _feature_obstacle(self, state):
+        """ Check is the agent is in a OBSTACLE cell """
+        if state.status == OBSTACLE:
             return 1.0
         return 0.0
 
@@ -94,7 +119,7 @@ class GRewardLFA(LinearRewardFunction):
 
 
 class GTransition(MDPTransition):
-    """ Grirdworld MDP controller """
+    """ Gridworld MDP controller """
     def __init__(self, domain, wind=0.2):
         super(GTransition, self).__init__(domain)
         self._wind = wind
@@ -133,14 +158,7 @@ class GTransition(MDPTransition):
                       state.cell[1]+action.direction[1])
 
         if new_coords in self._domain.state_map:
-            ns_id = self._domain.state_map[new_coords]
-
-            # avoid transitions to blocked cells
-            # ns = self._domain.states[ns_id]
-            # if ns.status == BLOCKED:
-            #     return self._domain.state_map[state.cell]
-
-            return ns_id
+            return self._domain.state_map[new_coords]
 
         return self._domain.state_map[state.cell]
 
@@ -223,7 +241,7 @@ class GridWorld(Domain):
         for i in range(self._width):
             for j in range(self._height):
                 if gmap[i, j] == 1:
-                    self.states[state_id] = GState(state_id, (j, i), BLOCKED)
+                    self.states[state_id] = GState(state_id, (j, i), OBSTACLE)
                 elif gmap[i, j] == 2:
                     self.goal = (j, i)
                     self.states[state_id] = GState(state_id, (j, i), TERMINAL)
@@ -233,8 +251,13 @@ class GridWorld(Domain):
                 self.state_map[(j, i)] = state_id
                 state_id += 1
 
-        self.actions = {0: GAction(0, (1, 0)), 1: GAction(1, (0, 1)),
-                        2: GAction(2, (-1, 0)), 3: GAction(3, (0, -1))}
+        self.actions = {
+            0: GAction(0, (1, 0)),
+            1: GAction(1, (0, 1)),
+            2: GAction(2, (-1, 0)),
+            3: GAction(3, (0, -1)),
+            4: GAction(4, (0, 0))
+        }
 
     def terminal(self, state):
         """ Check if a state is terminal"""
@@ -248,11 +271,9 @@ class GridWorld(Domain):
 
         return ax
 
-    def find_state(self, x, y):
-        for s in self.states:
-            if np.hypot(s.cell[0] - x, s.cell[1] - y) < 1e-05:
-                return s
-        return None
+    def in_domain(self, x, y):
+        """ Check if a cell is in the domain """
+        return (x, y) in self.state_map
 
     def _setup_visuals(self, ax):
         """ Setup the visual front end for gridworld
@@ -265,7 +286,7 @@ class GridWorld(Domain):
         for c in self.states:
             s = self.states[c]
             i, j = s.cell[0], s.cell[1]
-            if s.status == BLOCKED:
+            if s.status == OBSTACLE:
                 ax.add_artist(Rectangle((i * cz, j * cz), cz, cz,
                               fc='#b91d47', ec='#2b5797', alpha=0.7))
             elif s.status == TERMINAL:
@@ -297,7 +318,7 @@ class GridWorld(Domain):
                 elif self.actions[a].direction == (0, -1):
                     text = '$\\downarrow$'
                 else:
-                    text = 'G'
+                    text = 'S'
                 ss = self.states[s]
                 ax.text((ss.cell[0] * 1) + (1 / 2.),
                         (ss.cell[1] * 1) + (1 / 2.3),

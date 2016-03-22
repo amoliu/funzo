@@ -50,7 +50,7 @@ def main():
     # ax = world.visualize(ax, policy=policy)
     # plt.show()
 
-    demos = world.generate_trajectories(policy, num=150, random_state=SEED)
+    demos = world.generate_trajectories(policy, num=10, random_state=SEED)
     # np.save('demos.npy', demos)
     # demos = np.load('demos.npy')
     # print(demos)
