@@ -7,12 +7,10 @@ MDP planning using *dynamic programming* methods
 """
 
 import logging
-import copy
 
 import numpy as np
 
 from six.moves import range
-from tqdm import tqdm
 
 from .base import Planner
 from ..utils.validation import check_random_state
@@ -79,8 +77,7 @@ class PolicyIteration(Planner):
         policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
         iteration = 0
         cum_R = list()
-        for iteration in tqdm(range(0, self._max_iter),
-                              nested=True, desc='PI'):
+        for iteration in range(0, self._max_iter):
             V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
 
             # policy improvement
@@ -155,7 +152,7 @@ class ValueIteration(Planner):
         stable = False
         iteration = 0
         while not stable and iteration < self._max_iter:
-            V_old = copy.deepcopy(V)
+            V_old = np.array(V)
             delta = 0
             for s in mdp.S:
                 V[s] = mdp.R(s, None) + mdp.gamma * \
@@ -189,7 +186,7 @@ def _policy_evaluation(mdp, policy, max_iter=200, epsilon=1e-05):
     iteration = 0
     value = np.zeros(len(mdp.S))
     while iteration < max_iter and not finished:
-        v_old = copy.deepcopy(value)
+        v_old = np.array(value)
         delta = 0
         for s in mdp.S:
             # TODO - verify policy[s] or no action

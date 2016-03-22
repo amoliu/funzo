@@ -1,4 +1,5 @@
 
+from __future__ import division
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -16,13 +17,13 @@ from funzo.planners.dp import PolicyIteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
 from funzo.irl.birl.mcmc_birl import PolicyWalkBIRL
-from funzo.irl.birl import GaussianRewardPrior
+from funzo.irl.birl import GaussianRewardPrior, UniformRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
 from funzo.utils.diagnostics import plot_geweke_test
 from funzo.utils.diagnostics import plot_sample_autocorrelations
 
-SEED = None
+SEED = 42
 
 
 def main():
@@ -32,9 +33,14 @@ def main():
     w_expert /= (w_expert.max() - w_expert.min())
 
     world = GridWorld(gmap=gmap)
+    RMAX = 1.0/len(world.states)
+    # RMAX = 1.0
+
+    print('RMAX', RMAX)
+
     # rfunc = GReward(domain=world, rmax=1.0/len(world.states))
     rfunc = GRewardLFA(domain=world, weights=w_expert,
-                       rmax=1.0/len(world.states))
+                       rmax=RMAX)
 
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.8)
@@ -58,10 +64,12 @@ def main():
     # print(demos)
 
     # IRL
-    r_prior = GaussianRewardPrior(sigma=0.15)
+    # r_prior = GaussianRewardPrior(sigma=0.15)
+    r_prior = UniformRewardPrior(loc=-RMAX, scale=2*RMAX)
+
     # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
     #                      beta=0.6)
-    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos, delta=0.32,
+    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos, delta=0.2,
                                 planner=planner, beta=0.6, max_iter=500)
     # r, data = irl_solver.run(random_state=SEED)
     trace, mr = irl_solver.run(random_state=SEED)
@@ -107,8 +115,8 @@ def main():
     # figure = corner.corner(trace['r'])
     # figure = corner.corner(trace['sample'])
 
-    # plot_geweke_test(trace['r'])
-    # plot_sample_autocorrelations(np.array(trace['r']), thin=5)
+    plot_geweke_test(trace['r'])
+    plot_sample_autocorrelations(np.array(trace['r']), thin=5)
 
     plt.show()
 

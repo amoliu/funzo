@@ -11,7 +11,6 @@ from __future__ import division
 import numpy as np
 
 from tqdm import tqdm
-from copy import deepcopy
 from six.moves import range, zip
 from scipy.misc import logsumexp
 
@@ -42,13 +41,14 @@ class PolicyWalkProposal(Proposal):
         self.rng = check_random_state(random_state)
 
     def __call__(self, loc):
-        sample = np.asarray(loc)
+        sample = np.array(loc)
         d = self.rng.choice([-self.delta, self.delta])
         i = self.rng.randint(self.dim)
         if -self.rmax < sample[i]+d < self.rmax:
             sample[i] += d
-
-        return sample
+            return sample
+        else:
+            return sample
 
 
 #############################################################################
@@ -104,7 +104,7 @@ class PolicyWalkBIRL(BIRL):
 
     def run(self, **kwargs):
         r = self._initialize_reward(random_state=None)
-        r_mean = deepcopy(r)
+        r_mean = np.array(r)
 
         mr = list()
         mr.append(r_mean)
@@ -126,11 +126,12 @@ class PolicyWalkBIRL(BIRL):
             # ratio of joint vs conditionals for correctness check
             # print(log_p_r_new/log_p_r_old, llk_new/llk_old)
 
-            next_r, pr = pw_metrop_select(r, r_new,
+            r_next, pr = pw_metrop_select(r, r_new,
                                           log_p_r_old, log_p_r_new,
                                           self.tempering(step))
-            r = deepcopy(next_r)
-            print(r)
+            r = np.array(r_next)
+            log_p_r_old = log_p_r_new
+            log_prior_old = log_prior_new
 
             if step > self._burn:
                 r_mean = self._iterative_mean(r_mean, r, step-self._burn)
@@ -141,17 +142,15 @@ class PolicyWalkBIRL(BIRL):
 
         return trace, mr
 
+    def _scale(self, r):
+        """ Scale the reward to be in right range """
+
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
         return self._prior.sample(dim=len(self._mdp.reward))
-        # rng = check_random_state(random_state)
-        # rmax = self._mdp.reward.rmax
-        # r = rng.uniform(low=-rmax, high=rmax, size=len(self._mdp.reward))
-        # return self._prior(r)
 
     def _compute_llk(self, r):
         """ Evaluate the log likelihood of the demonstrations w.r.t reward """
-        # solve MDP to get Q_r, Q_r_new
         self._mdp.reward.update_parameters(reward=r)
         Q_r = self._planner(self._mdp)['Q']
 

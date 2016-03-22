@@ -110,7 +110,7 @@ class UniformRewardPrior(RewardPrior):
         return uniform.logpdf(r, loc=self._loc, scale=self._scale)
 
     def sample(self, dim):
-        return uniform.rvs(size=dim)
+        return uniform.rvs(loc=self._loc, scale=self._scale, size=dim)
 
 
 class GaussianRewardPrior(RewardPrior):
