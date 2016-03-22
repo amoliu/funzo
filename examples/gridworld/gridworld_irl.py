@@ -26,7 +26,7 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_b.txt')
+    gmap = np.loadtxt('maps/map_a.txt')
     # w_expert = np.array([-0.001, -0.5, 1.0])
     w_expert = np.array([-0.01, -10.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
@@ -62,7 +62,7 @@ def main():
     # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
     #                      beta=0.6)
     irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos, delta=0.32,
-                                planner=planner, beta=0.6, max_iter=5000)
+                                planner=planner, beta=0.6, max_iter=500)
     # r, data = irl_solver.run(random_state=SEED)
     trace, mr = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
@@ -101,11 +101,14 @@ def main():
     plt.xlabel('Iteration')
     plt.tight_layout()
 
+    plt.figure(figsize=(8, 6))
+    plt.plot(trace['log_p'])
+
     # figure = corner.corner(trace['r'])
     # figure = corner.corner(trace['sample'])
 
-    plot_geweke_test(trace['r'])
-    plot_sample_autocorrelations(np.array(trace['r']), thin=5)
+    # plot_geweke_test(trace['r'])
+    # plot_sample_autocorrelations(np.array(trace['r']), thin=5)
 
     plt.show()
 

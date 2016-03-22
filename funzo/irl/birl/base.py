@@ -90,11 +90,16 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
     def log_p(self, r):
         raise NotImplementedError('Abstract method')
 
+    @abstractmethod
+    def sample(self, dim):
+        raise NotImplementedError('Abstract method')
+
 
 class UniformRewardPrior(RewardPrior):
     """ Uniform/flat prior"""
 
     def __init__(self, loc=0.0, scale=1.0):
+        # generally loc = -rmax, scale = 2*rmax for full support
         self._loc = loc
         self._scale = scale
 
@@ -104,9 +109,12 @@ class UniformRewardPrior(RewardPrior):
     def log_p(self, r):
         return uniform.logpdf(r, loc=self._loc, scale=self._scale)
 
+    def sample(self, dim):
+        return uniform.rvs(size=dim)
+
 
 class GaussianRewardPrior(RewardPrior):
-    """Gaussian reward prior"""
+    """ Gaussian reward prior"""
     def __init__(self, sigma=0.5, loc=0.0):
         self._sigma = sigma
         self._loc = loc
@@ -117,9 +125,12 @@ class GaussianRewardPrior(RewardPrior):
     def log_p(self, r):
         return norm.logpdf(r, loc=self._loc, scale=self._sigma)
 
+    def sample(self, dim):
+        return norm.rvs(loc=self._loc, scale=self._sigma, size=dim)
+
 
 class LaplacianRewardPrior(RewardPrior):
-    """Laplacian reward prior"""
+    """ Laplace reward prior"""
     def __init__(self, sigma=0.5, loc=0.0):
         self._sigma = sigma
         self._loc = loc
@@ -129,6 +140,9 @@ class LaplacianRewardPrior(RewardPrior):
 
     def log_p(self, r):
         return laplace.logpdf(r, loc=self._loc, scale=self._sigma)
+
+    def sample(self, dim):
+        return laplace.rvs(loc=self._loc, scale=self._sigma, size=dim)
 
 
 class DirectionalRewardPrior(RewardPrior):
@@ -149,3 +163,7 @@ class DirectionalRewardPrior(RewardPrior):
 
     def log_p(self, r):
         return np.log(self.__call__(r))
+
+    def sample(self, dim):
+        return np.array([self.directions[np.random.randint(dim)]
+                        for i in range(dim)])

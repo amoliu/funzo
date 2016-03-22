@@ -109,17 +109,28 @@ class PolicyWalkBIRL(BIRL):
         mr = list()
         mr.append(r_mean)
 
-        # get policy and posterior for current reward
-        Q_r, log_p_r = self._compute_log_posterior(r)
         trace = Trace(save_interval=self._max_iter//2)
+
+        Q_r_old, llk_old = self._compute_llk(r)
+        log_prior_old = self._log_prior(r)
+        log_p_r_old = llk_old + log_prior_old
 
         for step in tqdm(range(1, self._max_iter+1), desc='PW'):
             r_new = self._proposal(r)
-            Q_r_new, log_p_r_new = self._compute_log_posterior(r_new)
+            Q_r_new, llk_new = self._compute_llk(r_new)
+            log_prior_new = self._log_prior(r_new)
+
+            # compute full posterior distribution (unnormalized)
+            log_p_r_new = llk_new + log_prior_new
+
+            # ratio of joint vs conditionals for correctness check
+            # print(log_p_r_new/log_p_r_old, llk_new/llk_old)
+
             next_r, pr = pw_metrop_select(r, r_new,
-                                          log_p_r, log_p_r_new,
+                                          log_p_r_old, log_p_r_new,
                                           self.tempering(step))
             r = deepcopy(next_r)
+            print(r)
 
             if step > self._burn:
                 r_mean = self._iterative_mean(r_mean, r, step-self._burn)
@@ -132,13 +143,14 @@ class PolicyWalkBIRL(BIRL):
 
     def _initialize_reward(self, random_state=None):
         """ Initialize a reward vector using the prior """
-        rng = check_random_state(random_state)
-        rmax = self._mdp.reward.rmax
-        r = rng.uniform(low=-rmax, high=rmax, size=len(self._mdp.reward))
-        return self._prior(r)
+        return self._prior.sample(dim=len(self._mdp.reward))
+        # rng = check_random_state(random_state)
+        # rmax = self._mdp.reward.rmax
+        # r = rng.uniform(low=-rmax, high=rmax, size=len(self._mdp.reward))
+        # return self._prior(r)
 
-    def _compute_log_posterior(self, r):
-        """ Evaluate the log posterior probability w.r.t reward """
+    def _compute_llk(self, r):
+        """ Evaluate the log likelihood of the demonstrations w.r.t reward """
         # solve MDP to get Q_r, Q_r_new
         self._mdp.reward.update_parameters(reward=r)
         Q_r = self._planner(self._mdp)['Q']
@@ -160,13 +172,11 @@ class PolicyWalkBIRL(BIRL):
                 llk += (alpha_H - beta_H) / float(H+1)
         llk /= float(M)
 
-        # compute log priors
-        log_prior = np.sum(self._prior.log_p(r))
+        return Q_r, llk
 
-        # compute full posterior
-        log_p = llk + log_prior
-
-        return Q_r, log_p
+    def _log_prior(self, r):
+        """ Compute log prior probability """
+        return np.sum(self._prior.log_p(r))
 
     def _iterative_mean(self, r_mean, r_new, iteration):
         """ Compute the iterative mean of the reward """
