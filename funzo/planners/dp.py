@@ -79,7 +79,8 @@ class PolicyIteration(Planner):
         policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
         iteration = 0
         cum_R = list()
-        for iteration in tqdm(range(0, self._max_iter)):
+        for iteration in tqdm(range(0, self._max_iter),
+                              nested=True, desc='PI'):
             V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
 
             # policy improvement

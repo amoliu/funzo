@@ -113,7 +113,7 @@ class PolicyWalkBIRL(BIRL):
         Q_r, log_p_r = self._compute_log_posterior(r)
         trace = Trace(save_interval=self._max_iter//2)
 
-        for step in tqdm(range(1, self._max_iter+1)):
+        for step in tqdm(range(1, self._max_iter+1), desc='PW'):
             r_new = self._proposal(r)
             Q_r_new, log_p_r_new = self._compute_log_posterior(r_new)
             next_r, pr = pw_metrop_select(r, r_new,
