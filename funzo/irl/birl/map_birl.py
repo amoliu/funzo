@@ -102,7 +102,7 @@ class MAPBIRL(BIRL):
                         beta_Hs.append(self._beta * Q_r[b, s])
                     beta_H = logsumexp(beta_Hs)
 
-                llk += (alpha_H - beta_H) / float(H+1)
+                llk += (alpha_H - beta_H) / float(H)
         llk /= float(M)
         return llk
 

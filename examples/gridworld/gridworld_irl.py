@@ -22,6 +22,8 @@ from funzo.irl import PolicyLoss, RewardLoss
 
 from funzo.utils.diagnostics import plot_geweke_test
 from funzo.utils.diagnostics import plot_sample_autocorrelations
+from funzo.utils.diagnostics import plot_variable_histograms
+from funzo.utils.diagnostics import plot_sample_traces
 
 SEED = 42
 
@@ -33,8 +35,8 @@ def main():
     w_expert /= (w_expert.max() - w_expert.min())
 
     world = GridWorld(gmap=gmap)
-    RMAX = 1.0/len(world.states)
-    # RMAX = 1.0
+    # RMAX = 1.0/len(world.states)
+    RMAX = 1.0
 
     print('RMAX', RMAX)
 
@@ -69,8 +71,9 @@ def main():
 
     # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
     #                      beta=0.6)
-    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos, delta=0.2,
-                                planner=planner, beta=0.6, max_iter=500)
+    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
+                                delta=0.3, planner=planner, beta=0.8,
+                                max_iter=1500, cooling=True)
     # r, data = irl_solver.run(random_state=SEED)
     trace, mr = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
@@ -86,8 +89,8 @@ def main():
     # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
     # loss = [loss_func(w_expert, w_pi) for w_pi in data['rewards']]
-    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
-    # loss = [loss_func(w_expert, w_pi) for w_pi in mr]
+    # loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
+    loss = [loss_func(w_expert, w_pi) for w_pi in mr]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
@@ -117,6 +120,8 @@ def main():
 
     plot_geweke_test(trace['r'])
     plot_sample_autocorrelations(np.array(trace['r']), thin=5)
+    plot_variable_histograms(np.array(trace['r']))
+    plot_sample_traces(np.array(trace['r']))
 
     plt.show()
 

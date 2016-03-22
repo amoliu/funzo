@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def geweke_test(trace, intervals=10, length=100, first=10):
+def geweke_test(trace, intervals=20, length=200, first=20):
     """ A formal test for MCMC chain convergence """
     nsl = length
     # first = 0.1*len(trace)
@@ -29,7 +29,7 @@ def geweke_test(trace, intervals=10, length=100, first=10):
     return z
 
 
-def plot_geweke_test(trace, intervals=10, length=100, first=10, **metadata):
+def plot_geweke_test(trace, intervals=20, length=200, first=20, **metadata):
     """
     Plot the the nature of the Geweke test for MCMC convergence
     """
@@ -90,8 +90,6 @@ def plot_reward_samples(reward_traces, **metadata):
 
 def plot_sample_traces(trace, burnin=0.27, **metadata):
     """ Plot MCMC traces """
-    algorithm = metadata['algorithm']
-    reward_type = metadata['reward_type']
     burnin = float(burnin)
     burn = int(trace.shape[0] * (burnin / 100.0))
 
@@ -106,7 +104,7 @@ def plot_sample_traces(trace, burnin=0.27, **metadata):
     # ax.set_ylim([-1.1, 1.1])
     ax.legend(loc='best')
     ax.set_xlabel('Iteration')
-    ax.set_title('MCMC samples trace: ' + algorithm + ' - ' + reward_type)
+    ax.set_title('MCMC samples trace')
     plt.tight_layout()
 
     return ax
@@ -134,10 +132,8 @@ def plot_sample_autocorrelations(trace, burnin=0.27, **metadata):
     fig.suptitle('MCMC samples trace ACF')
 
 
-def plot_variable_histograms(trace, burnin, **metadata):
+def plot_variable_histograms(trace, burnin=0.27, **metadata):
     """ Plot the different histograms for each variable """
-    algorithm = metadata['algorithm']
-    reward_type = metadata['reward_type']
     burnin = float(burnin)
     burn = int(trace.shape[0] * (burnin / 100.0))
     no_variables = trace.shape[1] - 1
@@ -149,6 +145,6 @@ def plot_variable_histograms(trace, burnin, **metadata):
                      bins=20, alpha=0.9)
         axes[i].set_title('$\phi_{0}(s)$'.format(i + 1))
 
-    fig.suptitle('MCMC samples histograms: ' + algorithm + ' - ' + reward_type)
+    fig.suptitle('MCMC samples histograms')
 
     return axes

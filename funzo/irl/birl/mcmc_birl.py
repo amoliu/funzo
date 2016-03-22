@@ -107,15 +107,15 @@ class PolicyWalkBIRL(BIRL):
         r_mean = np.array(r)
 
         mr = list()
-        mr.append(r_mean)
 
-        trace = Trace(save_interval=self._max_iter//2)
+        trace = Trace(['step', 'r', 'sample', 'a_ratio', 'Q_r', 'log_p'],
+                      save_interval=self._max_iter//2)
 
         Q_r_old, llk_old = self._compute_llk(r)
         log_prior_old = self._log_prior(r)
         log_p_r_old = llk_old + log_prior_old
 
-        for step in tqdm(range(1, self._max_iter+1), desc='PW'):
+        for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
             r_new = self._proposal(r)
             Q_r_new, llk_new = self._compute_llk(r_new)
             log_prior_new = self._log_prior(r_new)
@@ -168,7 +168,7 @@ class PolicyWalkBIRL(BIRL):
                         beta_Hs.append(self._beta * Q_r[b, s])
                     beta_H = logsumexp(beta_Hs)
 
-                llk += (alpha_H - beta_H) / float(H+1)
+                llk += (alpha_H - beta_H) / float(H)
         llk /= float(M)
 
         return Q_r, llk
