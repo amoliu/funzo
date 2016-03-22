@@ -96,7 +96,7 @@ def plot_sample_traces(trace, burnin=0.27, **metadata):
     plt.figure(figsize=(12, 5))
     ax = plt.subplot2grid((1, 1), (0, 0), rowspan=1, colspan=1)
 
-    for f in xrange(1, trace.shape[1], 1):
+    for f in range(trace.shape[1]):
         ax.plot(trace[:, f], ls='-', alpha=0.6, lw=1.5,
                 label='$\phi_{0}(s)$'.format(f))
 

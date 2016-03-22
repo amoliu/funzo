@@ -75,9 +75,9 @@ def main():
                                 delta=0.3, planner=planner, beta=0.8,
                                 max_iter=1500, cooling=True)
     # r, data = irl_solver.run(random_state=SEED)
-    trace, mr = irl_solver.run(random_state=SEED)
+    trace = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
-    r = mr[-1]
+    r = trace['r_mean'][-1]
 
     g.reward.update_parameters(reward=r)
     r_plan = planner(g)
@@ -89,8 +89,7 @@ def main():
     # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
     # loss = [loss_func(w_expert, w_pi) for w_pi in data['rewards']]
-    # loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
-    loss = [loss_func(w_expert, w_pi) for w_pi in mr]
+    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
@@ -112,16 +111,12 @@ def main():
     plt.xlabel('Iteration')
     plt.tight_layout()
 
-    plt.figure(figsize=(8, 6))
-    plt.plot(trace['log_p'])
-
     # figure = corner.corner(trace['r'])
     # figure = corner.corner(trace['sample'])
 
     plot_geweke_test(trace['r'])
     plot_sample_autocorrelations(np.array(trace['r']), thin=5)
     plot_variable_histograms(np.array(trace['r']))
-    plot_sample_traces(np.array(trace['r']))
 
     plt.show()
 

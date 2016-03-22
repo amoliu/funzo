@@ -106,10 +106,9 @@ class PolicyWalkBIRL(BIRL):
         r = self._initialize_reward(random_state=None)
         r_mean = np.array(r)
 
-        mr = list()
-
-        trace = Trace(['step', 'r', 'sample', 'a_ratio', 'Q_r', 'log_p'],
-                      save_interval=self._max_iter//2)
+        variables = ['step', 'r', 'r_mean', 'sample',
+                     'a_ratio', 'Q_r', 'log_p']
+        trace = Trace(variables, save_interval=self._max_iter//2)
 
         Q_r_old, llk_old = self._compute_llk(r)
         log_prior_old = self._log_prior(r)
@@ -136,11 +135,11 @@ class PolicyWalkBIRL(BIRL):
             if step > self._burn:
                 r_mean = self._iterative_mean(r_mean, r, step-self._burn)
 
-            trace.record(step, r, r_new, pr, Q_r_new, log_p_r_new)
-            mr.append(r_mean)
+            trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
+                         a_ratio=pr, Q_r=Q_r_new, lop_p=log_p_r_new)
             step += 1
 
-        return trace, mr
+        return trace
 
     def _scale(self, r):
         """ Scale the reward to be in right range """
