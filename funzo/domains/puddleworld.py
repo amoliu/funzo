@@ -107,10 +107,21 @@ class PuddleReward(TabularRewardFunction):
     """ Reward function for the puddle """
     def __init__(self, domain, rmax=1.0, step_reward=0.1):
         super(PuddleReward, self).__init__(domain, rmax)
+        self._T = PWTransition(domain=domain)
         self._sr = step_reward
 
     def __call__(self, state, action):
-        state_ = self._domain.states[state]
+        if action is None:
+            return -self._sr
+
+        s_p = self._T(state, action)[0][1]
+        if self._domain.terminal(s_p):
+            return 10.0
+
+        if s_p == state:  # out or domain movements penalty
+            return -10.0
+
+        state_ = self._domain.states[s_p]
         p_cost = np.sum(p.cost(state_.location[0], state_.location[1])
                         for p in self._domain.puddles)
         return -self._sr + p_cost
@@ -247,7 +258,7 @@ class PuddleWorld(Domain):
     def terminal(self, state):
         """ Check if a state is terminal"""
         state_ = self.states[state]
-        return state_[0] > 0.95 and state_[1] > 0.95
+        return state_.location[0] > 0.95 and state_.location[1] > 0.95
 
     def in_domain(self, location):
         return 0.0 < location[0] < 1.0 and 0.0 < location[1] < 1.0
