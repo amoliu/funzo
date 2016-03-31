@@ -169,7 +169,7 @@ class PolicyWalkBIRL(BIRL):
                 llk += (alpha_H - beta_H) / float(H)
         llk /= float(M)
 
-        return Q_r, -llk
+        return Q_r, llk
 
     def _log_prior(self, r):
         """ Compute log prior probability """
