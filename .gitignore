@@ -44,3 +44,4 @@ docs/_build
 .cache
 docs/generated
 .ipynb_checkpoints
+notebooks

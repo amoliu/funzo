@@ -84,12 +84,13 @@ class MAPBIRL(BIRL):
             if traj:
                 H = len(traj)
                 alpha_H = 0.0
+                beta_H = 0.0
                 for (s, a) in traj:
                     alpha_H += self._beta * Q_r[a, s]
                     beta_Hs = list()
                     for b in self._mdp.A:
                         beta_Hs.append(self._beta * Q_r[b, s])
-                    beta_H = logsumexp(beta_Hs)
+                    beta_H += logsumexp(beta_Hs)
 
                 llk += (alpha_H - beta_H) / float(H)
         llk /= float(M)

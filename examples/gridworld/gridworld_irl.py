@@ -25,7 +25,7 @@ from funzo.utils.diagnostics import plot_sample_autocorrelations
 from funzo.utils.diagnostics import plot_variable_histograms
 from funzo.utils.diagnostics import plot_sample_traces
 
-SEED = None
+SEED = 42
 
 
 def main():
@@ -69,16 +69,16 @@ def main():
     # r_prior = GaussianRewardPrior(sigma=0.15)
     r_prior = UniformRewardPrior(loc=-RMAX, scale=2*RMAX)
 
-    irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
-                         beta=0.6)
-    # irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
-    #                             delta=0.3, planner=planner, beta=0.8,
-    #                             max_iter=1500, cooling=True)
+    # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
+    #                      beta=0.6)
+    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
+                                delta=0.3, planner=planner, beta=0.8,
+                                max_iter=500, cooling=True, burn_ratio=0.0)
 
     trace = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
-    # r = trace['r_mean'][-1]
-    r = trace['r_map'][-1]
+    r = trace['r_mean'][-1]
+    # r = trace['r_map'][-1]
 
     g.reward.update_parameters(reward=r)
     r_plan = planner(g)
@@ -89,8 +89,8 @@ def main():
     # compute the loss
     # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
-    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
-    # loss = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
+    # loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
+    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
