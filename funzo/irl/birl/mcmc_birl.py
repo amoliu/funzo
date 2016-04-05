@@ -54,38 +54,11 @@ class PolicyWalkProposal(Proposal):
 #############################################################################
 
 
-def pw_metrop_select(r, r_new, log_p_r, log_p_r_new, tempering=1.0):
-    """ Metropolis-Hastings type select function for accepting samples
-
-    Parameters
-    -----------
-    r, r_new : array-like
-        Reward parameter vectors
-    log_p_r, log_p_r_new : float
-        Unnormalized Log of posterior probability p(r | demonstration)
-
-    Returns
-    --------
-    x : array-like
-        Reward parameter vector
-    p_ratio : float
-        Acceptance ratio
-
-    """
-    p_ratio = (log_p_r_new / log_p_r)**tempering
-    if np.isfinite(p_ratio) and np.log(np.random.uniform()) < p_ratio:
-        return r_new, p_ratio
-    else:
-        return r, p_ratio
-
-
-#############################################################################
-
-
 class PolicyWalkBIRL(BIRL):
     """ BIRL with inference done using PolicyWalk MCMC algorithm """
     def __init__(self, mdp, prior, demos, planner, beta, delta=0.2,
-                 burn_ratio=0.27, max_iter=100, cooling=False, verbose=4):
+                 burn_ratio=0.27, max_iter=100, cooling=False,
+                 verbose=4, random_state=None):
         super(PolicyWalkBIRL, self).__init__(mdp, prior, demos, planner, beta)
 
         if 0 >= max_iter > np.inf:
@@ -101,6 +74,7 @@ class PolicyWalkBIRL(BIRL):
         self._proposal = PolicyWalkProposal(dim=len(self._mdp.reward),
                                             delta=delta)
         self._tempered = cooling
+        self._rng = check_random_state(random_state)
 
     def run(self, **kwargs):
         r = self._initialize_reward(random_state=None)
@@ -110,33 +84,26 @@ class PolicyWalkBIRL(BIRL):
                      'a_ratio', 'Q_r', 'log_p']
         trace = Trace(variables, save_interval=self._max_iter//2)
 
-        Q_r_old, llk_old = self._compute_llk(r)
-        log_prior_old = self._log_prior(r)
-        log_p_r_old = llk_old + log_prior_old
+        _, llk_old = self._compute_llk(r)
+        log_p_r_old = llk_old + self._log_prior(r)
 
         for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
             r_new = self._proposal(r)
             Q_r_new, llk_new = self._compute_llk(r_new)
-            log_prior_new = self._log_prior(r_new)
 
             # compute full posterior distribution (unnormalized)
-            log_p_r_new = llk_new + log_prior_new
+            log_p_r_new = llk_new + self._log_prior(r_new)
+            p_accept = log_p_r_new / log_p_r_old
 
-            # ratio of joint vs conditionals for correctness check
-            # print(log_p_r_new/log_p_r_old, llk_new/llk_old)
+            if self._rng.uniform() < min([1.0, p_accept]):
+                r = np.array(r)
+                log_p_r_old = log_p_r_new
 
-            r_next, pr = pw_metrop_select(r, r_new,
-                                          log_p_r_old, log_p_r_new,
-                                          self.tempering(step))
-            r = np.array(r_next)
-            log_p_r_old = log_p_r_new
-            log_prior_old = log_prior_new
-
-            if step > self._burn:
-                r_mean = self._iterative_mean(r_mean, r, step-self._burn)
+                if step > self._burn:
+                    r_mean = self._iterative_mean(r_mean, r, step-self._burn)
 
             trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
-                         a_ratio=pr, Q_r=Q_r_new, log_p=log_p_r_new)
+                         a_ratio=p_accept, Q_r=Q_r_new, log_p=log_p_r_new)
             step += 1
 
         return trace
@@ -161,9 +128,6 @@ class PolicyWalkBIRL(BIRL):
                 for (s, a) in traj:
                     alpha_H += self._beta * Q_r[a, s]
                     beta_Hs = [self._beta * Q_r[b, s] for b in self._mdp.A]
-                    # beta_Hs = list()
-                    # for b in self._mdp.A:
-                    #     beta_Hs.append(self._beta * Q_r[b, s])
                     beta_H += logsumexp(beta_Hs)
 
                 llk += (alpha_H - beta_H) / float(H)

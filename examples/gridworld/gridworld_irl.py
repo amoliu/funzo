@@ -73,7 +73,7 @@ def main():
     #                      beta=0.6)
     irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
                                 delta=0.3, planner=planner, beta=0.8,
-                                max_iter=500, cooling=True, burn_ratio=0.0)
+                                max_iter=500, cooling=True, burn_ratio=0.2)
 
     trace = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
@@ -113,7 +113,7 @@ def main():
     plt.tight_layout()
 
     # figure = corner.corner(trace['r'])
-    # figure = corner.corner(trace['sample'])
+    figure = corner.corner(trace['sample'])
 
     # plot_geweke_test(trace['r'])
     # plot_sample_autocorrelations(np.array(trace['r']), thin=5)
