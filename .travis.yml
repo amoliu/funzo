@@ -16,7 +16,6 @@ env:
     - CONDA_DEPS="pip nose coverage cython networkx numpy scipy six"
     - PIP_DEPS="coveralls tqdm"
   matrix:
-    - EXTRA_DEPS="pyflann pyamg"
     - EXTRA_DEPS=""
 
 before_install:
