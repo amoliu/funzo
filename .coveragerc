@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = funzo
+include = */funzo/*
+omit =
+    */setup.py

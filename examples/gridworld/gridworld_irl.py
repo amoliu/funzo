@@ -25,7 +25,7 @@ from funzo.utils.diagnostics import plot_sample_autocorrelations
 from funzo.utils.diagnostics import plot_variable_histograms
 from funzo.utils.diagnostics import plot_sample_traces
 
-SEED = 42
+SEED = None
 
 
 def main():
@@ -72,8 +72,8 @@ def main():
     # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
     #                      beta=0.6)
     irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
-                                delta=0.3, planner=planner, beta=0.8,
-                                max_iter=500, cooling=True, burn_ratio=0.2)
+                                delta=0.2, planner=planner, beta=0.8,
+                                max_iter=7500, cooling=True, burn_ratio=0.2)
 
     trace = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
@@ -89,8 +89,8 @@ def main():
     # compute the loss
     # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
-    # loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
-    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
+    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
+    loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))
@@ -108,12 +108,15 @@ def main():
     plt.figure(figsize=(8, 6))
     # plt.plot(data['iter'], loss)
     plt.plot(trace['step'], loss)
+    plt.plot(trace['step'], loss_m)
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
     plt.tight_layout()
 
     # figure = corner.corner(trace['r'])
-    figure = corner.corner(trace['sample'])
+    if len(trace['sample']) > 100:
+        corner.corner(trace['sample'])
+        corner.corner(trace['r'])
 
     # plot_geweke_test(trace['r'])
     # plot_sample_autocorrelations(np.array(trace['r']), thin=5)

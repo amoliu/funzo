@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
+# LICENSE: MIT
 
-__author__ = 'Billy Okal'
-__email__ = 'sudo@makokal.com'
 __version__ = '0.1.0'

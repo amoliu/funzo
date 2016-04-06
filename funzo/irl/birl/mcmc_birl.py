@@ -46,9 +46,7 @@ class PolicyWalkProposal(Proposal):
         i = self.rng.randint(self.dim)
         if -self.rmax < sample[i]+d < self.rmax:
             sample[i] += d
-            return sample
-        else:
-            return sample
+        return sample
 
 
 #############################################################################
@@ -95,15 +93,17 @@ class PolicyWalkBIRL(BIRL):
             log_p_r_new = llk_new + self._log_prior(r_new)
             p_accept = log_p_r_new / log_p_r_old
 
-            if self._rng.uniform() < min([1.0, p_accept]):
-                r = np.array(r)
+            if self._rng.uniform() < min([1.0, p_accept])**self.cooling(step):
+                r = np.array(r_new)
                 log_p_r_old = log_p_r_new
 
-                if step > self._burn:
-                    r_mean = self._iterative_mean(r_mean, r, step-self._burn)
+                # if step > self._burn:
+                # r_mean = self._iterative_mean(r_mean, r, step-self._burn)
+                r_mean = self._iterative_mean(r_mean, r, step)
 
-            trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
-                         a_ratio=p_accept, Q_r=Q_r_new, log_p=log_p_r_new)
+            if step > self._burn:
+                trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
+                             a_ratio=p_accept, Q_r=Q_r_new, log_p=log_p_r_new)
             step += 1
 
         return trace
@@ -145,6 +145,6 @@ class PolicyWalkBIRL(BIRL):
                   r_m + 1.0 / iteration * r for r_m, r in zip(r_mean, r_new)]
         return np.array(r_mean)
 
-    def tempering(self, step):
+    def cooling(self, step):
         """ Cooling schedule """
         return 5.0 + step / 50.0

@@ -1,5 +1,5 @@
-numpy>=1.6
-scipy
+numpy>=1.8
+scipy>=0.16
 matplotlib>=1.4
 six
 nose
