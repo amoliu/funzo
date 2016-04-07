@@ -306,16 +306,12 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
         self._weights = np.asarray(weights)
         assert self._weights.ndim == 1, 'Weights must be 1D arrays'
 
-        # ensure reward is bounded by normalizing the weights
-        self._weights /= (self._weights.max() - self._weights.min())
-
     def update_parameters(self, **kwargs):
         """ Update the weights parameters of the reward function model """
         if 'reward' in kwargs:
             w = np.asarray(kwargs['reward'])
             assert w.shape == self._weights.shape,\
                 'New weight array size must match reward function dimension'
-            w /= (w.max() - w.min())
             self._weights = w
 
     @property

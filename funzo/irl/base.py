@@ -10,9 +10,25 @@ import numpy as np
 from ..base import Model
 
 
+class IRLSolver(six.with_metaclass(ABCMeta, Model)):
+    """ IRL problem solver interface """
+    def __init__(self, mdp_planner):
+        self._mdp_planner = mdp_planner
+
+    def solve(self, mdp, demos):
+        """ Solve the IRL problem using the MDP and demonstrations """
+        raise NotImplementedError('Abstract interface')
+
+    def _solve_mdp(self, mdp, r):
+        """ Solve and MDP using a given reward function """
+        mdp.reward.update_parameters(reward=r)
+        plan = self._mdp_planner(mdp)
+        return plan
+
+
 ########################################################################
 # Loss functions
-# ######################################################################
+########################################################################
 
 class Loss(six.with_metaclass(ABCMeta, Model)):
     """ A loss function for evaluating progress of IRL algorithms """
@@ -22,7 +38,7 @@ class Loss(six.with_metaclass(ABCMeta, Model)):
 
     @abstractmethod
     def __call__(self, r_e, r_pi, **kwargs):
-        # TODO - May enforce impmentation with ufuncs ?
+        # TODO - May enforce implementation with ufuncs ?
         pass
 
 
@@ -31,7 +47,7 @@ class PolicyLoss(Loss):
 
     L_p = || V^*(r) - V^{\pi}(r) ||_p
 
-    Roughly corresponds to apprentiship learning
+    Roughly corresponds to apprenticeship learning
 
     """
     def __init__(self, mdp, planner, order=2):

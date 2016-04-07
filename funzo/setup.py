@@ -8,7 +8,6 @@ def configuration(parent_package='', top_path=None):
     config.add_subpackage('domains')
     config.add_subpackage('irl')
     config.add_subpackage('irl/tests')
-    config.add_subpackage('irl/birl')
     config.add_subpackage('models')
     config.add_subpackage('models/tests')
     config.add_subpackage('planners')

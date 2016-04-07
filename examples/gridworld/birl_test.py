@@ -12,70 +12,41 @@ import corner
 import numpy as np
 
 from funzo.domains.gridworld import GridWorld, GridWorldMDP
-from funzo.domains.gridworld import GRewardLFA, GReward, GTransition
+from funzo.domains.gridworld import GRewardLFA, GTransition
 from funzo.planners.dp import PolicyIteration
 
-from funzo.irl.birl.map_birl import MAPBIRL
-from funzo.irl.birl.mcmc_birl import PolicyWalkBIRL
+from funzo.irl.birl import BIRL
 from funzo.irl.birl import GaussianRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
-from funzo.utils.diagnostics import plot_geweke_test
-from funzo.utils.diagnostics import plot_sample_autocorrelations
-from funzo.utils.diagnostics import plot_variable_histograms
-from funzo.utils.diagnostics import plot_sample_traces
 
 SEED = None
 
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    # w_expert = np.array([-0.001, -0.5, 1.0])
     w_expert = np.array([-0.01, -10.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
     world = GridWorld(gmap=gmap)
-    # RMAX = 1.0/len(world.states)
     RMAX = 1.0
 
     rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=RMAX)
-    # rfunc = GReward(domain=world, rmax=RMAX)
-    # w_expert = rfunc._R
-
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.8)
 
     # ------------------------
     planner = PolicyIteration(verbose=2)
-    # plan = planner(g)
-    # policy = plan['pi']
-    # print(policy)
-
-    # fig = plt.figure(figsize=(8, 8))
-    # ax = fig.gca()
-    # ax = world.visualize(ax, policy=policy)
-    # plt.show()
-
-    # demos = world.generate_trajectories(policy, num=5, random_state=SEED)
-    # print(demos)
-    # np.save('demos.npy', demos)
     demos = np.load('demos.npy')
-    # print(demos)
 
     # IRL
     r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.25)
+    irl_solver = BIRL(prior=r_prior, delta=0.3, planner=planner, beta=0.7,
+                      max_iter=1500, burn_ratio=0.2, random_state=SEED)
 
-    # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
-    #                      beta=0.6)
-    irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
-                                delta=0.3, planner=planner, beta=0.9,
-                                max_iter=500, cooling=True,
-                                burn_ratio=0.2, random_state=SEED)
-
-    trace = irl_solver.run(random_state=SEED)
+    trace = irl_solver.solve(mdp=g, demos=demos)
     trace.save('pw_trace')
     r = trace['r_mean'][-1]
-    # r = trace['r_map'][-1]
 
     g.reward.update_parameters(reward=r)
     r_plan = planner(g)
@@ -84,7 +55,6 @@ def main():
     V = r_plan['V']
 
     # compute the loss
-    # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss_func = RewardLoss(order=2)
     loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
     loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
@@ -103,17 +73,10 @@ def main():
     plt.colorbar()
 
     plt.figure(figsize=(8, 6))
-    # plt.plot(data['iter'], loss)
     plt.plot(trace['step'], loss)
     plt.plot(trace['step'], loss_m)
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
-    plt.tight_layout()
-
-    plt.figure()
-    plt.plot(trace['step'], trace['log_p'])
-    plt.ylabel('$\log p(r|D)$')
-    plt.xlabel('Step')
     plt.tight_layout()
 
     plt.figure()
@@ -122,14 +85,8 @@ def main():
     plt.xlabel('Step')
     plt.tight_layout()
 
-    # figure = corner.corner(trace['r'])
     if len(trace['sample']) > 100:
         corner.corner(trace['sample'])
-        # corner.corner(trace['r'])
-
-    # plot_geweke_test(trace['r'])
-    # plot_sample_autocorrelations(np.array(trace['r']), thin=5)
-    # plot_variable_histograms(np.array(trace['r']))
 
     plt.show()
 

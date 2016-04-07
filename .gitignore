@@ -46,3 +46,4 @@ docs/generated
 .ipynb_checkpoints
 notebooks
 .pypirc
+.DS_Store
