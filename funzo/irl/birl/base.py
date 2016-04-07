@@ -8,7 +8,7 @@ import six
 import numpy as np
 
 from abc import ABCMeta, abstractmethod
-from scipy.stats import uniform, norm, laplace
+from scipy.stats import uniform, laplace, multivariate_normal
 
 from ...base import Model
 
@@ -77,11 +77,18 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
     """ Reward prior interface
 
     The reward prior summarizes information about the reward distribution that
-    is available before running the algorithm, i.e. all the relavant domain
+    is available before running the algorithm, i.e. all the relevant domain
     knowledge.
+
+    These distributions are multivariate, i.e. samples are vectors
 
     """
 
+    def __init__(self, dim):
+        if 0 > dim:
+            raise ValueError('Reward space dimension must be positive')
+        self._dim = dim
+
     @abstractmethod
     def __call__(self, r):
         raise NotImplementedError('Abstract method')
@@ -91,79 +98,81 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Abstract method')
 
     @abstractmethod
-    def sample(self, dim):
+    def sample(self):
         raise NotImplementedError('Abstract method')
 
 
-class UniformRewardPrior(RewardPrior):
-    """ Uniform/flat prior"""
+# class UniformRewardPrior(RewardPrior):
+#     """ Uniform/flat prior"""
 
-    def __init__(self, loc=0.0, scale=1.0):
-        # generally loc = -rmax, scale = 2*rmax for full support
-        self._loc = loc
-        self._scale = scale
+#     def __init__(self, loc=0.0, scale=1.0):
+#         # generally loc = -rmax, scale = 2*rmax for full support
+#         self._loc = loc
+#         self._scale = scale
 
-    def __call__(self, r):
-        return uniform.pdf(r, loc=self._loc, scale=self._scale)
+#     def __call__(self, r):
+#         return uniform.pdf(r, loc=self._loc, scale=self._scale)
 
-    def log_p(self, r):
-        return uniform.logpdf(r, loc=self._loc, scale=self._scale)
+#     def log_p(self, r):
+#         return uniform.logpdf(r, loc=self._loc, scale=self._scale)
 
-    def sample(self, dim):
-        return uniform.rvs(loc=self._loc, scale=self._scale, size=dim)
+#     def sample(self, dim):
+#         return uniform.rvs(loc=self._loc, scale=self._scale, size=dim)
 
 
 class GaussianRewardPrior(RewardPrior):
-    """ Gaussian reward prior"""
-    def __init__(self, sigma=0.5, loc=0.0):
-        self._sigma = sigma
-        self._loc = loc
+    """ Gaussian reward prior """
+    def __init__(self, dim=1, mean=0.0, sigma=0.5):
+        super(GaussianRewardPrior, self).__init__(dim)
+        self._cov = np.eye(self._dim) * sigma
+        self._mu = np.ones(self._dim) * mean
+        # TODO - allow different covariance shapes, and full mean vectors
 
     def __call__(self, r):
-        return norm.pdf(r, loc=self._loc, scale=self._sigma)
+        return multivariate_normal.pdf(r, mean=self._mu, cov=self._cov)
 
     def log_p(self, r):
-        return norm.logpdf(r, loc=self._loc, scale=self._sigma)
+        return multivariate_normal.logpdf(r, mean=self._mu, cov=self._cov)
 
-    def sample(self, dim):
-        return norm.rvs(loc=self._loc, scale=self._sigma, size=dim)
-
-
-class LaplacianRewardPrior(RewardPrior):
-    """ Laplace reward prior"""
-    def __init__(self, sigma=0.5, loc=0.0):
-        self._sigma = sigma
-        self._loc = loc
-
-    def __call__(self, r):
-        return laplace.pdf(r, loc=self._loc, scale=self._sigma)
-
-    def log_p(self, r):
-        return laplace.logpdf(r, loc=self._loc, scale=self._sigma)
-
-    def sample(self, dim):
-        return laplace.rvs(loc=self._loc, scale=self._sigma, size=dim)
+    def sample(self):
+        return multivariate_normal.rvs(mean=self._mu, cov=self._cov, size=1)
 
 
-class DirectionalRewardPrior(RewardPrior):
-    """ Prior that injects direction information
+# class LaplacianRewardPrior(RewardPrior):
+#     """ Laplace reward prior"""
+#     def __init__(self, sigma=0.5, loc=0.0):
+#         self._sigma = sigma
+#         self._loc = loc
 
-    Useful for cases in which we know the direction of influence of a feature
-    as either a penalty or a reward. Defaults to all rewarding features
+#     def __call__(self, r):
+#         return laplace.pdf(r, loc=self._loc, scale=self._sigma)
 
-    """
-    def __init__(self, directions=None):
-        assert directions is not None, 'Directions must be a valid array'
-        self.directions = directions
+#     def log_p(self, r):
+#         return laplace.logpdf(r, loc=self._loc, scale=self._sigma)
 
-    def __call__(self, r):
-        dim = len(r)
-        rp = np.array([r[i] * self.directions[i] for i in range(dim)])
-        return rp
+#     def sample(self, dim):
+#         return laplace.rvs(loc=self._loc, scale=self._sigma, size=dim)
 
-    def log_p(self, r):
-        return np.log(self.__call__(r))
 
-    def sample(self, dim):
-        return np.array([self.directions[np.random.randint(dim)]
-                        for i in range(dim)])
+# class DirectionalRewardPrior(RewardPrior):
+#     """ Prior that injects direction information
+
+#     Useful for cases in which we know the direction of influence of a feature
+#     as either a penalty or a reward. Defaults to all rewarding features
+
+#     """
+#     def __init__(self, directions=None):
+#         assert directions is not None, 'Directions must be a valid array'
+#         self.directions = directions
+
+#     def __call__(self, r):
+#         dim = len(r)
+#         rp = np.array([r[i] * self.directions[i] for i in range(dim)])
+#         return rp
+
+#     def log_p(self, r):
+#         return np.log(self.__call__(r))
+
+#     def sample(self, dim):
+#         return np.array([self.directions[np.random.randint(dim)]
+#                         for i in range(dim)])

@@ -17,7 +17,7 @@ from funzo.planners.dp import PolicyIteration
 
 from funzo.irl.birl.map_birl import MAPBIRL
 from funzo.irl.birl.mcmc_birl import PolicyWalkBIRL
-from funzo.irl.birl import GaussianRewardPrior, UniformRewardPrior
+from funzo.irl.birl import GaussianRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
 from funzo.utils.diagnostics import plot_geweke_test
@@ -38,16 +38,12 @@ def main():
     # RMAX = 1.0/len(world.states)
     RMAX = 1.0
 
-    print('RMAX', RMAX)
-
-    # rfunc = GReward(domain=world, rmax=1.0/len(world.states))
-    rfunc = GRewardLFA(domain=world, weights=w_expert,
-                       rmax=RMAX)
+    rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=RMAX)
+    # rfunc = GReward(domain=world, rmax=RMAX)
+    # w_expert = rfunc._R
 
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.8)
-
-    # w_expert = rfunc._R
 
     # ------------------------
     planner = PolicyIteration(verbose=2)
@@ -66,14 +62,13 @@ def main():
     # print(demos)
 
     # IRL
-    # r_prior = GaussianRewardPrior(sigma=0.15)
-    r_prior = UniformRewardPrior(loc=-RMAX, scale=2*RMAX)
+    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.25)
 
     # irl_solver = MAPBIRL(mdp=g, prior=r_prior, demos=demos, planner=planner,
     #                      beta=0.6)
     irl_solver = PolicyWalkBIRL(mdp=g, prior=r_prior, demos=demos,
                                 delta=0.2, planner=planner, beta=0.8,
-                                max_iter=7500, cooling=True, burn_ratio=0.2)
+                                max_iter=2000, cooling=True, burn_ratio=0.2)
 
     trace = irl_solver.run(random_state=SEED)
     trace.save('pw_trace')
@@ -116,7 +111,7 @@ def main():
     # figure = corner.corner(trace['r'])
     if len(trace['sample']) > 100:
         corner.corner(trace['sample'])
-        corner.corner(trace['r'])
+        # corner.corner(trace['r'])
 
     # plot_geweke_test(trace['r'])
     # plot_sample_autocorrelations(np.array(trace['r']), thin=5)

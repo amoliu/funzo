@@ -10,6 +10,7 @@ from __future__ import division
 
 import numpy as np
 
+from abc import abstractmethod
 from tqdm import tqdm
 from six.moves import range, zip
 from scipy.misc import logsumexp
@@ -27,6 +28,10 @@ class Proposal(object):
     def __init__(self, dim):
         self.dim = dim
 
+    @abstractmethod
+    def __call__(self, location):
+        raise NotImplementedError('abstract')
+
 
 class PolicyWalkProposal(Proposal):
     """ PolicyWalk MCMC proposal
@@ -40,8 +45,8 @@ class PolicyWalkProposal(Proposal):
         self.rmax = rmax
         self.rng = check_random_state(random_state)
 
-    def __call__(self, loc):
-        sample = np.array(loc)
+    def __call__(self, location):
+        sample = np.array(location)
         d = self.rng.choice([-self.delta, self.delta])
         i = self.rng.randint(self.dim)
         if -self.rmax < sample[i]+d < self.rmax:
@@ -75,49 +80,42 @@ class PolicyWalkBIRL(BIRL):
         self._rng = check_random_state(random_state)
 
     def run(self, **kwargs):
-        r = self._initialize_reward(random_state=None)
+        """ Run the BIRL solver to find the reward function """
+        v = ['step', 'r', 'r_mean', 'sample', 'a_ratio', 'Q_r', 'log_p']
+        trace = Trace(v, save_interval=self._max_iter//2)
+
+        r = self._initialize_reward()
         r_mean = np.array(r)
 
-        variables = ['step', 'r', 'r_mean', 'sample',
-                     'a_ratio', 'Q_r', 'log_p']
-        trace = Trace(variables, save_interval=self._max_iter//2)
-
-        _, llk_old = self._compute_llk(r)
-        log_p_r_old = llk_old + self._log_prior(r)
+        Q_r, llk_r = self._log_likelihood(r)
+        log_p_r = llk_r + self._log_prior(r)
 
         for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
             r_new = self._proposal(r)
-            Q_r_new, llk_new = self._compute_llk(r_new)
+            Q_r_new, llk_r_new = self._log_likelihood(r_new)
+            log_p_r_new = llk_r_new + self._log_prior(r_new)
 
-            # compute full posterior distribution (unnormalized)
-            log_p_r_new = llk_new + self._log_prior(r_new)
-            p_accept = log_p_r_new / log_p_r_old
-
-            if self._rng.uniform() < min([1.0, p_accept])**self.cooling(step):
+            p_accept = log_p_r_new / log_p_r
+            if self._rng.uniform() < min([1.0, p_accept]):
                 r = np.array(r_new)
-                log_p_r_old = log_p_r_new
-
-                # if step > self._burn:
-                # r_mean = self._iterative_mean(r_mean, r, step-self._burn)
-                r_mean = self._iterative_mean(r_mean, r, step)
+                log_p_r = log_p_r_new
 
             if step > self._burn:
+                r_mean = self._iterative_mean(r_mean, r, step-self._burn)
                 trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
                              a_ratio=p_accept, Q_r=Q_r_new, log_p=log_p_r_new)
-            step += 1
 
         return trace
 
-    def _initialize_reward(self, random_state=None):
+    def _initialize_reward(self):
         """ Initialize a reward vector using the prior """
-        return self._prior.sample(dim=len(self._mdp.reward))
+        return self._prior.sample()
 
-    def _compute_llk(self, r):
+    def _log_likelihood(self, r):
         """ Evaluate the log likelihood of the demonstrations w.r.t reward """
         self._mdp.reward.update_parameters(reward=r)
         Q_r = self._planner(self._mdp)['Q']
 
-        # log likelihood of the data
         llk = 0.0
         M = len(self._demos)
         for traj in self._demos:
@@ -137,7 +135,7 @@ class PolicyWalkBIRL(BIRL):
 
     def _log_prior(self, r):
         """ Compute log prior probability """
-        return np.sum(self._prior.log_p(r))
+        return self._prior.log_p(r)
 
     def _iterative_mean(self, r_mean, r_new, iteration):
         """ Compute the iterative mean of the reward """
