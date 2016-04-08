@@ -24,7 +24,7 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_b.txt')
+    gmap = np.loadtxt('maps/map_a.txt')
     w_expert = np.array([-0.01, -3.0, 1.0])
     # w_expert = np.array([-3.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
@@ -47,12 +47,12 @@ def main():
     plt.show()
 
     # demos = np.load('demos.npy')
-    demos = world.generate_trajectories(policy, num=20, random_state=SEED)
+    demos = world.generate_trajectories(policy, num=100, random_state=SEED)
 
     # IRL
-    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.25)
+    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.5)
     irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.7,
-                      max_iter=1500, burn_ratio=0.2, random_state=SEED)
+                      max_iter=10000, burn_ratio=0.3, random_state=SEED)
 
     trace = irl_solver.solve(mdp=g, demos=demos)
     trace.save('pw_trace')

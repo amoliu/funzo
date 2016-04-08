@@ -56,15 +56,25 @@ class PolicyLoss(Loss):
         self._planner = planner
         self._p = order
 
+        # caching
+        self._ve = None
+        self._pi_e = None
+        self._vpi = None
+        self._pi_pi = None
+
     def __call__(self, r_e, r_pi, **kwargs):
         """ Compute the policy loss """
         self._mdp.reward.update_parameters(reward=r_e)
-        v_e = self._planner(self._mdp)['V']
+        plan_e = self._planner(self._mdp, self._ve, self._pi_e)
+        self._ve = plan_e['V']
+        self._pi_e = plan_e['pi']
 
         self._mdp.reward.update_parameters(reward=r_pi)
-        v_pi = self._planner(self._mdp)['V']
+        plan_pi = self._planner(self._mdp, self._vpi, self._pi_pi)
+        self._vpi = plan_pi['V']
+        self._pi_pi = plan_pi['pi']
 
-        return np.linalg.norm(v_e - v_pi, ord=self._p)
+        return np.linalg.norm(self._ve - self._vpi, ord=self._p)
 
 
 class RewardLoss(Loss):
