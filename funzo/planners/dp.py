@@ -59,13 +59,17 @@ class PolicyIteration(Planner):
 
         logging.basicConfig(level=verbose)
 
-    def __call__(self, mdp):
-        """ Standard dynamic programming using policy iteration algorithm
+    def __call__(self, mdp, V_init=None, pi_init=None):
+        """ Solve the MDP using policy iteration
 
         Parameters
         ------------
         mdp : :class:`MDP` variant or derivative
             The MDP to plan on.
+        V_init : array-like
+            Initial value function
+        pi_init : array-like
+            Initial policy
 
         Returns
         --------
@@ -75,29 +79,45 @@ class PolicyIteration(Planner):
         """
         V = np.zeros(len(mdp.S))
         policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-        iteration = 0
-        cum_R = list()
-        for iteration in range(0, self._max_iter):
-            V = _policy_evaluation(mdp, policy, self._max_iter, self._epsilon)
 
-            # policy improvement
-            unchanged = True
-            for s in mdp.S:
-                a = np.argmax([_expected_utility(mdp, a, s, V)
-                              for a in mdp.actions(s)])
-                if a != policy[s]:
-                    policy[s] = a
-                    unchanged = False
-            if unchanged:
-                break
+        if V_init is not None:
+            V = np.array(V_init)
+
+        if pi_init is not None:
+            policy = np.array(pi_init)
+
+        cum_R = list()
+
+        stable_policy = False
+        R = mdp.R
+        T = mdp.T
+        while not stable_policy:
+            finished = False
+            while not finished:
+                V_old = np.array(V)
+                change = 0.0
+                for s in mdp.S:
+                    V[s] = R(s, None) + mdp.gamma * \
+                        np.sum([p * V[s1] for (p, s1) in T(s, policy[s])])
+                change = max(np.fabs(V - V_old))
+                if change < self._epsilon:
+                    finished = True
+
+            Q = _compute_Q(mdp, V)
+            old_policy = np.array(policy)
+            policy = np.argmax(Q, axis=0)
+            policy_change = max(np.fabs(policy - old_policy))
+            if policy_change < 1e-08:
+                stable_policy = True
 
             cum_R.append(np.sum(mdp.R(s, policy[s]) for s in mdp.S))
 
         result = dict()
         result['pi'] = np.asarray(policy)
         result['V'] = V
-        result['Q'] = _compute_Q(mdp, V)
+        result['Q'] = Q
         result['cR'] = cum_R
+
         return result
 
 

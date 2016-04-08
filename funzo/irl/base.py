@@ -19,10 +19,10 @@ class IRLSolver(six.with_metaclass(ABCMeta, Model)):
         """ Solve the IRL problem using the MDP and demonstrations """
         raise NotImplementedError('Abstract interface')
 
-    def _solve_mdp(self, mdp, r):
+    def _solve_mdp(self, mdp, r, V_init=None, pi_init=None):
         """ Solve and MDP using a given reward function """
         mdp.reward.update_parameters(reward=r)
-        plan = self._mdp_planner(mdp)
+        plan = self._mdp_planner(mdp, V_init, pi_init)
         return plan
 
 

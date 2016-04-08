@@ -24,8 +24,9 @@ SEED = None
 
 
 def main():
-    gmap = np.loadtxt('maps/map_a.txt')
-    w_expert = np.array([-0.01, -10.0, 1.0])
+    gmap = np.loadtxt('maps/map_b.txt')
+    w_expert = np.array([-0.01, -3.0, 1.0])
+    # w_expert = np.array([-3.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
     world = GridWorld(gmap=gmap)
@@ -33,15 +34,24 @@ def main():
 
     rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=RMAX)
     T = GTransition(domain=world)
-    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.8)
+    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
 
     # ------------------------
     planner = PolicyIteration(verbose=2)
-    demos = np.load('demos.npy')
+    plan = planner(g)
+    policy = plan['pi']
+
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.gca()
+    ax = world.visualize(ax, policy=policy)
+    plt.show()
+
+    # demos = np.load('demos.npy')
+    demos = world.generate_trajectories(policy, num=20, random_state=SEED)
 
     # IRL
     r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.25)
-    irl_solver = BIRL(prior=r_prior, delta=0.3, planner=planner, beta=0.7,
+    irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.7,
                       max_iter=1500, burn_ratio=0.2, random_state=SEED)
 
     trace = irl_solver.solve(mdp=g, demos=demos)
@@ -56,6 +66,7 @@ def main():
 
     # compute the loss
     loss_func = RewardLoss(order=2)
+    # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
     loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
     loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 
@@ -79,11 +90,11 @@ def main():
     plt.xlabel('Iteration')
     plt.tight_layout()
 
-    plt.figure()
-    plt.plot(trace['step'], trace['a_ratio'])
-    plt.ylabel('Acceptance probability')
-    plt.xlabel('Step')
-    plt.tight_layout()
+    # plt.figure()
+    # plt.plot(trace['step'], trace['a_ratio'])
+    # plt.ylabel('Acceptance probability')
+    # plt.xlabel('Step')
+    # plt.tight_layout()
 
     if len(trace['sample']) > 100:
         corner.corner(trace['sample'])

@@ -101,7 +101,7 @@ class BIRL(IRLSolver):
         r_mean = np.array(r)
         for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
             r_new = self._proposal(r)
-            plan_r_new = self._solve_mdp(mdp, r_new)
+            plan_r_new = self._solve_mdp(mdp, r_new, plan_r['V'], plan_r['pi'])
             p_accept = self._acceptance_ratio(mdp, demos, r, r_new,
                                               plan_r['Q'], plan_r_new['Q'])
             if self._rng.uniform() < min([1.0, p_accept]):
