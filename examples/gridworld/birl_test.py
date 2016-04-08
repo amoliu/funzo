@@ -51,12 +51,14 @@ def main():
 
     # IRL
     r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.5)
-    irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.7,
-                      max_iter=10000, burn_ratio=0.3, random_state=SEED)
+    irl_solver = BIRL(prior=r_prior, delta=0.3, planner=planner, beta=0.7,
+                      max_iter=1000, burn_ratio=0.3, inference='PW',
+                      random_state=SEED)
 
     trace = irl_solver.solve(mdp=g, demos=demos)
     trace.save('pw_trace')
     r = trace['r_mean'][-1]
+    # r = trace['r_map'][-1]
 
     g.reward.update_parameters(reward=r)
     r_plan = planner(g)
@@ -84,6 +86,7 @@ def main():
     plt.colorbar()
 
     plt.figure(figsize=(8, 6))
+    # plt.plot(loss)
     plt.plot(trace['step'], loss)
     plt.plot(trace['step'], loss_m)
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
@@ -96,8 +99,8 @@ def main():
     # plt.xlabel('Step')
     # plt.tight_layout()
 
-    if len(trace['sample']) > 100:
-        corner.corner(trace['sample'])
+    # if len(trace['sample']) > 100:
+    #     corner.corner(trace['sample'])
 
     plt.show()
 

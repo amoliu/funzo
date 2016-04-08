@@ -93,6 +93,11 @@ class Trace(object):
 
         return saved_name
 
+    def add_vars(self, new_vars):
+        for v in new_vars:
+            self._data[v] = list()
+            self._vars.append(v)
+
     @property
     def vars(self):
         """ Variables in the trace data store """

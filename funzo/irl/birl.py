@@ -12,6 +12,8 @@ from abc import abstractmethod, ABCMeta
 from tqdm import tqdm
 from copy import deepcopy
 from six.moves import range, zip
+
+from scipy.optimize import minimize
 from scipy.misc import logsumexp
 from scipy.stats import multivariate_normal
 
@@ -73,9 +75,9 @@ class BIRL(IRLSolver):
                 raise ValueError('burn ratio must be in [0, 1)')
             self._burn = int(self._max_iter * burn_ratio / 100.0)
 
-            if 0.0 >= delta > 1.0:
-                raise ValueError('Reward steps (delta) must be in (0, 1)')
-            self._delta = delta
+        if 0.0 >= delta > 1.0:
+            raise ValueError('Reward steps (delta) must be in (0, 1)')
+        self._delta = delta
 
     def solve(self, mdp, demos):
         """ Solve the BIRL problem """
@@ -84,8 +86,6 @@ class BIRL(IRLSolver):
 
         if self._inference == 'PW':
             return self.policy_walk(mdp, demos, trace)
-        elif self._inference == 'MPW':
-            return self.modified_policy_walk(mdp, demos, trace)
         elif self._inference == 'MAP':
             return self.find_map(mdp, demos, trace)
 
@@ -104,7 +104,7 @@ class BIRL(IRLSolver):
             plan_r_new = self._solve_mdp(mdp, r_new, plan_r['V'], plan_r['pi'])
             p_accept = self._acceptance_ratio(mdp, demos, r, r_new,
                                               plan_r['Q'], plan_r_new['Q'])
-            if self._rng.uniform() < min([1.0, p_accept]):
+            if self._rng.uniform() < min([1.0, p_accept])**self._cooling(step):
                 r = np.array(r_new)
                 plan_r = deepcopy(plan_r_new)
 
@@ -114,12 +114,33 @@ class BIRL(IRLSolver):
                              a_ratio=p_accept)
         return trace
 
-    def modified_policy_walk(self, mdp, demos, trace):
-        """ Modified policy walk due to Michini & How """
-        return trace
-
     def find_map(self, mdp, demos, trace):
         """ Find the reward by direct MAP estimation """
+
+        trace.add_vars(['f', 'r_map'])
+
+        rmax = mdp.reward.rmax
+        bounds = tuple((-rmax, rmax) for _ in range(len(mdp.reward)))
+
+        r = self._initialize_reward(mdp.reward.rmax, len(mdp.reward))
+
+        def _callback_optimization(x):
+            """ Callback to catch the optimization progress """
+            trace.record(r=x)
+
+        self._mdp = mdp  # temporary HACK
+        self._demos = demos
+
+        # r is argmax_r p(D|r)p(r)
+        res = minimize(fun=self._log_posterior,
+                       x0=r,
+                       method='L-BFGS-B',
+                       jac=False,
+                       bounds=bounds,
+                       callback=_callback_optimization)
+
+        trace.record(r_map=res.x, f=res.fun)
+
         return trace
 
     def _initialize_reward(self, rmax, rdim):
@@ -143,6 +164,13 @@ class BIRL(IRLSolver):
 
                     ratio *= rr_new / rr
         return ratio
+
+    def _log_posterior(self, r):
+        """ Reward posterior distribution (unnormalized) """
+        plan_r = self._solve_mdp(self._mdp, r)
+        llk = self._log_likelihood(plan_r['Q'])
+        lp = self._log_prior(r)
+        return llk + lp
 
     def _log_likelihood(self, Q_r):
         """ Evaluate the log likelihood of the demonstrations w.r.t reward """
