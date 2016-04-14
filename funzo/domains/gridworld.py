@@ -88,14 +88,16 @@ class GRewardLFA(LinearRewardFunction):
         if s_p == state and action != 4:  # out or domain movements penalty
             return -10.0
 
-        state_ = self._domain.states[s_p]
-        phi = [self._feature_free(state_),
-               self._feature_obstacle(state_),
-               self._feature_goal(state_)]
+        phi = self.phi(s_p, action)
         return np.dot(self._weights, phi)
 
-    def __len__(self):
-        return 3
+    def phi(self, state, action):
+        """ Evaluate the reward features for state-action pair """
+        state_ = self._domain.states[state]
+        phi = np.array([self._feature_free(state_),
+                        self._feature_obstacle(state_),
+                        self._feature_goal(state_)])
+        return phi
 
     def _feature_goal(self, state):
         """ Check if the agent is at the goal position """

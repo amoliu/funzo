@@ -9,6 +9,7 @@ algorithms regardless of the concrete task or domain.
 
 
 import six
+import inspect
 
 from abc import ABCMeta
 from abc import abstractmethod, abstractproperty
@@ -319,11 +320,22 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
         """ Type of reward function (e.g. tabular, LFA) """
         return 'LFA'
 
+    @abstractmethod
+    def phi(self, state, action):
+        """ Evaluate the reward features for state-action pair """
+        raise NotImplementedError('abstract')
+
     def __len__(self):
         """ Dimension of the reward function in the case of LFA """
         # - count all class members named '_feature_{x}'
-        features = self.__class__.__dict__
-        dim = sum([f[0].startswith(self._template) for f in features])
+        dim = 0
+        for name in self.__class__.__dict__:
+            item = getattr(self.__class__, name)
+            if inspect.ismethod(item):
+                if item.__name__.startswith(self._template):
+                    dim += 1
+        # features = self.__class__.__dict__
+        # dim = sum([f[0].startswith(self._template) for f in features])
         return dim
 
 ########################################################################
