@@ -191,7 +191,7 @@ class GState(MDPState):
         return (self.cell[0], self.cell[1]).__hash__()
 
     def __str__(self):
-        return '({}, {})'.format(self.cell[0], self.cell[1])
+        return '({}, {}, {})'.format(self.cell[0], self.cell[1], self.status)
 
     def __repr__(self):
         return self.__str__()
@@ -352,6 +352,9 @@ class GridWorld(Domain):
                 traj.append((state, action))
                 next_state = controller(state, action)[0][1]
                 state = next_state
+
+            if self.terminal(state):
+                traj.append((state, 4))  # FIXME
 
             trajs.append(traj)
         return trajs
