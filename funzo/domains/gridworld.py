@@ -113,7 +113,8 @@ class GRewardLFA(LinearRewardFunction):
 
     def _feature_free(self, state):
         """ Check is the agent is in a free cell """
-        if state.status == FREE:
+        # Terminal state is always free by definition
+        if state.status == FREE or state.status == TERMINAL:
             return 1.0
         return 0.0
 
