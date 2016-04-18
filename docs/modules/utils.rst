@@ -1,12 +1,10 @@
+:mod:`funzo.utils`
 ====================================
-Utils (:mod:`funzo.utils`)
-====================================
-.. currentmodule:: funzo.utils
+
+.. automodule:: funzo.utils
 
 This module contains a number of convenient utilities used in the package such as data structures, little cute computations, etc
 
-Data Structures
-=================
 
 .. autosummary::
    :toctree: generated/

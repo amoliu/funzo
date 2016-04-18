@@ -1,12 +1,8 @@
+:mod:`funzo.irl`
 ==============================================================
-Inverse Reinforcement Learning (IRL) (:mod:`funzo.irl`)
-==============================================================
-.. currentmodule:: funzo.irl
+.. automodule:: funzo.irl
 
 This module contains the various IRL algorithms implemented in the library.
-
-Bayesian IRL
-================
 
 .. autosummary::
    :toctree: generated/

@@ -1,7 +1,6 @@
+:mod:`funzo.domains`
 ====================================
-Domains (:mod:`funzo.domains`)
-====================================
-.. currentmodule:: funzo.domains
+.. automodule:: funzo.domains
 
 This module contains various domains for experimenting with RL and IRL algorithms.
 
@@ -39,4 +38,3 @@ PuddleWorld
 
 Social Navigation
 ====================
-
