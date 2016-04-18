@@ -1,7 +1,7 @@
+:mod:`funzo.planners`
 ====================================
-Planners (:mod:`funzo.planners`)
-====================================
-.. currentmodule:: funzo.planners
+
+.. automodule:: funzo.planners
 
 This module contains implementation of various planning algorithms for Markov decision processes in general. Such planners take in MDPs and additional relevant parameters and compute policies and/or value functions either using Dynamic programming (DP) methods or by approximation.
 
@@ -15,4 +15,3 @@ The set of planners that work exhaustively on the the state and action space of 
 
    ~dp.PolicyIteration
    ~dp.ValueIteration
-
