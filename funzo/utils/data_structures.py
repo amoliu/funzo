@@ -79,9 +79,12 @@ class Trace(object):
         if self._iter > 0 and self._iter % self._save_interval == 0:
             self.save('trace')
 
-    def save(self, filename='trace'):
+    def save(self, filename='trace', final=False):
         """ Save trace as an HDF5 file with groups """
-        saved_name = '{}_{}.hdf5'.format(filename, time_string())
+        if final:
+            saved_name = '{}.hdf5'.format(filename)
+        else:
+            saved_name = '{}_{}.hdf5'.format(filename, time_string())
         f = h5py.File(saved_name, 'w')
         for key in self._data:
             f[key] = self._data[key]
@@ -92,6 +95,17 @@ class Trace(object):
         # self._old_save = saved_name
 
         return saved_name
+
+    def load(self, filename):
+        """ Load a trace from file """
+        self._vars = list()
+        self._data = dict
+
+        f = h5py.File(filename, 'r')
+        for key in f:
+            self._vars.append(key)
+            self._data[key] = f[key]
+        f.close()
 
     def add_vars(self, new_vars):
         for v in new_vars:
