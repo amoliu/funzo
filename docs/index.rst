@@ -1,35 +1,39 @@
-.. funzo documentation master file, created by
-   sphinx-quickstart on Tue Jul  9 22:26:36 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to funzo's documentation!
+Welcome to funzo!
 ======================================
 
-funzo is a library for learning from demonstation with special focus on Inverse Reinforcement Learning (IRL) algorithms.
+funzo is a library for learning from demonstration with special focus on Inverse Reinforcement Learning (IRL) algorithms.
+
+funzo is a work in progress, and as such inputs are gladly welcome. The documentation is an ongoing effort, but the full code is available on `Github`_.
+
+
+User Guide
+------------
+
+Looking to jump right in, start with the user guide.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents
+  :maxdepth: 2
 
-   readme
-   installation
-   usage
-   contributing
-   authors
-   history
+  user/installation
+  user/usage
+  user/contributing
 
 
-Reference
+API Reference
 -------------
-.. toctree::
-   :maxdepth: 1
 
-   models
-   planners
-   domains
-   irl
-   utils
+If you are looking for information on a specific function, class or
+method, this part of the documentation is for you.
+
+.. toctree::
+  :maxdepth: 2
+
+  modules/models
+  modules/irl
+  modules/domains
+  modules/planners
+  modules/utils
+
 
 Indices and tables
 ==================
@@ -38,3 +42,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _GitHub: https://github.com/makokal/funzo
