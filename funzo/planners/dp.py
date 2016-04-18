@@ -6,16 +6,12 @@ MDP planning using *dynamic programming* methods
 
 """
 
-import logging
-
 import numpy as np
 
 from six.moves import range
 
 from .base import Planner
 from ..utils.validation import check_random_state
-
-logger = logging.getLogger(__name__)
 
 
 __all__ = [
@@ -56,8 +52,6 @@ class PolicyIteration(Planner):
         self._max_iter = max_iter
         self._epsilon = epsilon
         self._rng = check_random_state(random_state)
-
-        logging.basicConfig(level=verbose)
 
     def __call__(self, mdp, V_init=None, pi_init=None):
         """ Solve the MDP using policy iteration
@@ -151,8 +145,6 @@ class ValueIteration(Planner):
     def __init__(self, max_iter=200, epsilon=1e-05, verbose=4):
         self._max_iter = max_iter
         self._epsilon = epsilon
-
-        logging.basicConfig(level=verbose)
 
     def __call__(self, mdp):
         """ Standard dynamic programming using  value iteration algorithm

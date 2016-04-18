@@ -1,11 +1,22 @@
+"""
+The :mod:`funzo.irl` module contains inverse reinforcement learning algorithms
+"""
 
-# from .birl.base import BIRL
+from .base import IRLSolver
+from .base import Loss, PolicyLoss, RewardLoss
 
-from .base import PolicyLoss
-from .base import RewardLoss
+from .birl import BIRL
+from .birl import Proposal, PolicyWalkProposal
+from .birl import RewardPrior, GaussianRewardPrior
+
 
 __all__ = [
-    # 'BIRL',
-    'PolicyLoss',
-    'RewardLoss',
+    'IRLSolver',
+    #
+    'Loss', 'PolicyLoss', 'RewardLoss',
+    #
+    'BIRL',
+    'Proposal', 'PolicyWalkProposal',
+    'RewardPrior', 'GaussianRewardPrior',
+    #
 ]

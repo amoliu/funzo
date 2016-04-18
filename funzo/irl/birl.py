@@ -154,7 +154,7 @@ class BIRL(IRLSolver):
     def _acceptance_ratio(self, mdp, demos, r, r_new, Q_r, Q_r_new):
         ratio = np.prod(np.true_divide(self._prior(r_new), self._prior(r)))
         for traj in demos:
-            if traj:
+            if len(traj) > 0:
                 for (s, a) in traj:
                     rr = np.exp(self._beta * Q_r[a, s]) /\
                             sum(np.exp(self._beta * Q_r[b, s]) for b in mdp.A)
@@ -177,7 +177,7 @@ class BIRL(IRLSolver):
         llk = 0.0
         M = len(self._demos)
         for traj in self._demos:
-            if traj:
+            if len(traj) > 0:
                 H = len(traj)
                 alpha_H = 0.0
                 beta_H = 0.0

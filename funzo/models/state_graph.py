@@ -11,6 +11,9 @@ from six.moves import filter
 from numpy import asarray, sqrt
 
 
+__all__ = ['StateGraph']
+
+
 class StateGraph(object):
     """ State Graph
 

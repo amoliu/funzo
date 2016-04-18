@@ -11,11 +11,12 @@ from ..base import Model
 
 
 class IRLSolver(six.with_metaclass(ABCMeta, Model)):
-    """ IRL problem solver interface """
-    def __init__(self, mdp_planner):
+    """ IRL algorithm interface """
+    def __init__(self, mdp_planner=None):
         self._mdp_planner = mdp_planner
 
-    def solve(self, mdp, demos):
+    @abstractmethod
+    def solve(self, demos, mdp=None):
         """ Solve the IRL problem using the MDP and demonstrations """
         raise NotImplementedError('Abstract interface')
 
@@ -39,7 +40,7 @@ class Loss(six.with_metaclass(ABCMeta, Model)):
     @abstractmethod
     def __call__(self, r_e, r_pi, **kwargs):
         # TODO - May enforce implementation with ufuncs ?
-        pass
+        raise NotImplementedError('abstract')
 
 
 class PolicyLoss(Loss):
@@ -91,5 +92,6 @@ class RewardLoss(Loss):
         """ Compute the policy loss """
         r_e = np.asarray(r_e)
         r_pi = np.asarray(r_pi)
-        assert r_e.shape == r_pi.shape, 'Expecting same shapes'
+        if r_e.shape != r_pi.shape:
+            raise ValueError('Expert and learned reward dimensions mismatch')
         return np.linalg.norm(r_e - r_pi, ord=self._p)

@@ -21,9 +21,7 @@ from ..models.mdp import MDP
 from ..models.mdp import TabularRewardFunction
 from ..models.mdp import MDPTransition, MDPState, MDPAction
 
-from ..utils.geometry import distance_to_segment, edist
-
-from .geometry import discretize_space
+from .geometry import distance_to_segment, edist, discretize_space
 
 
 __all__ = [
