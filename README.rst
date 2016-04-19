@@ -4,8 +4,7 @@
 .. image:: https://readthedocs.org/projects/funzo/badge/
     :target: http://funzo.readthedocs.org/en/latest/
 
-.. image:: https://img.shields.io/coveralls/funzo/funzo.svg
-    :target: https://coveralls.io/r/makokal/funzo
+.. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master :target: https://coveralls.io/github/makokal/funzo?branch=master
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/makokal/funzo/blob/master/LICENSE
