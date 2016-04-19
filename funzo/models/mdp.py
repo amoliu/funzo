@@ -141,8 +141,8 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
             state id for a state object in the MDP
 
         Returns
-        -------
-        a_s : array-like, shape (|A|_s,)
+        --------
+        a_s : array-like
             The set of available actions at the given state
 
         """
@@ -174,6 +174,7 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
 
     @gamma.setter
     def gamma(self, value):
+        """ MDP Discount factor """
         if 0.0 > value >= 1.0:
             raise ValueError('MDP `discount` must be in [0, 1)')
         self._discount = value

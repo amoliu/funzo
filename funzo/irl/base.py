@@ -11,13 +11,34 @@ from ..base import Model
 
 
 class IRLSolver(six.with_metaclass(ABCMeta, Model)):
-    """ IRL algorithm interface """
+    """ IRL algorithm interface
+
+    This interface assumes the most general formulation of the IRL problem.
+    The task requires at minimum only expert demonstrations.
+
+    Notes
+    ------
+    In case the underlying MDP is needed by an algorithm, a utility function
+    for solving the MDP is included for convenience.
+
+    """
     def __init__(self, mdp_planner=None):
         self._mdp_planner = mdp_planner
 
     @abstractmethod
     def solve(self, demos, mdp=None):
-        """ Solve the IRL problem using the MDP and demonstrations """
+        """ Solve the IRL problem
+
+        Parameters
+        -----------
+        demos : array-like
+            Expert demonstrations in form of state-action pairs
+        mdp : :class:`MDP` derivative instance, optional
+            The MDP model (in relevant form, e.g. a generative model) if the
+            IRL algorithm requires repeated solving of the forward problem
+            (planning) to get a policy
+
+        """
         raise NotImplementedError('Abstract interface')
 
     def _solve_mdp(self, mdp, r, V_init=None, pi_init=None):
@@ -46,7 +67,9 @@ class Loss(six.with_metaclass(ABCMeta, Model)):
 class PolicyLoss(Loss):
     """ Policy loss with respect to a reward function
 
-    L_p = || V^*(r) - V^{\pi}(r) ||_p
+    .. math::
+
+        L_p = || V^*(r) - V^{\pi}(r) ||_p
 
     Roughly corresponds to apprenticeship learning
 
@@ -81,7 +104,9 @@ class PolicyLoss(Loss):
 class RewardLoss(Loss):
     """ Reward loss with respect to a reward function
 
-    L_p = || r_e - r_pi ||_p
+    .. math::
+
+        L_p = || r_e - r_{\pi} ||_p
 
     """
     def __init__(self, order=2):

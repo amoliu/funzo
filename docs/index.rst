@@ -17,6 +17,7 @@ Looking to jump right in, start with the user guide.
   user/installation
   user/usage
   user/contributing
+  user/development
 
 
 API Reference
@@ -26,7 +27,7 @@ If you are looking for information on a specific function, class or
 method, this part of the documentation is for you.
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   modules/models
   modules/irl

@@ -1,15 +1,18 @@
-funzo
-===============================
-
 .. image:: https://img.shields.io/travis/makokal/funzo.svg
         :target: https://travis-ci.org/makokal/funzo
 
-.. image:: https://img.shields.io/pypi/v/funzo.svg
-        :target: https://pypi.python.org/pypi/funzo
+.. image:: https://readthedocs.org/projects/funzo/badge/
+    :target: http://funzo.readthedocs.org/en/latest/
 
+.. image:: https://img.shields.io/coveralls/funzo/funzo.svg
+    :target: https://coveralls.io/r/funzo/funzo
 
-Python toolkit for inverse reinforcement learning (IRL).
-Documentation: https://funzo.readthedocs.org
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://github.com/funzo/funzo/blob/master/LICENSE
+
+funzo
+============
+Python toolkit for inverse reinforcement learning (IRL). Documentation: https://funzo.readthedocs.org
 
 Features
 ---------
@@ -24,9 +27,9 @@ Features
     - Exact methods, PI, VI
 
 
-Usage
----------------
-See the examples folder for now
+Example
+------------
+See `examples <examples>`_ folder.
 
 
 What about the name?

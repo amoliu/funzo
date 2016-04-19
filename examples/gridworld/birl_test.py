@@ -47,11 +47,11 @@ def main():
     plt.show()
 
     # demos = np.load('demos.npy')
-    demos = world.generate_trajectories(policy, num=100, random_state=SEED)
+    demos = world.generate_trajectories(policy, num=150, random_state=SEED)
 
     # IRL
-    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.5)
-    irl_solver = BIRL(prior=r_prior, delta=0.3, planner=planner, beta=0.7,
+    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.15)
+    irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.8,
                       max_iter=1000, burn_ratio=0.3, inference='PW',
                       random_state=SEED)
 
@@ -67,8 +67,8 @@ def main():
     V = r_plan['V']
 
     # compute the loss
-    loss_func = RewardLoss(order=2)
-    # loss_func = PolicyLoss(mdp=g, planner=planner, order=1)
+    # loss_func = RewardLoss(order=2)
+    loss_func = PolicyLoss(mdp=g, planner=planner, order=2)
     loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
     loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 

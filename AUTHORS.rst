@@ -1,8 +1,4 @@
-=======
-Credits
-=======
-
-Development Lead
+Lead
 ----------------
 
 * Billy Okal <sudo@makokal.com>

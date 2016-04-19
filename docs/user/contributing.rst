@@ -1,1 +1,5 @@
-.. include:: ../CONTRIBUTING.rst
+============
+Contributing
+============
+
+.. include:: ../../CONTRIBUTING.rst

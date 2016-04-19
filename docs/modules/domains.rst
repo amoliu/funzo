@@ -1,40 +1,70 @@
 :mod:`funzo.domains`
 ====================================
+
 .. automodule:: funzo.domains
 
-This module contains various domains for experimenting with RL and IRL algorithms.
+1. Grid World
 
-Gridworld
-===========
-Simple discrete 2D grid world
+    .. autosummary::
+
+        GridWorld
+        GridWorldMDP
+        GReward
+        GRewardLFA
+        GTransition
+        GState
+        GAction
+
+
+2. Puddle World
+
+    .. autosummary::
+
+        PuddleWorld
+        PuddleWorldMDP
+        PuddleReward
+        PWTransition
+        PWState
+        PWAction
 
 .. autosummary::
-   :toctree: generated/
-   :nosignatures:
 
-   ~gridworld.GridWorld
-   ~gridworld.GridWorldMDP
-   ~gridworld.GReward
-   ~gridworld.GRewardLFA
-   ~gridworld.GTransition
-   ~gridworld.GState
-   ~gridworld.GAction
+    discretize_space
+    distance_to_segment
+    edist
 
 
-PuddleWorld
-=============
+Detailed descriptions
+-----------------------
 
-.. autosummary::
-   :toctree: generated/
-   :nosignatures:
+.. autoclass:: GridWorld
+    :members:
+.. autoclass:: GridWorldMDP
+    :members:
+.. autoclass:: GReward
+    :members:
+.. autoclass:: GRewardLFA
+    :members:
+.. autoclass:: GTransition
+    :members:
+.. autoclass:: GState
+    :members:
+.. autoclass:: GAction
+    :members:
 
-   ~puddleworld.PuddleWorld
-   ~puddleworld.PuddleWorldMDP
-   ~puddleworld.PuddleReward
-   ~puddleworld.PWTransition
-   ~puddleworld.PWState
-   ~puddleworld.PWAction
+.. autoclass:: PuddleWorld
+    :members:
+.. autoclass:: PuddleWorldMDP
+    :members:
+.. autoclass:: PuddleReward
+    :members:
+.. autoclass:: PWTransition
+    :members:
+.. autoclass:: PWState
+    :members:
+.. autoclass:: PWAction
+    :members:
 
-
-Social Navigation
-====================
+.. autofunction:: discretize_space
+.. autofunction:: distance_to_segment
+.. autofunction:: edist
