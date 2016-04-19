@@ -10,6 +10,7 @@ from . import planners
 from . import irl
 from . import domains
 from . import utils
+from . import representation
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     'irl',
     'domains',
     'utils',
+    'representation',
 ]

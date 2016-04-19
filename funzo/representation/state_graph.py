@@ -15,33 +15,50 @@ __all__ = ['StateGraph']
 
 
 class StateGraph(object):
-    """ State Graph
+    """ Generic state graph suited for MDPs
 
     The state graph encapsulates a flexible representation for an MDP which
     affords use of task specific constraints as well as temporally extended
     actions (in the sense of hierarchical reinforcement learning, options)
+
+    Parameters
+    -----------
+    state_dim : int
+        The dimensional of the state space used in the graph
+
+    Attributes
+    ------------
+    _graph : :class:`networkx.DiGraph` object
+        The underlying graph using ``networkx``
+    _node_attrs : tuple or str
+        Node attributes used in the graph
+    _edge_attrs : tuple of str
+        Attribute types of the edges in the graph
+    _state_dim : int
+        The dimensional of the state space used in the graph
 
     """
 
     _node_attrs = ('data', 'cost', 'priority', 'Q', 'V', 'pi', 'type')
     _edge_attrs = ('source', 'target', 'duration', 'reward', 'phi', 'traj')
 
-    def __init__(self, state_dim=4):
+    def __init__(self, state_dim):
         self._graph = nx.DiGraph()
 
-        assert state_dim > 0, 'State dimension must be greater than 0'
+        if state_dim <= 0:
+            raise ValueError('State dimension must be greater than 0')
         self._state_dim = state_dim
 
     def clear(self):
+        """ Reset the graph """
         self.G.clear()
 
     def add_node(self, nid, data, cost, priority, Q, V, pi, ntype):
-        """
-        Add a new node to the graph
-        """
+        """ Add a new node to the graph """
         data = asarray(data)
-        assert len(data) == self._state_dim,\
-            'Expecting a {}-dim state vector for node'.format(self._state_dim)
+        if len(data) != self._state_dim:
+            raise ValueError('Expecting a {}-dim state vector for\
+                node'.format(self._state_dim))
 
         if nid not in self.G:
             self.G.add_node(nid, data=data, cost=cost, priority=priority,
@@ -50,13 +67,13 @@ class StateGraph(object):
             warnings.warn('Node already exits in the graph, not added')
 
     def add_edge(self, source, target, duration, reward, phi, traj):
-        """
-        Add a new edge into the graph
-        """
-        assert duration >= 0.0, 'Duration must be positive'
+        """ Add a new edge into the graph """
+        if duration < 0.0:
+            raise ValueError('Duration arguiment must be positive, >= 0')
         phi = asarray(phi)
         traj = asarray(traj)
-        assert traj.ndim == 2, 'Expecting a 2-dim dim trajectory'
+        if traj.ndim != 2:
+            raise ValueError('Expecting a 2-dim dim trajectory')
 
         if source == target:
             warnings.warn('source: {} and target: {} nodes are the same'.
@@ -86,39 +103,37 @@ class StateGraph(object):
         return self.G.has_edge(source, target)
 
     def gna(self, node_id, attribute):
-        """
-        Get a single attribute of a single node
+        """ Get a single attribute of a single node
+
         Parameters
         ------------
         node_id : int
         attribute : string
+
         """
         self._check_node_attributes(node_id, attribute)
         return self.G.node[node_id][attribute]
 
     def sna(self, node_id, attribute, value):
-        """
-        Set a single attribute of a node
+        """ Set a single attribute of a node
+
         Parameters
         ------------
         node_id : int
         attribute : string
         value : any
+
         """
         self._check_node_attributes(node_id, attribute)
         self.G.node[node_id][attribute] = value
 
     def gea(self, source, target, attribute):
-        """
-        Get a single attribute of a single edge
-        """
+        """ Get a single attribute of a single edge """
         self._check_edge_attributes(source, target, attribute)
         return self.G.edge[source][target][attribute]
 
     def sea(self, source, target, attribute, value):
-        """
-        Set a single attribute of a edge between source and target
-        """
+        """ Set a single attribute of a edge between source and target """
         self._check_edge_attributes(source, target, attribute)
         self.G.edge[source][target][attribute] = value
 
@@ -140,8 +155,8 @@ class StateGraph(object):
         neighbors : list of int
             List of node ids in the "neighborhood"
 
-        Note
-        -----
+        Notes
+        ------
         Includes the query node in the result
 
         """
@@ -168,8 +183,8 @@ class StateGraph(object):
         neighbors : list of int
             List of node ids in the "neighborhood"
 
-        Note
-        -----
+        Notes
+        ------
         Includes the query node in the result
 
         """
@@ -245,7 +260,8 @@ class StateGraph(object):
             1D array for Cost, V, and policy; and a list of lists for Q
 
         """
-        assert name in ('cost', 'policy', 'priority', 'V', 'Q')
+        if name not in self._node_attrs:
+            raise IndexError('Invalid signal name')
         return [self.gna(n, name) for n in self.nodes]
 
     def save_graph(self, filename):

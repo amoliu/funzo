@@ -33,6 +33,7 @@ method, this part of the documentation is for you.
   modules/irl
   modules/domains
   modules/planners
+  modules/representation
   modules/utils
 
 
