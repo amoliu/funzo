@@ -13,7 +13,7 @@ env:
     # Directory where tests are run from
     - TEST_DIR=/tmp/funzo
     - CONDA_CHANNEL="conda-forge"
-    - CONDA_DEPS="pip nose coverage cython networkx numpy scipy six h5py"
+    - CONDA_DEPS="pip nose coverage cython networkx numpy scipy six h5py  python-dateutil pytz matplotlib"
     - PIP_DEPS="coveralls tqdm"
   matrix:
     - EXTRA_DEPS=""
