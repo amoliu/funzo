@@ -14,6 +14,8 @@ def configuration(parent_package='', top_path=None):
     config.add_subpackage('planners/tests')
     config.add_subpackage('utils')
     config.add_subpackage('utils/tests')
+    config.add_subpackage('representation')
+    config.add_subpackage('representation/tests')
     config.add_data_files('data/DUMMY.txt')
 
     return config
