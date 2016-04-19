@@ -1,1 +1,8 @@
-
+numpy
+scipy
+matplotlib
+six
+nose
+tqdm
+networkx
+h5py
