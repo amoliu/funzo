@@ -1,12 +1,9 @@
 """
-Base interfaces for Markov Decision Processes (MDP)
+Base abstract classes for Markov Decision Processes (MDP) and components
 
 These interfaces strive to define a contract for easily implementing relevant
 algorithms regardless of the concrete task or domain.
-
-
 """
-
 
 import six
 import inspect
@@ -86,7 +83,7 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
         self.gamma = discount
 
     def R(self, state, action):
-        """ Evaluate the reward function
+        """ Evaluate the reward function for a (state-action) pair
 
         The reward for performing `action` in `state`. Additional reward
         parameters can be included in the definition of the reward class
@@ -107,7 +104,7 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
         return self._reward(state, action)
 
     def T(self, state, action):
-        """ Evaluate the transition function
+        """ Evaluate the transition function for a (state-action) pair
 
         Perform a transition from a state using the action specified. The
         result is all reachable states with their respective "reach"
@@ -152,26 +149,27 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Abstract method')
 
     def terminal(self, state):
-        """ Check if a state is terminal (absorbing state) """
+        """ Check if a state is terminal (absorbing) """
         return self._domain.terminal(state)
 
     @abstractproperty
     def S(self):
-        """ States of the MDP in an hashable container """
+        """ Set of states in the MDP in an hashable container """
         raise NotImplementedError('Abstract property')
 
     @abstractproperty
     def A(self):
-        """ Actions of the MDP in an hashable container """
+        """ Set of actions in the MDP in an hashable container """
         raise NotImplementedError('Abstract property')
 
     @property
     def reward(self):
-        """ Accessor for the underlying reward object """
+        """ Reward function of the MDP """
         return self._reward
 
     @property
     def gamma(self):
+        """ MDP Discount factor """
         return self._discount
 
     @gamma.setter
@@ -185,22 +183,23 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
 
 
 class RewardFunction(six.with_metaclass(ABCMeta, Model)):
-    """ Markov decision process reward  function interface
+    """ MDP reward function model
 
     Rewards are as functions of state and action spaces of MDPs, i.e.
 
     .. math::
 
-        r: \mathcal{S} \\times \mathcal{A} \longrightarrow \mathbb{R}
+        r: \mathcal{S} \\times \mathcal{A} \longmapsto \mathbb{R}
 
-    Rewards are accessed via the `__call__` method with appropriate
-    parameters.
-
+    Rewards for a state and action pair, :math:`r(s, a)` are accessed via
+    the ``__call__`` method while appropriate reward function parameters are
+    set in the constructor. In the :class:`MDP` object, this function will be
+    called via :class:`MDP.R` function.
 
     Parameters
     -----------
     domain : :class:`Domain` derivative object
-        Object reference to the domain of the MDP that the reward is
+        Object reference to the domain/world of the MDP that the reward is
         to be used
     rmax : float, optional (default: 1.0)
         Upper bound on the reward function
@@ -285,18 +284,18 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
 
 class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
-    """ RewardFunction using Linear Function Approximation
+    """ RewardFunction using linear function approximation
 
-    The reward is given by;
+    The reward funtion is define as,
 
-    .. math:
+    .. math::
 
-            r(s, a) = \sum_i w_i f_i(s, a)
+        r(s, a) = \sum_i w_i \phi_i(s, a)
 
-    where :math:`f_(s, a)` is a reward feature defined over state and action
-    spaces of the underlying MDP. The *weights* are the parameters of the
-    model as usually sum to 1 to ensure that the reward remains bounded, a
-    typical assumption in RL.
+    where :math:`\phi_i(s, a)` is a feature defined over state and action
+    spaces of the underlying MDP. The ``weights`` are the parameters of the
+    model and are usually assumed to sum to 1 to ensure that the reward
+    remains bounded, a typical assumption used in most RL planners.
 
     """
 
@@ -344,6 +343,11 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 class MDPTransition(six.with_metaclass(ABCMeta, Model)):
     """ A MDP transition function
 
+    .. math::
+
+        T: \mathcal{S} \\times \mathcal{A} \\times \mathcal{S}
+        \longmapsto \mathbb{R}
+
     A generic way of representing MDP transition operation for both discrete
     and continuous spaces. A T function simply takes and `action` at a given
     `state` and executes it based on the transition properties (which could
@@ -358,8 +362,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
     Attributes
     -----------
     _domain : :class:`Domain` derivative object
-        Object reference to the domain of the MDP that the controller is
-        to be used on
+        Object reference to the domain of the underlying MDP
 
     """
 
@@ -381,7 +384,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
 
 class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
-    """ State on an MDP
+    """ MDP State
 
     A state in an MDP with all the relevant domain specific data. Such data
     is used in the reward function and transition function for computing
@@ -394,19 +397,22 @@ class MDPState(six.with_metaclass(ABCMeta, Model, Hashable)):
 
     @abstractmethod
     def __hash__(self):
+        """ State hash function """
         raise ValueError('Implement a hash function')
 
     @property
     def id(self):
+        """ State unique identifier """
         return self._id
 
     @abstractmethod
     def __eq__(self, other):
+        """ State comparator function """
         raise NotImplementedError('Implement equality of states')
 
 
 class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
-    """ Action in an MDP
+    """ MDP Action
 
     An action in an MDP with all the relevant domain specific data. Such data
     is used in the reward function and transition function for computing
@@ -419,12 +425,15 @@ class MDPAction(six.with_metaclass(ABCMeta, Model, Hashable)):
 
     @abstractmethod
     def __hash__(self):
+        """ Action hash function """
         raise ValueError('Implement a hash function')
 
     @property
     def id(self):
+        """ Action unique identifier """
         return self._id
 
     @abstractmethod
     def __eq__(self, other):
+        """ Action comparator function """
         raise NotImplementedError('Implement equality of actions')
