@@ -1,6 +1,6 @@
-numpy>=1.6
-scipy>=0.16
-matplotlib>=1.4
+numpy
+scipy
+matplotlib
 six
 nose
 tqdm
