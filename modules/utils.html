@@ -33,7 +33,7 @@
 
   
     <link rel="top" title="funzo 0.1.0 documentation" href="../index.html"/>
-        <link rel="prev" title="funzo.planners" href="planners.html"/> 
+        <link rel="prev" title="funzo.representation" href="representation.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a></li>
 </ul>
@@ -159,7 +160,7 @@
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.utils.Trace">
-<em class="property">class </em><code class="descclassname">funzo.utils.</code><code class="descname">Trace</code><span class="sig-paren">(</span><em>variables=None</em>, <em>save_interval=100</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.utils.</code><code class="descname">Trace</code><span class="sig-paren">(</span><em>variables=None</em>, <em>save_interval=100</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils/data_structures.py#L19-L140"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterative data store</p>
 <p>Data structure for storing progress logs of various iterative algorithms</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -195,19 +196,19 @@
 </table>
 <dl class="method">
 <dt id="funzo.utils.Trace.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.load" title="Permalink to this definition">¶</a></dt>
+<code class="descname">load</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils/data_structures.py#L109-L118"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a trace from file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.utils.Trace.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils/data_structures.py#L130-L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the trace to visually inspect convergence</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.utils.Trace.record">
-<code class="descname">record</code><span class="sig-paren">(</span><em>**entry</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.record" title="Permalink to this definition">¶</a></dt>
+<code class="descname">record</code><span class="sig-paren">(</span><em>**entry</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils/data_structures.py#L72-L90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record new data into the trace</p>
 <p>Allows asynchronous recording of only select variables. Adding an index
 variable then helps to later align data.</p>
@@ -215,7 +216,7 @@ variable then helps to later align data.</p>
 
 <dl class="method">
 <dt id="funzo.utils.Trace.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>filename='trace'</em>, <em>final=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.save" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save</code><span class="sig-paren">(</span><em>filename='trace'</em>, <em>final=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/utils/data_structures.py#L92-L107"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save trace as an HDF5 file with groups</p>
 </dd></dl>
 
@@ -238,7 +239,7 @@ variable then helps to later align data.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="planners.html" class="btn btn-neutral" title="funzo.planners" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="representation.html" class="btn btn-neutral" title="funzo.representation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
