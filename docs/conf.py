@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# import sys
+import sys
 import os
 # import sphinx_bootstrap_theme
 # import sphinx_rtd_theme
@@ -112,6 +112,22 @@ if os.environ.get('READTHEDOCS') != 'True':
     else:
         html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
     html_theme = 'sphinx_rtd_theme'
+
+    # Mock modules as per RTF FAQ to avoid hard C dependencies
+    # the below only works for Python3.3+
+    # from unittest.mock import MagicMock
+    # use this for Python<3.3
+    from mock import Mock as MagicMock
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return Mock()
+
+    # include the names of your minimal required packages here
+    MOCK_MODULES = ['numpy', 'matplotlib', 'h5py', 'networkx']
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 def setup(app):
     app.add_stylesheet("fix_rtd.css")
 
