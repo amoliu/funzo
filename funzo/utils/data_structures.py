@@ -5,9 +5,13 @@ Utility data structures
 from __future__ import division, absolute_import
 
 import os
-import h5py
 import time
 import warnings
+
+try:
+    import h5py
+except ImportError:
+    warnings.warn('h5py needed to use this module')
 
 from collections import Iterable
 

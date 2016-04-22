@@ -65,7 +65,7 @@ DOWNLOAD_URL = 'https://github.com/makokal/funzo'
 LICENSE = 'MIT'
 VERSION = version('funzo/__init__.py')
 REQUIRES = ["numpy", "scipy", "networkx",
-            "tqdm", "six", "matplotlib", "h5py", "nose"]
+            "tqdm", "six", "matplotlib", "nose"]
 
 
 def setup_package():
