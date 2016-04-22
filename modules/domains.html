@@ -97,6 +97,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
 </ul>
 
@@ -231,32 +232,32 @@
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.domains.GridWorld">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorld</code><span class="sig-paren">(</span><em>gmap</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorld</code><span class="sig-paren">(</span><em>gmap</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld" title="Permalink to this definition">¶</a></dt>
 <dd><p>GridWorld domain</p>
 <p>A discrete world with cells (free, obstacles, and goal). The main task
 is to find a path from any start cell to a goal cell. The start, goal
 and obstacle cells are specified using a matrix or list of lists.</p>
 <dl class="method">
 <dt id="funzo.domains.GridWorld.generate_trajectories">
-<code class="descname">generate_trajectories</code><span class="sig-paren">(</span><em>policy</em>, <em>num=5</em>, <em>starts=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.generate_trajectories" title="Permalink to this definition">¶</a></dt>
+<code class="descname">generate_trajectories</code><span class="sig-paren">(</span><em>policy</em>, <em>num=5</em>, <em>starts=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld.generate_trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.generate_trajectories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate trajectories of varying lengths using a policy</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.domains.GridWorld.in_domain">
-<code class="descname">in_domain</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.in_domain" title="Permalink to this definition">¶</a></dt>
+<code class="descname">in_domain</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld.in_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.in_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a cell is in the domain</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.domains.GridWorld.show_policy">
-<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.show_policy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld.show_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.show_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show a policy on the gridworld interface</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.domains.GridWorld.terminal">
-<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.terminal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld.terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld.terminal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a state is terminal</p>
 </dd></dl>
 
@@ -264,17 +265,17 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GridWorldMDP">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid world MDP representing the decision making process</p>
 <dl class="attribute">
 <dt id="funzo.domains.GridWorldMDP.A">
-<code class="descname">A</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP.A" title="Permalink to this definition">¶</a></dt>
+<code class="descname">A</code><a class="headerlink" href="#funzo.domains.GridWorldMDP.A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actions of the MDP in an indexable container</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="funzo.domains.GridWorldMDP.S">
-<code class="descname">S</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP.S" title="Permalink to this definition">¶</a></dt>
+<code class="descname">S</code><a class="headerlink" href="#funzo.domains.GridWorldMDP.S" title="Permalink to this definition">¶</a></dt>
 <dd><p>States of the MDP in an indexable container</p>
 </dd></dl>
 
@@ -282,17 +283,17 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GReward">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid world MDP reward function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.GRewardLFA">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GRewardLFA</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GRewardLFA</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gridworld reward using linear function approximation</p>
 <dl class="method">
 <dt id="funzo.domains.GRewardLFA.phi">
-<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA.phi" title="Permalink to this definition">¶</a></dt>
+<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GRewardLFA.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA.phi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the reward features for state-action pair</p>
 </dd></dl>
 
@@ -300,35 +301,35 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GTransition">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GTransition</code><span class="sig-paren">(</span><em>domain</em>, <em>wind=0.2</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GTransition</code><span class="sig-paren">(</span><em>domain</em>, <em>wind=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gridworld MDP controller</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.GState">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GState</code><span class="sig-paren">(</span><em>state_id</em>, <em>cell</em>, <em>status='free'</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GState</code><span class="sig-paren">(</span><em>state_id</em>, <em>cell</em>, <em>status='free'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gridworld state</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.GAction">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GAction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grirdworld action</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.PuddleWorld">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorld</code><span class="sig-paren">(</span><em>start</em>, <em>resolution=0.1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorld</code><span class="sig-paren">(</span><em>start</em>, <em>resolution=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld domain</p>
 <dl class="method">
 <dt id="funzo.domains.PuddleWorld.show_policy">
-<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld.show_policy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorld.show_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld.show_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show a policy on the interface</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.domains.PuddleWorld.terminal">
-<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld.terminal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorld.terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorld.terminal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a state is terminal</p>
 </dd></dl>
 
@@ -336,17 +337,17 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.PuddleWorldMDP">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld MDP representing the decision making process</p>
 <dl class="attribute">
 <dt id="funzo.domains.PuddleWorldMDP.A">
-<code class="descname">A</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP.A" title="Permalink to this definition">¶</a></dt>
+<code class="descname">A</code><a class="headerlink" href="#funzo.domains.PuddleWorldMDP.A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actions of the MDP in an indexable container</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="funzo.domains.PuddleWorldMDP.S">
-<code class="descname">S</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP.S" title="Permalink to this definition">¶</a></dt>
+<code class="descname">S</code><a class="headerlink" href="#funzo.domains.PuddleWorldMDP.S" title="Permalink to this definition">¶</a></dt>
 <dd><p>States of the MDP in an indexable container</p>
 </dd></dl>
 
@@ -354,31 +355,31 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.PuddleReward">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em>, <em>step_reward=0.1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleReward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em>, <em>step_reward=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleReward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function for the puddle</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.PWTransition">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PWTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld transition function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.PWState">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWState</code><span class="sig-paren">(</span><em>state_id</em>, <em>location</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWState</code><span class="sig-paren">(</span><em>state_id</em>, <em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PWState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWState" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld state</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.PWAction">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em>, <em>step=0.05</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWAction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em>, <em>step=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PWAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld action</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="funzo.domains.discretize_space">
-<code class="descclassname">funzo.domains.</code><code class="descname">discretize_space</code><span class="sig-paren">(</span><em>*extents</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.discretize_space" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">funzo.domains.</code><code class="descname">discretize_space</code><span class="sig-paren">(</span><em>*extents</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/geometry.html#discretize_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.discretize_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discretize a continuous space</p>
 <p>Transform an N-dimensional continuous space represented by linear extents
 in each axis.</p>
@@ -406,7 +407,7 @@ space</p>
 
 <dl class="function">
 <dt id="funzo.domains.distance_to_segment">
-<code class="descclassname">funzo.domains.</code><code class="descname">distance_to_segment</code><span class="sig-paren">(</span><em>point</em>, <em>line_start</em>, <em>line_end</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.distance_to_segment" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">funzo.domains.</code><code class="descname">distance_to_segment</code><span class="sig-paren">(</span><em>point</em>, <em>line_start</em>, <em>line_end</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/geometry.html#distance_to_segment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.distance_to_segment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Distance from a 2D point to a line segment</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -446,7 +447,7 @@ space</p>
 
 <dl class="function">
 <dt id="funzo.domains.edist">
-<code class="descclassname">funzo.domains.</code><code class="descname">edist</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/domains.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.edist" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">funzo.domains.</code><code class="descname">edist</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/geometry.html#edist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.edist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Euclidean distance between two 2D vectors</p>
 </dd></dl>
 

@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.planners.dp &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/development.html">Development</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>funzo.planners.dp</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for funzo.planners.dp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MDP planning using *dynamic programming* methods</span>
+
+<span class="sd">    * Policy Iteration (PI)</span>
+<span class="sd">    * Value  Iteration (VI)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Planner</span>
+<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;PolicyIteration&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ValueIteration&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="PolicyIteration"><a class="viewcode-back" href="../../../modules/planners.html#funzo.planners.PolicyIteration">[docs]</a><span class="k">class</span> <span class="nc">PolicyIteration</span><span class="p">(</span><span class="n">Planner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Policy iteration for computing optimal MDP policy</span>
+
+<span class="sd">    Standard Dynamic Programming (DP) using Bellman operator backups</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------------</span>
+<span class="sd">    max_iter : int, optional (default: 500)</span>
+<span class="sd">        Maximum number of iterations of the algorithm</span>
+<span class="sd">    epsilon : float, optional (default: 1e-08)</span>
+<span class="sd">        Threshold for policy change in policy evaluation</span>
+<span class="sd">    verbose : int, optional (default: 4)</span>
+<span class="sd">        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</span>
+<span class="sd">    random_state : :class:`numpy.RandomState`, optional (default: None)</span>
+<span class="sd">        Random number generation seed control</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ------------</span>
+<span class="sd">    _max_iter : int</span>
+<span class="sd">        Maximum number of iterations of the algorithm</span>
+<span class="sd">    _epsilon : float</span>
+<span class="sd">        Threshold for policy change in policy evaluation</span>
+<span class="sd">    _rng : :class:`numpy.RandomState`</span>
+<span class="sd">        Random number generator</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Solve the MDP using policy iteration</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------</span>
+<span class="sd">        mdp : :class:`MDP` variant or derivative</span>
+<span class="sd">            The MDP to plan on.</span>
+<span class="sd">        V_init : array-like</span>
+<span class="sd">            Initial value function</span>
+<span class="sd">        pi_init : array-like</span>
+<span class="sd">            Initial policy</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        plan : dict</span>
+<span class="sd">            Dictionary containing the optimal Q, V, pi and cR found</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">A</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="n">V_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">V_init</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pi_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pi_init</span><span class="p">)</span>
+
+        <span class="n">cum_R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">stable_policy</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">R</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stable_policy</span><span class="p">:</span>
+            <span class="n">finished</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">finished</span><span class="p">:</span>
+                <span class="n">V_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+                <span class="n">change</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+                    <span class="n">V</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">+</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">p</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">s1</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">policy</span><span class="p">[</span><span class="n">s</span><span class="p">])])</span>
+                <span class="n">change</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">V</span> <span class="o">-</span> <span class="n">V_old</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">change</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span><span class="p">:</span>
+                    <span class="n">finished</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">_compute_Q</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+            <span class="n">old_policy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">policy_change</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">policy</span> <span class="o">-</span> <span class="n">old_policy</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">policy_change</span> <span class="o">&lt;</span> <span class="mf">1e-08</span><span class="p">:</span>
+                <span class="n">stable_policy</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="n">cum_R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">R</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">policy</span><span class="p">[</span><span class="n">s</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;cR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cum_R</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ValueIteration"><a class="viewcode-back" href="../../../modules/planners.html#funzo.planners.ValueIteration">[docs]</a><span class="k">class</span> <span class="nc">ValueIteration</span><span class="p">(</span><span class="n">Planner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Value iteration for computing optimal MDP policy</span>
+
+<span class="sd">    Standard Dynamic Programming (DP) using Bellman operator backups</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------------</span>
+<span class="sd">    max_iter : int, optional (default: 500)</span>
+<span class="sd">        Maximum number of iterations of the algorithm</span>
+<span class="sd">    epsilon : float, optional (default: 1e-08)</span>
+<span class="sd">        Threshold for policy change in policy evaluation</span>
+<span class="sd">    verbose : int, optional (default: 4)</span>
+<span class="sd">        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ------------</span>
+<span class="sd">    _max_iter : int</span>
+<span class="sd">        Maximum number of iterations of the algorithm</span>
+<span class="sd">    _epsilon : float</span>
+<span class="sd">        Threshold for policy change in policy evaluation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    plan : dict</span>
+<span class="sd">        Dictionary containing the optimal Q, V and pi found</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Standard dynamic programming using  value iteration algorithm</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------</span>
+<span class="sd">        mdp : :class:`MDP` variant or derivative</span>
+<span class="sd">            The MDP to plan on.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        plan : dict</span>
+<span class="sd">            Dictionary containing the optimal Q, V and pi found</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+        <span class="n">stable</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stable</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span><span class="p">:</span>
+            <span class="n">V_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+                <span class="n">V</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">R</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">+</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> \
+                    <span class="nb">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">p</span> <span class="o">*</span> <span class="n">V_old</span><span class="p">[</span><span class="n">s1</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)])</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">actions</span><span class="p">(</span><span class="n">s</span><span class="p">)])</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">-</span> <span class="n">V_old</span><span class="p">[</span><span class="n">s</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span><span class="p">:</span>
+                <span class="n">stable</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_compute_Q</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_policy_evaluation</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the value of a policy</span>
+
+<span class="sd">    Perform Bellman backups to find the value of a policy for all states in the</span>
+<span class="sd">    MDP</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">finished</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+    <span class="k">while</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">finished</span><span class="p">:</span>
+        <span class="n">v_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+            <span class="c1"># TODO - verify policy[s] or no action</span>
+            <span class="n">value</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">R</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">+</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">p</span> <span class="o">*</span> <span class="n">value</span><span class="p">[</span><span class="n">s1</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">policy</span><span class="p">[</span><span class="n">s</span><span class="p">])])</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_old</span><span class="p">[</span><span class="n">s</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="n">finished</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_expected_utility</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The expected utility of performing `a` in `s`, using `value` &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">p</span> <span class="o">*</span> <span class="n">mdp</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">value</span><span class="p">[</span><span class="n">s1</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)])</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_Q</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the action-value function &quot;&quot;&quot;</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">A</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">A</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">:</span>
+            <span class="n">Q</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">_expected_utility</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Q</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

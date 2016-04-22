@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.models.mdp &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/development.html">Development</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>funzo.models.mdp</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for funzo.models.mdp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base abstract classes for Markov Decision Processes (MDP) and components</span>
+
+<span class="sd">These interfaces strive to define a contract for easily implementing relevant</span>
+<span class="sd">algorithms regardless of the concrete task or domain.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Hashable</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">Model</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;MDP&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RewardFunction&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LinearRewardFunction&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TabularRewardFunction&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MDPTransition&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MDPState&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MDPAction&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="MDP"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP">[docs]</a><span class="k">class</span> <span class="nc">MDP</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; Markov Decision Process (MDP) model</span>
+
+<span class="sd">    For general MDPs, states and action can be continuous making it hard to</span>
+<span class="sd">    efficiently represent them using standard data structures. In the case of</span>
+<span class="sd">    discrete MDPs, it is straightforward to use array of comparable objects to</span>
+<span class="sd">    represent the states.</span>
+
+<span class="sd">    In the continuous cases, we assume that only a sample of the state and</span>
+<span class="sd">    action spaces will be used, and these can also be represented a simple</span>
+<span class="sd">    hashable data structure (indexed by state or action ids).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------------</span>
+<span class="sd">    domain : :class:`Domain` object</span>
+<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
+<span class="sd">    discount : float</span>
+<span class="sd">        MDP discount factor in the range [0, 1)</span>
+<span class="sd">    reward : :class:`RewardFunction` object</span>
+<span class="sd">        Reward function for the MDP with all the relevant parameters</span>
+<span class="sd">    transition : :class:`MDPTransition` object</span>
+<span class="sd">        Represents the transition function for the MDP. All transition relevant</span>
+<span class="sd">        details such as stochasticity are handled therein.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ------------</span>
+<span class="sd">    _domain : :class:`Domain` object</span>
+<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        MDP discount factor</span>
+<span class="sd">    _reward : :class:`RewardFunction` object</span>
+<span class="sd">        Reward function for the MDP with all the relevant parameters</span>
+<span class="sd">    _transition : :class:`MDPTransition` object</span>
+<span class="sd">        Represents the transition function for the MDP. All transition relevant</span>
+<span class="sd">        details such as stochasticity are handled therein.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    ------</span>
+<span class="sd">    This design deliberately leaves out the details of *states* and *actions*</span>
+<span class="sd">    to be handled by the domain object which includes a reference to an MDP</span>
+<span class="sd">    object. Additionally, transitions and reward which are in general functions</span>
+<span class="sd">    are represented as separate *callable* objects with references to relevant</span>
+<span class="sd">    data needed. This allows a unified interface for both *discrete* and</span>
+<span class="sd">    *continuous* MDPs and further extensions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reward</span> <span class="o">=</span> <span class="n">reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transition</span> <span class="o">=</span> <span class="n">transition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">discount</span>
+
+<div class="viewcode-block" id="MDP.R"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP.R">[docs]</a>    <span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward function for a (state-action) pair</span>
+
+<span class="sd">        The reward for performing `action` in `state`. Additional reward</span>
+<span class="sd">        parameters can be included in the definition of the reward class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        state : int</span>
+<span class="sd">            state id for a state object in the MDP</span>
+<span class="sd">        action : int</span>
+<span class="sd">            id for an MDP action</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        reward : float</span>
+<span class="sd">            A real valued reward signal</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDP.T"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP.T">[docs]</a>    <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the transition function for a (state-action) pair</span>
+
+<span class="sd">        Perform a transition from a state using the action specified. The</span>
+<span class="sd">        result is all reachable states with their respective &quot;reach&quot;</span>
+<span class="sd">        probabilities. In the case of deterministic dynamics, the result will</span>
+<span class="sd">        contain only one of the reachable states.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        state : int</span>
+<span class="sd">            state id for a state object in the MDP</span>
+<span class="sd">        action : int</span>
+<span class="sd">            id for an MDP action</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        next_states : array-like</span>
+<span class="sd">            Array of all reachable states and their transition probabilities</span>
+<span class="sd">            i.e. :math:`\{(p, s&#39;) \\forall s&#39; \in T(s, a, \cdot) \}`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transition</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MDP.actions"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP.actions">[docs]</a>    <span class="k">def</span> <span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get actions available at a state</span>
+
+<span class="sd">        Set the set of actions available at a state. The dynamic model, T then</span>
+<span class="sd">        together with the policy induce a probability distribution over this</span>
+<span class="sd">        set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        state : int</span>
+<span class="sd">            state id for a state object in the MDP</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        a_s : array-like</span>
+<span class="sd">            The set of available actions at the given state</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDP.terminal"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP.terminal">[docs]</a>    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check if a state is terminal (absorbing) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set of states in the MDP in an hashable container &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract property&#39;</span><span class="p">)</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set of actions in the MDP in an hashable container &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract property&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reward function of the MDP &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reward</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; MDP Discount factor &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discount</span>
+
+    <span class="nd">@gamma.setter</span>
+    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; MDP Discount factor &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&gt;</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;MDP `discount` must be in [0, 1)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discount</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<span class="c1">########################################################################</span>
+
+
+<div class="viewcode-block" id="RewardFunction"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.RewardFunction">[docs]</a><span class="k">class</span> <span class="nc">RewardFunction</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; MDP reward function model</span>
+
+<span class="sd">    Rewards are as functions of state and action spaces of MDPs, i.e.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        r: \mathcal{S} \\times \mathcal{A} \longmapsto \mathbb{R}</span>
+
+<span class="sd">    Rewards for a state and action pair, :math:`r(s, a)` are accessed via</span>
+<span class="sd">    the ``__call__`` method while appropriate reward function parameters are</span>
+<span class="sd">    set in the constructor. In the :class:`MDP` object, this function will be</span>
+<span class="sd">    called via :class:`MDP.R` function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    domain : :class:`Domain` derivative object</span>
+<span class="sd">        Object reference to the domain/world of the MDP that the reward is</span>
+<span class="sd">        to be used</span>
+<span class="sd">    rmax : float, optional (default: 1.0)</span>
+<span class="sd">        Upper bound on the reward function</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    _domain : :class:`Domain` derivative object</span>
+<span class="sd">        Object reference to the domain of the MDP</span>
+<span class="sd">    _rmax : float</span>
+<span class="sd">        Reward upper bound</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="c1"># keep a reference to parent MDP to get access to domain and dynamics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rmax</span> <span class="o">=</span> <span class="n">rmax</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward function for the (state, action) pair &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Dimension of the reward function &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="RewardFunction.update_parameters"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.RewardFunction.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the parameters of the reward function model &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">kind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Type of reward function (e.g. tabular, LFA) &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract property&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reward upper bound &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rmax</span></div>
+
+
+<div class="viewcode-block" id="TabularRewardFunction"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.TabularRewardFunction">[docs]</a><span class="k">class</span> <span class="nc">TabularRewardFunction</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">RewardFunction</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; Reward function with a tabular representation</span>
+
+<span class="sd">    A basic reward function with full tabular representation, mainly suitable</span>
+<span class="sd">    for discrete and small sized domains. i.e. :math:`r(s, a) = R[s, a]` where</span>
+<span class="sd">    :math:`R` is a tensor.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">n_s</span><span class="p">,</span> <span class="n">n_a</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="c1"># If n_a is 0, assume only state based reward function</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">n_s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Number of states must be greater than 0&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_s</span> <span class="o">=</span> <span class="n">n_s</span>
+
+        <span class="k">if</span> <span class="n">n_a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">n_a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Number of actions must be greater than 0&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n_a</span> <span class="o">=</span> <span class="n">n_a</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_a</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_s</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TabularRewardFunction.update_parameters"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.TabularRewardFunction.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the internal reward representation parameters &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;reward&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reward&#39;</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>\
+                <span class="s1">&#39;New reward array shape must match reward function dimension&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">r</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Type of reward function (e.g. tabular, LFA) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;Tabular&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Dimension of the reward function &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="o">.</span><span class="n">size</span></div>
+
+
+<div class="viewcode-block" id="LinearRewardFunction"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.LinearRewardFunction">[docs]</a><span class="k">class</span> <span class="nc">LinearRewardFunction</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">RewardFunction</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; RewardFunction using linear function approximation</span>
+
+<span class="sd">    The reward funtion is define as,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        r(s, a) = \sum_i w_i \phi_i(s, a)</span>
+
+<span class="sd">    where :math:`\phi_i(s, a)` is a feature defined over state and action</span>
+<span class="sd">    spaces of the underlying MDP. The ``weights`` are the parameters of the</span>
+<span class="sd">    model and are usually assumed to sum to 1 to ensure that the reward</span>
+<span class="sd">    remains bounded, a typical assumption used in most RL planners.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_template</span> <span class="o">=</span> <span class="s1">&#39;_feature_&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Weights must be 1D arrays&#39;</span>
+
+<div class="viewcode-block" id="LinearRewardFunction.update_parameters"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.LinearRewardFunction.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the weights parameters of the reward function model &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;reward&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reward&#39;</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">w</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>\
+                <span class="s1">&#39;New weight array size must match reward function dimension&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">w</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Type of reward function (e.g. tabular, LFA) &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;LFA&#39;</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="LinearRewardFunction.phi"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.LinearRewardFunction.phi">[docs]</a>    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward features for state-action pair &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;abstract&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Dimension of the reward function in the case of LFA &quot;&quot;&quot;</span>
+        <span class="c1"># - count all class members named &#39;_feature_{x}&#39;</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_template</span><span class="p">):</span>
+                    <span class="n">dim</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># features = self.__class__.__dict__</span>
+        <span class="c1"># dim = sum([f[0].startswith(self._template) for f in features])</span>
+        <span class="k">return</span> <span class="n">dim</span></div>
+
+<span class="c1">########################################################################</span>
+
+
+<div class="viewcode-block" id="MDPTransition"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPTransition">[docs]</a><span class="k">class</span> <span class="nc">MDPTransition</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; A MDP transition function</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        T: \mathcal{S} \\times \mathcal{A} \\times \mathcal{S}</span>
+<span class="sd">        \longmapsto \mathbb{R}</span>
+
+<span class="sd">    A generic way of representing MDP transition operation for both discrete</span>
+<span class="sd">    and continuous spaces. A T function simply takes and `action` at a given</span>
+<span class="sd">    `state` and executes it based on the transition properties (which could</span>
+<span class="sd">    include stochasticity, etc)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    domain : :class:`Domain` derivative object</span>
+<span class="sd">        Object reference to the domain of the MDP that the controller is</span>
+<span class="sd">        to be used on</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    _domain : :class:`Domain` derivative object</span>
+<span class="sd">        Object reference to the domain of the underlying MDP</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Execute the transition function</span>
+
+<span class="sd">        Run the controller at `state` using `action` with optional parameters</span>
+<span class="sd">        given in `kwargs`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1">########################################################################</span>
+
+
+<div class="viewcode-block" id="MDPState"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPState">[docs]</a><span class="k">class</span> <span class="nc">MDPState</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; MDP State</span>
+
+<span class="sd">    A state in an MDP with all the relevant domain specific data. Such data</span>
+<span class="sd">    is used in the reward function and transition function for computing</span>
+<span class="sd">    various quantities. Every state must be a comparable object with an id</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="n">state_id</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; State hash function &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Implement a hash function&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; State unique identifier &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; State comparator function &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Implement equality of states&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MDPAction"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPAction">[docs]</a><span class="k">class</span> <span class="nc">MDPAction</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; MDP Action</span>
+
+<span class="sd">    An action in an MDP with all the relevant domain specific data. Such data</span>
+<span class="sd">    is used in the reward function and transition function for computing</span>
+<span class="sd">    various quantities.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="n">action_id</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Action hash function &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Implement a hash function&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Action unique identifier &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Action comparator function &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Implement equality of actions&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

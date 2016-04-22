@@ -180,7 +180,7 @@
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.models.MDP">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Markov Decision Process (MDP) model</p>
 <p>For general MDPs, states and action can be continuous making it hard to
 efficiently represent them using standard data structures. In the case of
@@ -252,13 +252,13 @@ data needed. This allows a unified interface for both <em>discrete</em> and
 </table>
 <dl class="attribute">
 <dt id="funzo.models.MDP.A">
-<code class="descname">A</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.A" title="Permalink to this definition">¶</a></dt>
+<code class="descname">A</code><a class="headerlink" href="#funzo.models.MDP.A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of actions in the MDP in an hashable container</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.MDP.R">
-<code class="descname">R</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.R" title="Permalink to this definition">¶</a></dt>
+<code class="descname">R</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP.R"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.R" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the reward function for a (state-action) pair</p>
 <p>The reward for performing <cite>action</cite> in <cite>state</cite>. Additional reward
 parameters can be included in the definition of the reward class</p>
@@ -288,13 +288,13 @@ parameters can be included in the definition of the reward class</p>
 
 <dl class="attribute">
 <dt id="funzo.models.MDP.S">
-<code class="descname">S</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.S" title="Permalink to this definition">¶</a></dt>
+<code class="descname">S</code><a class="headerlink" href="#funzo.models.MDP.S" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of states in the MDP in an hashable container</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.MDP.T">
-<code class="descname">T</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.T" title="Permalink to this definition">¶</a></dt>
+<code class="descname">T</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP.T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.T" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the transition function for a (state-action) pair</p>
 <p>Perform a transition from a state using the action specified. The
 result is all reachable states with their respective &#8220;reach&#8221;
@@ -327,7 +327,7 @@ i.e. <span class="math">\(\{(p, s') \forall s' \in T(s, a, \cdot) \}\)</span></p
 
 <dl class="method">
 <dt id="funzo.models.MDP.actions">
-<code class="descname">actions</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.actions" title="Permalink to this definition">¶</a></dt>
+<code class="descname">actions</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP.actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.actions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get actions available at a state</p>
 <p>Set the set of actions available at a state. The dynamic model, T then
 together with the policy induce a probability distribution over this
@@ -354,19 +354,19 @@ set.</p>
 
 <dl class="attribute">
 <dt id="funzo.models.MDP.gamma">
-<code class="descname">gamma</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.gamma" title="Permalink to this definition">¶</a></dt>
+<code class="descname">gamma</code><a class="headerlink" href="#funzo.models.MDP.gamma" title="Permalink to this definition">¶</a></dt>
 <dd><p>MDP Discount factor</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="funzo.models.MDP.reward">
-<code class="descname">reward</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.reward" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reward</code><a class="headerlink" href="#funzo.models.MDP.reward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function of the MDP</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.MDP.terminal">
-<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.terminal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP.terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP.terminal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a state is terminal (absorbing)</p>
 </dd></dl>
 
@@ -374,14 +374,14 @@ set.</p>
 
 <dl class="class">
 <dt id="funzo.models.MDPState">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPState</code><span class="sig-paren">(</span><em>state_id</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPState</code><span class="sig-paren">(</span><em>state_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPState" title="Permalink to this definition">¶</a></dt>
 <dd><p>MDP State</p>
 <p>A state in an MDP with all the relevant domain specific data. Such data
 is used in the reward function and transition function for computing
 various quantities. Every state must be a comparable object with an id</p>
 <dl class="attribute">
 <dt id="funzo.models.MDPState.id">
-<code class="descname">id</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPState.id" title="Permalink to this definition">¶</a></dt>
+<code class="descname">id</code><a class="headerlink" href="#funzo.models.MDPState.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>State unique identifier</p>
 </dd></dl>
 
@@ -389,14 +389,14 @@ various quantities. Every state must be a comparable object with an id</p>
 
 <dl class="class">
 <dt id="funzo.models.MDPAction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPAction</code><span class="sig-paren">(</span><em>action_id</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPAction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPAction</code><span class="sig-paren">(</span><em>action_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>MDP Action</p>
 <p>An action in an MDP with all the relevant domain specific data. Such data
 is used in the reward function and transition function for computing
 various quantities.</p>
 <dl class="attribute">
 <dt id="funzo.models.MDPAction.id">
-<code class="descname">id</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPAction.id" title="Permalink to this definition">¶</a></dt>
+<code class="descname">id</code><a class="headerlink" href="#funzo.models.MDPAction.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Action unique identifier</p>
 </dd></dl>
 
@@ -404,7 +404,7 @@ various quantities.</p>
 
 <dl class="class">
 <dt id="funzo.models.MDPTransition">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>A MDP transition function</p>
 <div class="math">
 \[T: \mathcal{S} \times \mathcal{A} \times \mathcal{S}
@@ -442,7 +442,7 @@ to be used on</p>
 
 <dl class="class">
 <dt id="funzo.models.RewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">RewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">RewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#RewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>MDP reward function model</p>
 <p>Rewards are as functions of state and action spaces of MDPs, i.e.</p>
 <div class="math">
@@ -485,19 +485,19 @@ to be used</p>
 </table>
 <dl class="attribute">
 <dt id="funzo.models.RewardFunction.kind">
-<code class="descname">kind</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction.kind" title="Permalink to this definition">¶</a></dt>
+<code class="descname">kind</code><a class="headerlink" href="#funzo.models.RewardFunction.kind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of reward function (e.g. tabular, LFA)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="funzo.models.RewardFunction.rmax">
-<code class="descname">rmax</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction.rmax" title="Permalink to this definition">¶</a></dt>
+<code class="descname">rmax</code><a class="headerlink" href="#funzo.models.RewardFunction.rmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward upper bound</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.RewardFunction.update_parameters">
-<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#RewardFunction.update_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the parameters of the reward function model</p>
 </dd></dl>
 
@@ -505,20 +505,20 @@ to be used</p>
 
 <dl class="class">
 <dt id="funzo.models.TabularRewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>n_s</em>, <em>n_a=None</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>n_s</em>, <em>n_a=None</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function with a tabular representation</p>
 <p>A basic reward function with full tabular representation, mainly suitable
 for discrete and small sized domains. i.e. <span class="math">\(r(s, a) = R[s, a]\)</span> where
 <span class="math">\(R\)</span> is a tensor.</p>
 <dl class="attribute">
 <dt id="funzo.models.TabularRewardFunction.kind">
-<code class="descname">kind</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction.kind" title="Permalink to this definition">¶</a></dt>
+<code class="descname">kind</code><a class="headerlink" href="#funzo.models.TabularRewardFunction.kind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of reward function (e.g. tabular, LFA)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.TabularRewardFunction.update_parameters">
-<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction.update_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the internal reward representation parameters</p>
 </dd></dl>
 
@@ -526,7 +526,7 @@ for discrete and small sized domains. i.e. <span class="math">\(r(s, a) = R[s, a
 
 <dl class="class">
 <dt id="funzo.models.LinearRewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">LinearRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">LinearRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#LinearRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>RewardFunction using linear function approximation</p>
 <p>The reward funtion is define as,</p>
 <div class="math">
@@ -537,19 +537,19 @@ model and are usually assumed to sum to 1 to ensure that the reward
 remains bounded, a typical assumption used in most RL planners.</p>
 <dl class="attribute">
 <dt id="funzo.models.LinearRewardFunction.kind">
-<code class="descname">kind</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction.kind" title="Permalink to this definition">¶</a></dt>
+<code class="descname">kind</code><a class="headerlink" href="#funzo.models.LinearRewardFunction.kind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of reward function (e.g. tabular, LFA)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.LinearRewardFunction.phi">
-<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction.phi" title="Permalink to this definition">¶</a></dt>
+<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#LinearRewardFunction.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction.phi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the reward features for state-action pair</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.models.LinearRewardFunction.update_parameters">
-<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/models.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_parameters</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#LinearRewardFunction.update_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction.update_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the weights parameters of the reward function model</p>
 </dd></dl>
 

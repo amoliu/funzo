@@ -163,7 +163,7 @@ These could be graphs, neural networks, etc</p>
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.representation.StateGraph">
-<em class="property">class </em><code class="descclassname">funzo.representation.</code><code class="descname">StateGraph</code><span class="sig-paren">(</span><em>state_dim</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.representation.</code><code class="descname">StateGraph</code><span class="sig-paren">(</span><em>state_dim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic state graph suited for MDPs</p>
 <p>The state graph encapsulates a flexible representation for an MDP which
 affords use of task specific constraints as well as temporally extended
@@ -203,43 +203,43 @@ actions (in the sense of hierarchical reinforcement learning, options)</p>
 </table>
 <dl class="method">
 <dt id="funzo.representation.StateGraph.add_edge">
-<code class="descname">add_edge</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>duration</em>, <em>reward</em>, <em>phi</em>, <em>traj</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.add_edge" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_edge</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>duration</em>, <em>reward</em>, <em>phi</em>, <em>traj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.add_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.add_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new edge into the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.add_node">
-<code class="descname">add_node</code><span class="sig-paren">(</span><em>nid</em>, <em>data</em>, <em>cost</em>, <em>priority</em>, <em>Q</em>, <em>V</em>, <em>pi</em>, <em>ntype</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.add_node" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>nid</em>, <em>data</em>, <em>cost</em>, <em>priority</em>, <em>Q</em>, <em>V</em>, <em>pi</em>, <em>ntype</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.add_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new node to the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.clear">
-<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.clear" title="Permalink to this definition">¶</a></dt>
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.edge_exists">
-<code class="descname">edge_exists</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.edge_exists" title="Permalink to this definition">¶</a></dt>
+<code class="descname">edge_exists</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.edge_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.edge_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if an edge already exists in the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.edges">
-<code class="descname">edges</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.edges" title="Permalink to this definition">¶</a></dt>
+<code class="descname">edges</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the edges of a node</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.filter_nodes_by_type">
-<code class="descname">filter_nodes_by_type</code><span class="sig-paren">(</span><em>ntype</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.filter_nodes_by_type" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filter_nodes_by_type</code><span class="sig-paren">(</span><em>ntype</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.filter_nodes_by_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.filter_nodes_by_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter nodes by node type</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.find_neighbors_data">
-<code class="descname">find_neighbors_data</code><span class="sig-paren">(</span><em>c</em>, <em>distance</em>, <em>metric=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_neighbors_data</code><span class="sig-paren">(</span><em>c</em>, <em>distance</em>, <em>metric=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.find_neighbors_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find node neighbors based on distance between <cite>data</cite> attribute</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -274,7 +274,7 @@ If <cite>None</cite>, Euclidean distance will be used</p>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.find_neighbors_k">
-<code class="descname">find_neighbors_k</code><span class="sig-paren">(</span><em>nid</em>, <em>k</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_k" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_neighbors_k</code><span class="sig-paren">(</span><em>nid</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.find_neighbors_k"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_k" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find k nearest neighbors based on Euclidean distance</p>
 <p>The Euclidean distance is computed based on the <cite>data</cite> attribute</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -303,7 +303,7 @@ If <cite>None</cite>, Euclidean distance will be used</p>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.find_neighbors_range">
-<code class="descname">find_neighbors_range</code><span class="sig-paren">(</span><em>nid</em>, <em>distance</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_range" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_neighbors_range</code><span class="sig-paren">(</span><em>nid</em>, <em>distance</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.find_neighbors_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.find_neighbors_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find neighboring nodes within a distance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -333,13 +333,13 @@ If <cite>None</cite>, Euclidean distance will be used</p>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.gea">
-<code class="descname">gea</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.gea" title="Permalink to this definition">¶</a></dt>
+<code class="descname">gea</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.gea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.gea" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a single attribute of a single edge</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.get_signal">
-<code class="descname">get_signal</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.get_signal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_signal</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.get_signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.get_signal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve a graph signal from the nodes</p>
 <p>The signals correspond to the node attributes in the graph. For Q
 values, the signal is a list of lists, each of varying lengths since
@@ -366,7 +366,7 @@ the number of edges vary per node.</p>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.gna">
-<code class="descname">gna</code><span class="sig-paren">(</span><em>node_id</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.gna" title="Permalink to this definition">¶</a></dt>
+<code class="descname">gna</code><span class="sig-paren">(</span><em>node_id</em>, <em>attribute</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.gna"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.gna" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a single attribute of a single node</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -382,55 +382,55 @@ the number of edges vary per node.</p>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.load_graph">
-<code class="descname">load_graph</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.load_graph" title="Permalink to this definition">¶</a></dt>
+<code class="descname">load_graph</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.load_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.load_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a graph from file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.neighbors">
-<code class="descname">neighbors</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.neighbors" title="Permalink to this definition">¶</a></dt>
+<code class="descname">neighbors</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.neighbors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the connected node neighbors</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.out_edges">
-<code class="descname">out_edges</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.out_edges" title="Permalink to this definition">¶</a></dt>
+<code class="descname">out_edges</code><span class="sig-paren">(</span><em>nid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.out_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.out_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the outgoing edges of a node</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.remove_edge">
-<code class="descname">remove_edge</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.remove_edge" title="Permalink to this definition">¶</a></dt>
+<code class="descname">remove_edge</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.remove_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.remove_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove an edge from the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.remove_node">
-<code class="descname">remove_node</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.remove_node" title="Permalink to this definition">¶</a></dt>
+<code class="descname">remove_node</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.remove_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.remove_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a node from the graph</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.save_graph">
-<code class="descname">save_graph</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.save_graph" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save_graph</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.save_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.save_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the graph to file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.sea">
-<code class="descname">sea</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.sea" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sea</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.sea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.sea" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a single attribute of a edge between source and target</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.search_path">
-<code class="descname">search_path</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.search_path" title="Permalink to this definition">¶</a></dt>
+<code class="descname">search_path</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.search_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.search_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for a path from <code class="docutils literal"><span class="pre">source</span></code> to <code class="docutils literal"><span class="pre">target</span></code> using A*</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.representation.StateGraph.sna">
-<code class="descname">sna</code><span class="sig-paren">(</span><em>node_id</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.sna" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sna</code><span class="sig-paren">(</span><em>node_id</em>, <em>attribute</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/representation/state_graph.html#StateGraph.sna"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.sna" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a single attribute of a node</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -447,7 +447,7 @@ the number of edges vary per node.</p>
 
 <dl class="attribute">
 <dt id="funzo.representation.StateGraph.transition_matrix">
-<code class="descname">transition_matrix</code><a class="reference external" href="https://github.com/makokal/funzo/blob/v0.1.0/funzo/representation.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.representation.StateGraph.transition_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transition_matrix</code><a class="headerlink" href="#funzo.representation.StateGraph.transition_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the transition matrix T(s, a, s&#8217;)</p>
 <p>Obtained from the adjacency matrix of the underlying graph</p>
 </dd></dl>

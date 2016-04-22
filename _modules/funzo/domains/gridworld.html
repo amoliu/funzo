@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.domains.gridworld &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/development.html">Development</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>funzo.domains.gridworld</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for funzo.domains.gridworld</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">GridWorld Domain</span>
+
+<span class="sd">An agent moves in the world using a choice of 5 actions:</span>
+<span class="sd">(LEFT, RIGHT, UP, DOWN and STAY).</span>
+
+<span class="sd">The agent gets a reward that based on the action taken (i.e. depending on the</span>
+<span class="sd">resulting state). The goal state provides a large positive reward, obstacles</span>
+<span class="sd">provide large negative reward whiles the remaining states incur a small</span>
+<span class="sd">constant negative reward (the cost of movement). Additionally, actions that</span>
+<span class="sd">make the agent go outside of the domain limits incur a negative cost</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Rectangle</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Domain</span>
+
+<span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">MDP</span>
+<span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="n">LinearRewardFunction</span>
+<span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">MDPTransition</span><span class="p">,</span> <span class="n">MDPState</span><span class="p">,</span> <span class="n">MDPAction</span>
+
+<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;GridWorldMDP&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GridWorld&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GReward&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GRewardLFA&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1">#############################################################################</span>
+
+<span class="c1"># Cell status</span>
+<span class="n">FREE</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span>
+<span class="n">OBSTACLE</span> <span class="o">=</span> <span class="s1">&#39;obstacle&#39;</span>
+<span class="n">TERMINAL</span> <span class="o">=</span> <span class="s1">&#39;terminal&#39;</span>
+
+
+<div class="viewcode-block" id="GReward"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GReward">[docs]</a><span class="k">class</span> <span class="nc">GReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Grid world MDP reward function &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span>
+                                      <span class="n">n_s</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">states</span><span class="p">),</span>
+                                      <span class="n">rmax</span><span class="o">=</span><span class="n">rmax</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">state_</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">elif</span> <span class="n">state_</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">OBSTACLE</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.01</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">reward</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate reward function &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="GRewardLFA"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">GRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gridworld reward using linear function approximation &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GRewardLFA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="n">rmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate reward function &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># get the resulting state to determine if movement occurred</span>
+        <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
+
+        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">s_p</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GRewardLFA.phi"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA.phi">[docs]</a>    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward features for state-action pair &quot;&quot;&quot;</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature_free</span><span class="p">(</span><span class="n">state_</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_obstacle</span><span class="p">(</span><span class="n">state_</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_goal</span><span class="p">(</span><span class="n">state_</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">phi</span></div>
+
+    <span class="k">def</span> <span class="nf">_feature_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check if the agent is at the goal position &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">_feature_obstacle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check is the agent is in a OBSTACLE cell &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">OBSTACLE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">_feature_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check is the agent is in a free cell &quot;&quot;&quot;</span>
+        <span class="c1"># Terminal state is always free by definition</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">FREE</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+<span class="c1">#############################################################################</span>
+
+
+<div class="viewcode-block" id="GTransition"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GTransition">[docs]</a><span class="k">class</span> <span class="nc">GTransition</span><span class="p">(</span><span class="n">MDPTransition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gridworld MDP controller &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">wind</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GTransition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span> <span class="o">=</span> <span class="n">wind</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        A list of all possible next states [(prob, state)]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">action_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+        <span class="n">p_s</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span>
+        <span class="n">p_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">p_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="n">state_</span><span class="p">,</span> <span class="n">action_</span><span class="p">)),</span>
+                <span class="p">(</span><span class="n">p_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="n">state_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span><span class="p">(</span><span class="n">action_</span><span class="p">,</span> <span class="n">A</span><span class="p">))),</span>
+                <span class="p">(</span><span class="n">p_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="n">state_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span><span class="p">(</span><span class="n">action_</span><span class="p">,</span> <span class="n">A</span><span class="p">)))]</span>
+
+    <span class="k">def</span> <span class="nf">_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the state that results from going in this direction.</span>
+
+<span class="sd">        Stay in the same state if action os leading to go outside the world or</span>
+<span class="sd">        to obstacles</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        new_state : int</span>
+<span class="sd">            Id of the new state after transition (which can be the current</span>
+<span class="sd">            state, if transition leads to outside of the world)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_coords</span> <span class="o">=</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">action</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                      <span class="n">state</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">action</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">new_coords</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">state_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">state_map</span><span class="p">[</span><span class="n">new_coords</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">state_map</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">cell</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_heading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heading</span><span class="p">,</span> <span class="n">inc</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">directions</span><span class="p">[(</span><span class="n">directions</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">heading</span><span class="p">)</span> <span class="o">+</span> <span class="n">inc</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">directions</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heading</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heading</span><span class="p">(</span><span class="n">heading</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">directions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heading</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heading</span><span class="p">(</span><span class="n">heading</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">directions</span><span class="p">)</span></div>
+
+
+<span class="c1">#############################################################################</span>
+
+
+<div class="viewcode-block" id="GState"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GState">[docs]</a><span class="k">class</span> <span class="nc">GState</span><span class="p">(</span><span class="n">MDPState</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gridworld state &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_id</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">FREE</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">state_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">__hash__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;({}, {}, {})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GAction"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GAction">[docs]</a><span class="k">class</span> <span class="nc">GAction</span><span class="p">(</span><span class="n">MDPAction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Grirdworld action &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_id</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">action_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">__hash__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;[{}, {}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span></div>
+
+
+<span class="c1">#############################################################################</span>
+
+
+<div class="viewcode-block" id="GridWorld"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld">[docs]</a><span class="k">class</span> <span class="nc">GridWorld</span><span class="p">(</span><span class="n">Domain</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GridWorld domain</span>
+
+<span class="sd">    A discrete world with cells (free, obstacles, and goal). The main task</span>
+<span class="sd">    is to find a path from any start cell to a goal cell. The start, goal</span>
+<span class="sd">    and obstacle cells are specified using a matrix or list of lists.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmap</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gmap</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gmap</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;`gmap` must be a two dimensional array&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gmap</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gmap</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">gmap</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">,</span> <span class="s1">&#39;Only square grids supported&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># simple inverse map for transition</span>
+
+        <span class="n">state_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">gmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">GState</span><span class="p">(</span><span class="n">state_id</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">OBSTACLE</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">gmap</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">GState</span><span class="p">(</span><span class="n">state_id</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">TERMINAL</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">GState</span><span class="p">(</span><span class="n">state_id</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">FREE</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">state_map</span><span class="p">[(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">state_id</span>
+                <span class="n">state_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="GridWorld.terminal"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.terminal">[docs]</a>    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check if a state is terminal&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;terminal&#39;</span></div>
+
+    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_visuals</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;policy&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_policy</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">ax</span>
+
+<div class="viewcode-block" id="GridWorld.in_domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.in_domain">[docs]</a>    <span class="k">def</span> <span class="nf">in_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check if a cell is in the domain &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_map</span></div>
+
+    <span class="k">def</span> <span class="nf">_setup_visuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup the visual front end for gridworld</span>
+
+<span class="sd">        Visuals implemented with y axis flipped upside down to match with</span>
+<span class="sd">        the array representation in numpy</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cz</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># cell size in matplotlib units</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">OBSTACLE</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">i</span> <span class="o">*</span> <span class="n">cz</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="n">cz</span><span class="p">),</span> <span class="n">cz</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span>
+                              <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;#b91d47&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;#2b5797&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">s</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">i</span> <span class="o">*</span> <span class="n">cz</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="n">cz</span><span class="p">),</span> <span class="n">cz</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span>
+                              <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;#00a300&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;#2b5797&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">i</span> <span class="o">*</span> <span class="n">cz</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="n">cz</span><span class="p">),</span> <span class="n">cz</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span>
+                              <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;#2b5797&#39;</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+        <span class="k">return</span> <span class="n">ax</span>
+
+<div class="viewcode-block" id="GridWorld.show_policy"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.show_policy">[docs]</a>    <span class="k">def</span> <span class="nf">show_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Show a policy on the gridworld interface &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">),</span>\
+                <span class="s1">&#39;Policy not compatible with state space dimensions&#39;</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">policy</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">rightarrow$&#39;</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">uparrow$&#39;</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">leftarrow$&#39;</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">downarrow$&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+                <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">ss</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.3</span><span class="p">),</span>
+                        <span class="n">text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+<div class="viewcode-block" id="GridWorld.generate_trajectories"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.generate_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">generate_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">starts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                              <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate trajectories of varying lengths using a policy &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Number of trajectories must be greater than zero&#39;</span>
+        <span class="k">if</span> <span class="n">starts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">),</span>\
+                <span class="s1">&#39;{} expects an iterable for *starts*&#39;</span>\
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_trajectories</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span>
+
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">trajs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="n">traj</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">starts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pick_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">starts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">max_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_len</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+                <span class="n">next_state</span> <span class="o">=</span> <span class="n">controller</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">state</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>  <span class="c1"># FIXME</span>
+
+            <span class="n">trajs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trajs</span></div>
+
+    <span class="k">def</span> <span class="nf">_pick_random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+
+<div class="viewcode-block" id="GridWorldMDP"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorldMDP">[docs]</a><span class="k">class</span> <span class="nc">GridWorldMDP</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Grid world MDP representing the decision making process &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GridWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span>
+                                           <span class="n">reward</span><span class="p">,</span>
+                                           <span class="n">transition</span><span class="p">,</span>
+                                           <span class="n">discount</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; States of the MDP in an indexable container &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Actions of the MDP in an indexable container &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
