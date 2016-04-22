@@ -5,4 +5,3 @@ six
 nose
 tqdm
 networkx
-h5py
