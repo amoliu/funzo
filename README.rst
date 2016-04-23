@@ -1,9 +1,6 @@
 .. image:: https://img.shields.io/travis/makokal/funzo.svg
         :target: https://travis-ci.org/makokal/funzo
 
-.. image:: https://circleci.com/gh/makokal/funzo.svg?style=svg
-        :target: https://circleci.com/gh/makokal/funzo
-
 .. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master
     :target: https://coveralls.io/github/makokal/funzo?branch=master
 
@@ -12,22 +9,25 @@
 
 funzo
 ============
-Python toolkit for inverse reinforcement learning (IRL). Documentation: `http://makokal.github.io/funzo/ <http://makokal.github.io/funzo/>`__
+Python toolkit for (inverse) reinforcement learning (IRL). This toolkit strives for flexible interfaces enabling generic implementations of standard algorithms for RL and IRL.
+
+Documentation: `http://makokal.github.io/funzo/ <http://makokal.github.io/funzo/>`__
 
 Features
 ---------
 * Flexible interfaces allowing easy extensions
 * Inverse Reinforcement Learning
-    - Bayesian IRL (including TBIRL for finite and infinite domains)
+    - Bayesian IRL
 * RL Domains
     - GridWorld (discrete)
     - PuddleWorld (continuous)
     - Social Navigation (continuous)
 * MDP solvers
-    - Exact methods, PI, VI
+    - Policy Iteration
+    - Value Iteration
 
 
-Example
+Usage
 ------------
 See `examples <examples>`_ folder.
 

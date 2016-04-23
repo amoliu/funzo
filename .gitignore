@@ -47,3 +47,5 @@ docs/generated
 notebooks
 .pypirc
 .DS_Store
+docs/auto_examples
+docs/modules/generated

@@ -1,7 +1,4 @@
-Welcome to funzo!
-======================================
-
-funzo is a library for learning from demonstration with special focus on Inverse Reinforcement Learning (IRL) algorithms.
+**funzo** is a library for learning from demonstration with special focus on Inverse Reinforcement Learning (IRL) algorithms.
 
 funzo is a work in progress, and as such inputs are gladly welcome. The documentation is an ongoing effort, but the full code is available on `Github`_.
 
