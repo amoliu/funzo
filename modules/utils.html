@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.utils &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../index.html"/>
+        <link rel="prev" title="funzo.representation" href="representation.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/development.html">Development</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">funzo.utils</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/modules/utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-funzo.utils">
+<span id="funzo-utils"></span><h1><a class="reference internal" href="#module-funzo.utils" title="funzo.utils"><code class="xref py py-mod docutils literal"><span class="pre">funzo.utils</span></code></a><a class="headerlink" href="#module-funzo.utils" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-funzo.utils" title="funzo.utils"><code class="xref py py-mod docutils literal"><span class="pre">funzo.utils</span></code></a> module contains general helper functions and classes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.utils.Trace" title="funzo.utils.Trace"><code class="xref py py-obj docutils literal"><span class="pre">Trace</span></code></a>([variables,&nbsp;save_interval])</td>
+<td>Iterative data store</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="detailed-descriptions">
+<h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="funzo.utils.Trace">
+<em class="property">class </em><code class="descclassname">funzo.utils.</code><code class="descname">Trace</code><span class="sig-paren">(</span><em>variables=None</em>, <em>save_interval=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/utils/data_structures.html#Trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterative data store</p>
+<p>Data structure for storing progress logs of various iterative algorithms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save_interval</strong> : int, optional (default: 100)</p>
+<blockquote>
+<div><p>No. of iterations before a periodic save of current data</p>
+</div></blockquote>
+<p><strong>variables</strong> : list of string or str, optional (default: None)</p>
+<blockquote class="last">
+<div><p>Names of all the variables stored, a single variable name</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>_save_interval</td>
+<td>(int) No. of iterations before a periodic save of current data. Zero means no periodic saves</td>
+</tr>
+<tr class="row-even"><td>_variables</td>
+<td>(list of string) Names of all the variables stored</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="funzo.utils.Trace.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/utils/data_structures.html#Trace.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a trace from file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.utils.Trace.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/utils/data_structures.html#Trace.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the trace to visually inspect convergence</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.utils.Trace.record">
+<code class="descname">record</code><span class="sig-paren">(</span><em>**entry</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/utils/data_structures.html#Trace.record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record new data into the trace</p>
+<p>Allows asynchronous recording of only select variables. Adding an index
+variable then helps to later align data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.utils.Trace.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>filename='trace'</em>, <em>final=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/utils/data_structures.html#Trace.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.utils.Trace.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save trace as an HDF5 file with groups</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="funzo.utils.Trace.vars">
+<code class="descname">vars</code><a class="headerlink" href="#funzo.utils.Trace.vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variables in the trace data store</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="representation.html" class="btn btn-neutral" title="funzo.representation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
