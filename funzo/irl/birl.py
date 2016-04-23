@@ -47,6 +47,9 @@ class BIRL(IRLSolver):
     beta : float, optional (default=0.7)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
+    random_state : :class:`numpy.RandomState`, optional (default: None)
+        Random number generation seed control
+
 
     Attributes
     ----------
@@ -55,6 +58,10 @@ class BIRL(IRLSolver):
     _beta : float, optional (default=0.9)
         Expert optimality parameter for the reward likelihood term in the
         product of exponential distributions
+    _rng : :class:`numpy.RandomState`
+        Random number generator
+    _inference : str
+        Inference procedure
 
     """
 
@@ -79,17 +86,20 @@ class BIRL(IRLSolver):
             raise ValueError('Reward steps (delta) must be in (0, 1)')
         self._delta = delta
 
-    def solve(self, mdp, demos):
+    def solve(self, demos, mdp=None):
         """ Solve the BIRL problem """
+        if mdp is None:
+            raise ValueError('BIRL requires an MDP model')
+
         v = ['step', 'r', 'r_mean', 'sample', 'a_ratio']
         trace = Trace(v, save_interval=self._max_iter//2)
 
         if self._inference == 'PW':
-            return self.policy_walk(mdp, demos, trace)
+            return self._policy_walk(mdp, demos, trace)
         elif self._inference == 'MAP':
-            return self.find_map(mdp, demos, trace)
+            return self._find_map(mdp, demos, trace)
 
-    def policy_walk(self, mdp, demos, trace):
+    def _policy_walk(self, mdp, demos, trace):
         """ Find the reward using PolicyWalk """
 
         self._proposal = PolicyWalkProposal(dim=len(mdp.reward),
@@ -100,7 +110,7 @@ class BIRL(IRLSolver):
 
         r_mean = np.array(r)
         for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
-            r_new = self._proposal(r)
+            r_new = self._proposal.step(r)
             plan_r_new = self._solve_mdp(mdp, r_new, plan_r['V'], plan_r['pi'])
             p_accept = self._acceptance_ratio(mdp, demos, r, r_new,
                                               plan_r['Q'], plan_r_new['Q'])
@@ -114,7 +124,7 @@ class BIRL(IRLSolver):
                              a_ratio=p_accept)
         return trace
 
-    def find_map(self, mdp, demos, trace):
+    def _find_map(self, mdp, demos, trace):
         """ Find the reward by direct MAP estimation """
 
         trace.add_vars(['f', 'r_map'])
@@ -152,7 +162,9 @@ class BIRL(IRLSolver):
         return r
 
     def _acceptance_ratio(self, mdp, demos, r, r_new, Q_r, Q_r_new):
-        ratio = np.prod(np.true_divide(self._prior(r_new), self._prior(r)))
+        """ Compute the PolicyWalk acceptance ratio """
+        ratio = np.prod(np.true_divide(self._prior.pdf(r_new),
+                                       self._prior.pdf(r)))
         for traj in demos:
             if len(traj) > 0:
                 for (s, a) in traj:
@@ -217,7 +229,8 @@ class Proposal(object):
         self.dim = dim
 
     @abstractmethod
-    def __call__(self, location):
+    def step(self, location):
+        """ Take a single MCMC chain step """
         raise NotImplementedError('abstract')
 
 
@@ -233,7 +246,20 @@ class PolicyWalkProposal(Proposal):
         self.rmax = rmax
         self.rng = check_random_state(random_state)
 
-    def __call__(self, location):
+    def step(self, location):
+        """ Take a single MCMC chain step
+
+        PolicyWalk takes steps in the grid defined by,
+
+        .. math::
+
+            \mathbb{R}^{|R|} / \delta
+
+        where :math:`|R|` is the dimension of the reward space, which can get
+        very large. In this case a lot of samples are needed before the MCMC
+        chain converges.
+
+        """
         sample = np.array(location)
         d = self.rng.choice([-self.delta, self.delta])
         i = self.rng.randint(self.dim)
@@ -264,15 +290,32 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
         self._dim = dim
 
     @abstractmethod
-    def __call__(self, r):
+    def pdf(self, r):
+        """ Evaluate the pdf of the reward prior distribution
+
+        .. math::
+
+            p(r \in A) = \int_A f d\mu
+
+        for any :math:`A \in \mathcal{A}`, given some measurable space :math:`(\mathcal{X}, \mathcal{A})` and a measure :math:`\mu`.
+
+        """
         raise NotImplementedError('Abstract method')
 
     @abstractmethod
     def log_p(self, r):
+        """ Evaluate the logpdf of the reward prior distribution """
         raise NotImplementedError('Abstract method')
 
     @abstractmethod
     def sample(self):
+        """ Generate a sample from the reward prior distribution
+
+        .. math::
+
+            r \sim f_{\\theta}
+
+        """
         raise NotImplementedError('Abstract method')
 
 
@@ -284,11 +327,20 @@ class GaussianRewardPrior(RewardPrior):
         self._mu = np.ones(self._dim) * mean
         # TODO - allow different covariance shapes, and full mean vectors
 
-    def __call__(self, r):
+    def pdf(self, r):
+        """ Evaluate the pdf of the reward prior distribution """
         return multivariate_normal.pdf(r, mean=self._mu, cov=self._cov)
 
     def log_p(self, r):
+        """ Evaluate the logpdf of the reward prior distribution """
         return multivariate_normal.logpdf(r, mean=self._mu, cov=self._cov)
 
     def sample(self):
+        """ Generate a sample from the reward prior distribution
+
+        .. math::
+
+            r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})
+
+        """
         return multivariate_normal.rvs(mean=self._mu, cov=self._cov, size=1)

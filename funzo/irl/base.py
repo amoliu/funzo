@@ -59,8 +59,10 @@ class Loss(six.with_metaclass(ABCMeta, Model)):
         self.name = name
 
     @abstractmethod
-    def __call__(self, r_e, r_pi, **kwargs):
+    def evaluate(self, r_e, r_pi, **kwargs):
+        """ Evaluate the loss function """
         # TODO - May enforce implementation with ufuncs ?
+        # TODO - vectorize ?
         raise NotImplementedError('abstract')
 
 
@@ -71,7 +73,7 @@ class PolicyLoss(Loss):
 
         L_p = || V^*(r) - V^{\pi}(r) ||_p
 
-    Roughly corresponds to apprenticeship learning
+    Suited for apprenticeship learning (AL) scenarios
 
     """
     def __init__(self, mdp, planner, order=2):
@@ -86,8 +88,8 @@ class PolicyLoss(Loss):
         self._vpi = None
         self._pi_pi = None
 
-    def __call__(self, r_e, r_pi, **kwargs):
-        """ Compute the policy loss """
+    def evaluate(self, r_e, r_pi, **kwargs):
+        """ Evaluate the policy loss """
         self._mdp.reward.update_parameters(reward=r_e)
         plan_e = self._planner(self._mdp, self._ve, self._pi_e)
         self._ve = plan_e['V']
@@ -108,13 +110,17 @@ class RewardLoss(Loss):
 
         L_p = || r_e - r_{\pi} ||_p
 
+    More appropriate in reward learning scenarios as opposed to apprenticeship
+    learning. The reward is generally accepted as being a more succint
+    representation of behavior and more transferable.
+
     """
     def __init__(self, order=2):
         super(RewardLoss, self).__init__(name='reward_loss')
         self._p = order
 
-    def __call__(self, r_e, r_pi, **kwargs):
-        """ Compute the policy loss """
+    def evaluate(self, r_e, r_pi, **kwargs):
+        """ Evaluate the reward loss """
         r_e = np.asarray(r_e)
         r_pi = np.asarray(r_pi)
         if r_e.shape != r_pi.shape:

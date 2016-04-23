@@ -57,10 +57,10 @@ def main():
     V = r_plan['V']
 
     # compute the loss
-    loss_func = RewardLoss(order=2)
-    # loss_func = PolicyLoss(mdp=g, planner=planner, order=2)
-    loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
-    loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
+    L = RewardLoss(order=2)
+    # L = PolicyLoss(mdp=g, planner=planner, order=2)
+    loss = [L.evaluate(w_expert, w_pi) for w_pi in trace['r']]
+    loss_m = [L.evaluate(w_expert, w_pi) for w_pi in trace['r_mean']]
 
     # ------------------------
     fig = plt.figure(figsize=(8, 8))

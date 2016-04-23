@@ -27,9 +27,9 @@ class PolicyIteration(Planner):
 
     Parameters
     ------------
-    max_iter : int, optional (default: 500)
+    max_iter : int, optional (default: 200)
         Maximum number of iterations of the algorithm
-    epsilon : float, optional (default: 1e-08)
+    epsilon : float, optional (default: 1e-05)
         Threshold for policy change in policy evaluation
     random_state : :class:`numpy.RandomState`, optional (default: None)
         Random number generation seed control
@@ -44,11 +44,12 @@ class PolicyIteration(Planner):
     _rng : :class:`numpy.RandomState`
         Random number generator
     pi_t_ : array-like
-        Intermediate policies during the iterative run
+        Intermediate policies for the iteration steps. Can be used to check the
+        convergence properties of the algorithm empirically
 
     See Also
     ----------
-    PolicyIteration : MDP planning using policy iteration algorithm
+    ValueIteration : MDP planning using value iteration algorithm
 
     References
     ------------
@@ -65,7 +66,7 @@ class PolicyIteration(Planner):
 
         Parameters
         ------------
-        mdp : :class:`MDP` variant or derivative
+        mdp : :class:`MDP` instance
             The MDP to plan on.
         V_init : array-like
             Initial value function
@@ -131,9 +132,9 @@ class ValueIteration(Planner):
 
     Parameters
     ------------
-    max_iter : int, optional (default: 500)
+    max_iter : int, optional (default: 200)
         Maximum number of iterations of the algorithm
-    epsilon : float, optional (default: 1e-08)
+    epsilon : float, optional (default: 1e-05)
         Threshold for policy change in policy evaluation
 
     Attributes
@@ -166,7 +167,7 @@ class ValueIteration(Planner):
 
         Parameters
         ------------
-        mdp : :class:`MDP` variant or derivative
+        mdp : :class:`MDP` instance
             The MDP to plan on.
         V_init : array-like
             Initial value function
