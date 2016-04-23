@@ -18,6 +18,6 @@ class Planner(six.with_metaclass(ABCMeta, Model)):
     """
 
     @abstractmethod
-    def __call__(self, mdp, V_init=None, pi_init=None):
+    def solve(self, mdp, V_init=None, pi_init=None):
         """ Run the planner on a MDP to get the policy """
         raise NotImplementedError('Abstract method')

@@ -44,7 +44,7 @@ class IRLSolver(six.with_metaclass(ABCMeta, Model)):
     def _solve_mdp(self, mdp, r, V_init=None, pi_init=None):
         """ Solve and MDP using a given reward function """
         mdp.reward.update_parameters(reward=r)
-        plan = self._mdp_planner(mdp, V_init, pi_init)
+        plan = self._mdp_planner.solve(mdp, V_init, pi_init)
         return plan
 
 

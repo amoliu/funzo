@@ -31,8 +31,6 @@ class PolicyIteration(Planner):
         Maximum number of iterations of the algorithm
     epsilon : float, optional (default: 1e-08)
         Threshold for policy change in policy evaluation
-    verbose : int, optional (default: 4)
-        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)
     random_state : :class:`numpy.RandomState`, optional (default: None)
         Random number generation seed control
 
@@ -45,16 +43,25 @@ class PolicyIteration(Planner):
         Threshold for policy change in policy evaluation
     _rng : :class:`numpy.RandomState`
         Random number generator
+    pi_t_ : array-like
+        Intermediate policies during the iterative run
+
+    See Also
+    ----------
+    PolicyIteration : MDP planning using policy iteration algorithm
+
+    References
+    ------------
+    "Reinforcement Learning: An introduction", Sutton R. and Barto A., MIT Press
 
     """
-    def __init__(self, max_iter=200, epsilon=1e-05, verbose=4,
-                 random_state=None):
+    def __init__(self, max_iter=200, epsilon=1e-05, random_state=None):
         self._max_iter = max_iter
         self._epsilon = epsilon
         self._rng = check_random_state(random_state)
 
-    def __call__(self, mdp, V_init=None, pi_init=None):
-        """ Solve the MDP using policy iteration
+    def solve(self, mdp, V_init=None, pi_init=None):
+        """ Run the policy iteration algorithm
 
         Parameters
         ------------
@@ -71,21 +78,24 @@ class PolicyIteration(Planner):
             Dictionary containing the optimal Q, V, pi and cR found
 
         """
-        V = np.zeros(len(mdp.S))
-        policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
-
         if V_init is not None:
             V = np.array(V_init)
+        else:
+            V = np.zeros(len(mdp.S))
 
         if pi_init is not None:
             policy = np.array(pi_init)
+        else:
+            policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
 
-        cum_R = list()
-
-        stable_policy = False
         R = mdp.R
         T = mdp.T
-        while not stable_policy:
+        self.pi_t_ = list()
+
+        stable_policy = False
+        step = 0
+        self.pi_t_.append(policy)
+        while not stable_policy and step < self._max_iter:
             finished = False
             while not finished:
                 V_old = np.array(V)
@@ -104,14 +114,13 @@ class PolicyIteration(Planner):
             if policy_change < 1e-08:
                 stable_policy = True
 
-            cum_R.append(np.sum(mdp.R(s, policy[s]) for s in mdp.S))
+            step += 1
+            self.pi_t_.append(policy)
 
         result = dict()
         result['pi'] = np.asarray(policy)
         result['V'] = V
         result['Q'] = Q
-        result['cR'] = cum_R
-
         return result
 
 
@@ -126,8 +135,6 @@ class ValueIteration(Planner):
         Maximum number of iterations of the algorithm
     epsilon : float, optional (default: 1e-08)
         Threshold for policy change in policy evaluation
-    verbose : int, optional (default: 4)
-        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)
 
     Attributes
     ------------
@@ -141,18 +148,31 @@ class ValueIteration(Planner):
     plan : dict
         Dictionary containing the optimal Q, V and pi found
 
+    See Also
+    ----------
+    PolicyIteration : MDP planning using policy iteration algorithm
+
+    References
+    ------------
+    "Reinforcement Learning: An introduction", Sutton R. and Barto A., MIT Press
+
     """
     def __init__(self, max_iter=200, epsilon=1e-05, verbose=4):
         self._max_iter = max_iter
         self._epsilon = epsilon
 
-    def __call__(self, mdp):
-        """ Standard dynamic programming using  value iteration algorithm
+    def solve(self, mdp, V_init=None, pi_init=None):
+        """ Run the value iteration algorithm
 
         Parameters
         ------------
         mdp : :class:`MDP` variant or derivative
             The MDP to plan on.
+        V_init : array-like
+            Initial value function
+        pi_init : array-like
+            Initial policy
+
 
         Returns
         --------

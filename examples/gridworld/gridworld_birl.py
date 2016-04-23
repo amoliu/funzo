@@ -20,33 +20,24 @@ from funzo.irl.birl import GaussianRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
 
-SEED = None
+SEED = 42
 
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
     w_expert = np.array([-0.01, -3.0, 1.0])
-    # w_expert = np.array([-3.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
     world = GridWorld(gmap=gmap)
-    RMAX = 1.0
-
-    rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=RMAX)
+    rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=1.0)
     T = GTransition(domain=world)
     g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
 
     # ------------------------
-    planner = PolicyIteration(verbose=2)
-    plan = planner(g)
+    planner = PolicyIteration(random_state=SEED)
+    plan = planner.solve(g)
     policy = plan['pi']
 
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.gca()
-    ax = world.visualize(ax, policy=policy)
-    plt.show()
-
-    # demos = np.load('demos.npy')
     demos = world.generate_trajectories(policy, num=150, random_state=SEED)
 
     # IRL
@@ -58,17 +49,16 @@ def main():
     trace = irl_solver.solve(mdp=g, demos=demos)
     trace.save('pw_trace')
     r = trace['r_mean'][-1]
-    # r = trace['r_map'][-1]
 
     g.reward.update_parameters(reward=r)
-    r_plan = planner(g)
+    r_plan = planner.solve(g)
     print(r_plan['pi'])
     print('Found reward: {}'.format(r))
     V = r_plan['V']
 
     # compute the loss
-    # loss_func = RewardLoss(order=2)
-    loss_func = PolicyLoss(mdp=g, planner=planner, order=2)
+    loss_func = RewardLoss(order=2)
+    # loss_func = PolicyLoss(mdp=g, planner=planner, order=2)
     loss = [loss_func(w_expert, w_pi) for w_pi in trace['r']]
     loss_m = [loss_func(w_expert, w_pi) for w_pi in trace['r_mean']]
 
@@ -86,21 +76,11 @@ def main():
     plt.colorbar()
 
     plt.figure(figsize=(8, 6))
-    # plt.plot(loss)
     plt.plot(trace['step'], loss)
     plt.plot(trace['step'], loss_m)
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
     plt.tight_layout()
-
-    # plt.figure()
-    # plt.plot(trace['step'], trace['a_ratio'])
-    # plt.ylabel('Acceptance probability')
-    # plt.xlabel('Step')
-    # plt.tight_layout()
-
-    # if len(trace['sample']) > 100:
-    #     corner.corner(trace['sample'])
 
     plt.show()
 
