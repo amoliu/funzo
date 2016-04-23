@@ -39,6 +39,7 @@ dependencies:
 test:
   # Grep error on the documentation
   override:
+    - make test
     - cat ~/log.txt && if grep -q "Traceback (most recent call last):" ~/log.txt; then false; else true; fi
 deployment:
   push:

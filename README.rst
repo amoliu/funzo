@@ -1,10 +1,10 @@
 .. image:: https://img.shields.io/travis/makokal/funzo.svg
         :target: https://travis-ci.org/makokal/funzo
 
-.. image:: https://readthedocs.org/projects/funzo/badge/
-    :target: http://funzo.readthedocs.org/en/latest/
+.. image:: https://circleci.com/gh/makokal/funzo.svg?style=svg
+        :target: https://circleci.com/gh/makokal/funzo
 
-.. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master 
+.. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master
     :target: https://coveralls.io/github/makokal/funzo?branch=master
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
