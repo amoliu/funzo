@@ -3,15 +3,10 @@
 
 import sys
 import os
-# import sphinx_bootstrap_theme
-# import sphinx_rtd_theme
 
-# If extensions (or modules to document with autodoc) are in another
-# directory, add these directories to sys.path here. If the directory is
-# relative to the documentation root, use os.path.abspath to make it
-# absolute, like shown here.
+import sphinx_rtd_theme
+
 # sys.path.insert(0, os.path.abspath('../sphinxext'))
-
 # sys.path.insert(0, os.path.abspath('../funzo'))
 # sys.path.append(os.path.abspath('sphinxext'))
 
@@ -20,12 +15,24 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
     'sphinx.ext.mathjax',
-#    'sphinx.ext.viewcode',  # create HTML file of source code and link to it
-    'sphinx.ext.linkcode',  # link to github, see linkcode_resolve() below
+   'sphinx.ext.viewcode',  # create HTML file of source code and link to it
+    # 'sphinx.ext.linkcode',  # link to github, see linkcode_resolve() below
     'numpydoc',
-#    'sphinx.ext.napoleon',  # alternative to numpydoc -- looks a bit worse.
+    'sphinx_gallery.gen_gallery'
 ]
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    'examples_dirs' : '../examples',
+    # path where to save gallery generated examples
+    'gallery_dirs'  : 'auto_examples'
+}
+
+# Generate the plots for the gallery
+plot_gallery = False
 
 # See https://github.com/rtfd/readthedocs.org/issues/283
 mathjax_path = ('https://cdn.mathjax.org/mathjax/latest/MathJax.js?'
@@ -75,58 +82,18 @@ pygments_style = 'sphinx'
 # If true, keep warnings as "system message" paragraphs in the built documents.
 # keep_warnings = False
 
-# Resolve function for the linkcode extension.
-def linkcode_resolve(domain, info):
-    def find_source():
-        # try to find the file and line number, based on code from numpy:
-        # https://github.com/numpy/numpy/blob/master/doc/source/conf.py#L286
-        obj = sys.modules[info['module']]
-        for part in info['fullname'].split('.'):
-            obj = getattr(obj, part)
-        import inspect
-        import os
-        fn = inspect.getsourcefile(obj)
-        fn = os.path.relpath(fn, start=os.path.dirname(funzo.__file__))
-        source, lineno = inspect.getsourcelines(obj)
-        return fn, lineno, lineno + len(source) - 1
-
-    if domain != 'py' or not info['module']:
-        return None
-    try:
-        filename = 'funzo/%s#L%d-L%d' % find_source()
-    except Exception:
-        filename = info['module'].replace('.', '/') + '.py'
-    tag = 'master' if 'dev' in release else ('v' + release)
-    return "https://github.com/makokal/funzo/blob/%s/%s" % (tag, filename)
-
-
-
 
 # -- Options for HTML output ----------------------------------------------
-## Read the docs style:
-if os.environ.get('READTHEDOCS') != 'True':
-    try:
-        import sphinx_rtd_theme
-    except ImportError:
-        pass  # assume we have sphinx >= 1.3
-    else:
-        html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-    html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_rtd_theme'
 
-    # Mock modules as per RTF FAQ to avoid hard C dependencies
-    # the below only works for Python3.3+
-    # from unittest.mock import MagicMock
-    # use this for Python<3.3
-    from mock import Mock as MagicMock
+# Theme options are theme-specific and customize the look and feel of a theme
+# further.  For a list of options available for each theme, see the
+# documentation.
+#html_theme_options = {}
 
-    class Mock(MagicMock):
-        @classmethod
-        def __getattr__(cls, name):
-            return Mock()
+# Add any paths that contain custom themes here, relative to this directory.
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-    # include the names of your minimal required packages here
-    MOCK_MODULES = ['numpy', 'matplotlib', 'h5py', 'networkx']
-    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 def setup(app):
     app.add_stylesheet("fix_rtd.css")

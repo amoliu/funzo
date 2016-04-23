@@ -1,7 +1,8 @@
-numpy
+numpy>=1.6.1
 scipy>=0.14
-matplotlib
+matplotlib>=1.3
 six
 nose
 tqdm
 networkx
+h5py
