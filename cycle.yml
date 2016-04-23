@@ -21,7 +21,7 @@ dependencies:
     - sudo apt-get update
     - sudo apt-get install libatlas-dev libatlas3gf-base
     - sudo apt-get install build-essential python-dev python-setuptools
-    - sudo apt-get install libhdf5-dev
+    - sudo apt-get install hdf5-tools hdf5-helpers libhdf5-10 libhdf5-dev
     # install numpy first as it is a compile time dependency for other packages
     - pip install --upgrade numpy
     - pip install --upgrade scipy matplotlib setuptools nose coverage sphinx networkx pillow sphinx-gallery sphinx_rtd_theme h5py tqdm six
