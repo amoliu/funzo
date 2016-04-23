@@ -158,7 +158,7 @@ algorithms</p>
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.planners.PolicyIteration" title="funzo.planners.PolicyIteration"><code class="xref py py-obj docutils literal"><span class="pre">PolicyIteration</span></code></a>([max_iter,&nbsp;epsilon,&nbsp;...])</td>
 <td>Policy iteration for computing optimal MDP policy</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.planners.ValueIteration" title="funzo.planners.ValueIteration"><code class="xref py py-obj docutils literal"><span class="pre">ValueIteration</span></code></a>([max_iter,&nbsp;epsilon,&nbsp;verbose])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.planners.ValueIteration" title="funzo.planners.ValueIteration"><code class="xref py py-obj docutils literal"><span class="pre">ValueIteration</span></code></a>([max_iter,&nbsp;epsilon])</td>
 <td>Value iteration for computing optimal MDP policy</td>
 </tr>
 </tbody>
@@ -167,24 +167,20 @@ algorithms</p>
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.planners.PolicyIteration">
-<em class="property">class </em><code class="descclassname">funzo.planners.</code><code class="descname">PolicyIteration</code><span class="sig-paren">(</span><em>max_iter=200</em>, <em>epsilon=1e-05</em>, <em>verbose=4</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#PolicyIteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.PolicyIteration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.planners.</code><code class="descname">PolicyIteration</code><span class="sig-paren">(</span><em>max_iter=200</em>, <em>epsilon=1e-05</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#PolicyIteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.PolicyIteration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Policy iteration for computing optimal MDP policy</p>
 <p>Standard Dynamic Programming (DP) using Bellman operator backups</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional (default: 500)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional (default: 200)</p>
 <blockquote>
 <div><p>Maximum number of iterations of the algorithm</p>
 </div></blockquote>
-<p><strong>epsilon</strong> : float, optional (default: 1e-08)</p>
+<p><strong>epsilon</strong> : float, optional (default: 1e-05)</p>
 <blockquote>
 <div><p>Threshold for policy change in policy evaluation</p>
-</div></blockquote>
-<p><strong>verbose</strong> : int, optional (default: 4)</p>
-<blockquote>
-<div><p>Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</p>
 </div></blockquote>
 <p><strong>random_state</strong> : <code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>, optional (default: None)</p>
 <blockquote class="last">
@@ -194,11 +190,20 @@ algorithms</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#funzo.planners.ValueIteration" title="funzo.planners.ValueIteration"><code class="xref py py-obj docutils literal"><span class="pre">ValueIteration</span></code></a></dt>
+<dd>MDP planning using value iteration algorithm</dd>
+</dl>
+</div>
+<p class="rubric">References</p>
+<p>&#8220;Reinforcement Learning: An introduction&#8221;, Sutton R. and Barto A., MIT Press</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="14%" />
-<col width="86%" />
+<col width="6%" />
+<col width="94%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>_max_iter</td>
@@ -210,30 +215,61 @@ algorithms</p>
 <tr class="row-odd"><td>_rng</td>
 <td>(<code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>) Random number generator</td>
 </tr>
+<tr class="row-even"><td><a href="#id1"><span class="problematic" id="id2">pi_t_</span></a></td>
+<td>(array-like) Intermediate policies for the iteration steps. Can be used to check the convergence properties of the algorithm empirically</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="funzo.planners.PolicyIteration.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>mdp</em>, <em>V_init=None</em>, <em>pi_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#PolicyIteration.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.PolicyIteration.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the policy iteration algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mdp</strong> : <code class="xref py py-class docutils literal"><span class="pre">MDP</span></code> instance</p>
+<blockquote>
+<div><p>The MDP to plan on.</p>
+</div></blockquote>
+<p><strong>V_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initial value function</p>
+</div></blockquote>
+<p><strong>pi_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initial policy</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>plan</strong> : dict</p>
+<blockquote class="last">
+<div><p>Dictionary containing the optimal Q, V, pi and cR found</p>
+</div></blockquote>
+</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
 
+</dd></dl>
+
 <dl class="class">
 <dt id="funzo.planners.ValueIteration">
-<em class="property">class </em><code class="descclassname">funzo.planners.</code><code class="descname">ValueIteration</code><span class="sig-paren">(</span><em>max_iter=200</em>, <em>epsilon=1e-05</em>, <em>verbose=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#ValueIteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.ValueIteration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.planners.</code><code class="descname">ValueIteration</code><span class="sig-paren">(</span><em>max_iter=200</em>, <em>epsilon=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#ValueIteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.ValueIteration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Value iteration for computing optimal MDP policy</p>
 <p>Standard Dynamic Programming (DP) using Bellman operator backups</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional (default: 500)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional (default: 200)</p>
 <blockquote>
 <div><p>Maximum number of iterations of the algorithm</p>
 </div></blockquote>
-<p><strong>epsilon</strong> : float, optional (default: 1e-08)</p>
+<p><strong>epsilon</strong> : float, optional (default: 1e-05)</p>
 <blockquote>
 <div><p>Threshold for policy change in policy evaluation</p>
-</div></blockquote>
-<p><strong>verbose</strong> : int, optional (default: 4)</p>
-<blockquote>
-<div><p>Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -245,6 +281,15 @@ algorithms</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#funzo.planners.PolicyIteration" title="funzo.planners.PolicyIteration"><code class="xref py py-obj docutils literal"><span class="pre">PolicyIteration</span></code></a></dt>
+<dd>MDP planning using policy iteration algorithm</dd>
+</dl>
+</div>
+<p class="rubric">References</p>
+<p>&#8220;Reinforcement Learning: An introduction&#8221;, Sutton R. and Barto A., MIT Press</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -260,6 +305,38 @@ algorithms</p>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="funzo.planners.ValueIteration.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>mdp</em>, <em>V_init=None</em>, <em>pi_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/planners/dp.html#ValueIteration.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.planners.ValueIteration.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the value iteration algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mdp</strong> : <code class="xref py py-class docutils literal"><span class="pre">MDP</span></code> instance</p>
+<blockquote>
+<div><p>The MDP to plan on.</p>
+</div></blockquote>
+<p><strong>V_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initial value function</p>
+</div></blockquote>
+<p><strong>pi_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initial policy</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>plan</strong> : dict</p>
+<blockquote class="last">
+<div><p>Dictionary containing the optimal Q, V and pi found</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>

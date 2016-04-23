@@ -188,7 +188,7 @@
     <span class="k">def</span> <span class="nf">_solve_mdp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Solve and MDP using a given reward function &quot;&quot;&quot;</span>
         <span class="n">mdp</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">reward</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
-        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdp_planner</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="p">,</span> <span class="n">pi_init</span><span class="p">)</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdp_planner</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="p">,</span> <span class="n">pi_init</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">plan</span></div>
 
 
@@ -203,9 +203,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Loss.evaluate"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.Loss.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the loss function &quot;&quot;&quot;</span>
         <span class="c1"># TODO - May enforce implementation with ufuncs ?</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;abstract&#39;</span><span class="p">)</span></div>
+        <span class="c1"># TODO - vectorize ?</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;abstract&#39;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PolicyLoss"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.PolicyLoss">[docs]</a><span class="k">class</span> <span class="nc">PolicyLoss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
@@ -215,7 +217,7 @@
 
 <span class="sd">        L_p = || V^*(r) - V^{\pi}(r) ||_p</span>
 
-<span class="sd">    Roughly corresponds to apprenticeship learning</span>
+<span class="sd">    Suited for apprenticeship learning (AL) scenarios</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">planner</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
@@ -230,8 +232,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_vpi</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pi_pi</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Compute the policy loss &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PolicyLoss.evaluate"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.PolicyLoss.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the policy loss &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mdp</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">reward</span><span class="o">=</span><span class="n">r_e</span><span class="p">)</span>
         <span class="n">plan_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_planner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pi_e</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ve</span> <span class="o">=</span> <span class="n">plan_e</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span>
@@ -242,7 +244,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_vpi</span> <span class="o">=</span> <span class="n">plan_pi</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pi_pi</span> <span class="o">=</span> <span class="n">plan_pi</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ve</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vpi</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ve</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vpi</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="RewardLoss"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.RewardLoss">[docs]</a><span class="k">class</span> <span class="nc">RewardLoss</span><span class="p">(</span><span class="n">Loss</span><span class="p">):</span>
@@ -252,18 +254,22 @@
 
 <span class="sd">        L_p = || r_e - r_{\pi} ||_p</span>
 
+<span class="sd">    More appropriate in reward learning scenarios as opposed to apprenticeship</span>
+<span class="sd">    learning. The reward is generally accepted as being a more succint</span>
+<span class="sd">    representation of behavior and more transferable.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RewardLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;reward_loss&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">order</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Compute the policy loss &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RewardLoss.evaluate"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.RewardLoss.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_e</span><span class="p">,</span> <span class="n">r_pi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward loss &quot;&quot;&quot;</span>
         <span class="n">r_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_e</span><span class="p">)</span>
         <span class="n">r_pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_pi</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r_e</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">r_pi</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expert and learned reward dimensions mismatch&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_e</span> <span class="o">-</span> <span class="n">r_pi</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_e</span> <span class="o">-</span> <span class="n">r_pi</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

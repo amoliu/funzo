@@ -171,12 +171,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ------------</span>
-<span class="sd">    max_iter : int, optional (default: 500)</span>
+<span class="sd">    max_iter : int, optional (default: 200)</span>
 <span class="sd">        Maximum number of iterations of the algorithm</span>
-<span class="sd">    epsilon : float, optional (default: 1e-08)</span>
+<span class="sd">    epsilon : float, optional (default: 1e-05)</span>
 <span class="sd">        Threshold for policy change in policy evaluation</span>
-<span class="sd">    verbose : int, optional (default: 4)</span>
-<span class="sd">        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</span>
 <span class="sd">    random_state : :class:`numpy.RandomState`, optional (default: None)</span>
 <span class="sd">        Random number generation seed control</span>
 
@@ -189,20 +187,30 @@
 <span class="sd">        Threshold for policy change in policy evaluation</span>
 <span class="sd">    _rng : :class:`numpy.RandomState`</span>
 <span class="sd">        Random number generator</span>
+<span class="sd">    pi_t_ : array-like</span>
+<span class="sd">        Intermediate policies for the iteration steps. Can be used to check the</span>
+<span class="sd">        convergence properties of the algorithm empirically</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ValueIteration : MDP planning using value iteration algorithm</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ------------</span>
+<span class="sd">    &quot;Reinforcement Learning: An introduction&quot;, Sutton R. and Barto A., MIT Press</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-                 <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Solve the MDP using policy iteration</span>
+<div class="viewcode-block" id="PolicyIteration.solve"><a class="viewcode-back" href="../../../modules/planners.html#funzo.planners.PolicyIteration.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run the policy iteration algorithm</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ------------</span>
-<span class="sd">        mdp : :class:`MDP` variant or derivative</span>
+<span class="sd">        mdp : :class:`MDP` instance</span>
 <span class="sd">            The MDP to plan on.</span>
 <span class="sd">        V_init : array-like</span>
 <span class="sd">            Initial value function</span>
@@ -215,21 +223,24 @@
 <span class="sd">            Dictionary containing the optimal Q, V, pi and cR found</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
-        <span class="n">policy</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">A</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))]</span>
-
         <span class="k">if</span> <span class="n">V_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">V_init</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">pi_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">policy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pi_init</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">A</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))]</span>
 
-        <span class="n">cum_R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-
-        <span class="n">stable_policy</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">R</span>
         <span class="n">T</span> <span class="o">=</span> <span class="n">mdp</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">stable_policy</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pi_t_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="n">stable_policy</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pi_t_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">stable_policy</span> <span class="ow">and</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span><span class="p">:</span>
             <span class="n">finished</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="k">while</span> <span class="ow">not</span> <span class="n">finished</span><span class="p">:</span>
                 <span class="n">V_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -248,15 +259,14 @@
             <span class="k">if</span> <span class="n">policy_change</span> <span class="o">&lt;</span> <span class="mf">1e-08</span><span class="p">:</span>
                 <span class="n">stable_policy</span> <span class="o">=</span> <span class="bp">True</span>
 
-            <span class="n">cum_R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mdp</span><span class="o">.</span><span class="n">R</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">policy</span><span class="p">[</span><span class="n">s</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">mdp</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+            <span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pi_t_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q</span>
-        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;cR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cum_R</span>
-
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 
 
 <div class="viewcode-block" id="ValueIteration"><a class="viewcode-back" href="../../../modules/planners.html#funzo.planners.ValueIteration">[docs]</a><span class="k">class</span> <span class="nc">ValueIteration</span><span class="p">(</span><span class="n">Planner</span><span class="p">):</span>
@@ -266,12 +276,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ------------</span>
-<span class="sd">    max_iter : int, optional (default: 500)</span>
+<span class="sd">    max_iter : int, optional (default: 200)</span>
 <span class="sd">        Maximum number of iterations of the algorithm</span>
-<span class="sd">    epsilon : float, optional (default: 1e-08)</span>
+<span class="sd">    epsilon : float, optional (default: 1e-05)</span>
 <span class="sd">        Threshold for policy change in policy evaluation</span>
-<span class="sd">    verbose : int, optional (default: 4)</span>
-<span class="sd">        Verbosity level (1-CRITICAL, 2-ERROR, 3-WARNING, 4-INFO, 5-DEBUG)</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ------------</span>
@@ -285,18 +293,31 @@
 <span class="sd">    plan : dict</span>
 <span class="sd">        Dictionary containing the optimal Q, V and pi found</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    ----------</span>
+<span class="sd">    PolicyIteration : MDP planning using policy iteration algorithm</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ------------</span>
+<span class="sd">    &quot;Reinforcement Learning: An introduction&quot;, Sutton R. and Barto A., MIT Press</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Standard dynamic programming using  value iteration algorithm</span>
+<div class="viewcode-block" id="ValueIteration.solve"><a class="viewcode-back" href="../../../modules/planners.html#funzo.planners.ValueIteration.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run the value iteration algorithm</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ------------</span>
-<span class="sd">        mdp : :class:`MDP` variant or derivative</span>
+<span class="sd">        mdp : :class:`MDP` instance</span>
 <span class="sd">            The MDP to plan on.</span>
+<span class="sd">        V_init : array-like</span>
+<span class="sd">            Initial value function</span>
+<span class="sd">        pi_init : array-like</span>
+<span class="sd">            Initial policy</span>
+
 
 <span class="sd">        Returns</span>
 <span class="sd">        --------</span>
@@ -325,7 +346,7 @@
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_compute_Q</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 
 
 <span class="c1">##############################################################################</span>
