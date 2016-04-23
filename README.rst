@@ -12,7 +12,7 @@
 
 funzo
 ============
-Python toolkit for inverse reinforcement learning (IRL). Documentation: https://funzo.readthedocs.org
+Python toolkit for inverse reinforcement learning (IRL). Documentation: `http://makokal.github.io/funzo/ <http://makokal.github.io/funzo/>`__
 
 Features
 ---------
