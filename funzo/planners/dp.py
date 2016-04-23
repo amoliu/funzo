@@ -158,7 +158,7 @@ class ValueIteration(Planner):
     "Reinforcement Learning: An introduction", Sutton R. and Barto A., MIT Press
 
     """
-    def __init__(self, max_iter=200, epsilon=1e-05, verbose=4):
+    def __init__(self, max_iter=200, epsilon=1e-05):
         self._max_iter = max_iter
         self._epsilon = epsilon
 
