@@ -10,8 +10,10 @@ import six
 from abc import ABCMeta
 from abc import abstractmethod
 
-
 from ..base import Model
+
+
+__all__ = ['Domain', 'model_domain']
 
 
 class Domain(six.with_metaclass(ABCMeta, Model)):
@@ -22,6 +24,8 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
     details of the task. i.e. the environment.
 
     """
+    # def __init__(self):
+    #     self._domain = self
 
     @abstractmethod
     def terminal(self, state):
@@ -46,3 +50,32 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
 
         """
         raise NotImplementedError('This method is abstract')
+
+    def __enter__(self):
+        type(self).get_domains().append(self)
+        return self
+
+    def __exit__(self, typ, value, traceback):
+        type(self).get_domains().pop()
+
+    @classmethod
+    def get_domains(cls):
+        if not hasattr(cls, "domains"):
+            cls.domains = []
+
+        return cls.domains
+
+    @classmethod
+    def get_domain(cls):
+        """Return the deepest domain on the stack."""
+        try:
+            return cls.get_domains()[-1]
+        except IndexError:
+            raise TypeError("No domain on domain stack")
+
+
+def model_domain(model=None, domain_type=Domain):
+    """ Get the domain model domain  """
+    if model is None:
+        return domain_type.get_domain()
+    return model

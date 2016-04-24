@@ -2,7 +2,7 @@
 The :mod:`funzo.domains` module contains reinforcement learning environments
 """
 
-from .base import Domain
+from .base import Domain, model_domain
 
 from .geometry import discretize_space, distance_to_segment, edist
 
@@ -14,7 +14,7 @@ from .puddleworld import PuddleWorldMDP, PuddleWorld
 
 
 __all__ = [
-    'Domain',
+    'Domain', 'model_domain',
     #
     'discretize_space', 'distance_to_segment', 'edist',
     #

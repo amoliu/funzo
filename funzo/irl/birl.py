@@ -155,10 +155,11 @@ class BIRL(IRLSolver):
 
     def _initialize_reward(self, rmax, rdim):
         """ Initialize a reward vector using the prior """
-        candidates = np.arange(-rmax, rmax+self._delta, self._delta)
-        r = np.zeros(rdim)
-        for i in range(rdim):
-            r[i] = self._rng.choice(candidates)
+        # candidates = np.arange(-rmax, rmax+self._delta, self._delta)
+        # r = np.zeros(rdim)
+        # for i in range(rdim):
+        #     r[i] = self._rng.choice(candidates)
+        r = self._prior.sample()
         return r
 
     def _acceptance_ratio(self, mdp, demos, r, r_new, Q_r, Q_r_new):

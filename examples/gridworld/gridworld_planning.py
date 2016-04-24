@@ -17,19 +17,22 @@ from funzo.planners.dp import PolicyIteration, ValueIteration
 
 def main(map_name, planner):
     gmap = np.loadtxt(map_name)
-    world = GridWorld(gmap)
-    R = GReward(domain=world)
-    T = GTransition(domain=world, wind=0.1)
-    g_mdp = GridWorldMDP(domain=world, reward=R, transition=T, discount=0.9)
+    w, h = gmap.shape
 
-    # ------------------------
-    mdp_planner = PolicyIteration(max_iter=200, random_state=None)
-    if planner == 'VI':
-        mdp_planner = ValueIteration(verbose=2)
+    with GridWorld(gmap=gmap) as world:
+        R = GReward(ns=w*h)
+        T = GTransition(wind=0.1)
+        g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.9)
 
-    res = mdp_planner.solve(g_mdp)
-    V = res['V']
-    print('Policy: ', res['pi'])
+        # ------------------------
+        mdp_planner = PolicyIteration(max_iter=200, random_state=None)
+        if planner == 'VI':
+            mdp_planner = ValueIteration(verbose=2)
+
+        res = mdp_planner.solve(g_mdp)
+        V = res['V']
+        print('Policy: ', res['pi'])
+
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()

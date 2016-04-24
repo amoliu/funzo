@@ -42,8 +42,6 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     ------------
-    domain : :class:`Domain` object
-        The underlying domain (world) on which the MDP operates on
     discount : float
         MDP discount factor in the range [0, 1)
     reward : :class:`RewardFunction` object
@@ -51,11 +49,11 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
     transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochasticity are handled therein.
+    domain : :class:`Domain` object, optional (default: None)
+        The underlying domain (world) on which the MDP operates on
 
     Attributes
     ------------
-    _domain : :class:`Domain` object
-        The underlying domain (world) on which the MDP operates on
     gamma : float
         MDP discount factor
     _reward : :class:`RewardFunction` object
@@ -63,6 +61,8 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
     _transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochasticity are handled therein.
+    _domain : :class:`Domain` object
+        The underlying domain (world) on which the MDP operates on
 
 
     Notes
@@ -76,11 +76,11 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
 
     """
 
-    def __init__(self, domain, reward, transition, discount=0.9):
-        self._domain = domain
+    def __init__(self, reward, transition, discount=0.9, domain=None):
         self._reward = reward
         self._transition = transition
         self.gamma = discount
+        self._domain = domain
 
     def R(self, state, action):
         """ Evaluate the reward function for a (state-action) pair
@@ -199,7 +199,7 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
 
     Parameters
     -----------
-    domain : :class:`Domain` derivative object
+    domain : :class:`Domain` instance, optional (default: None)
         Object reference to the domain/world of the MDP that the reward is
         to be used
     rmax : float, optional (default: 1.0)
@@ -214,7 +214,7 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
 
     """
 
-    def __init__(self, domain, rmax=1.0):
+    def __init__(self, rmax=1.0, domain=None):
         # keep a reference to parent MDP to get access to domain and dynamics
         self._domain = domain
         self._rmax = rmax
@@ -253,9 +253,9 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     :math:`R` is a tensor.
 
     """
-    def __init__(self, domain, n_s, n_a=None, rmax=1.0):
+    def __init__(self, n_s, n_a=None, rmax=1.0, domain=None):
         # If n_a is 0, assume only state based reward function
-        super(TabularRewardFunction, self).__init__(domain, rmax)
+        super(TabularRewardFunction, self).__init__(rmax, domain)
         assert n_s > 0, 'Number of states must be greater than 0'
         self._n_s = n_s
 
@@ -302,8 +302,8 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
     _template = '_feature_'
 
-    def __init__(self, domain, weights, rmax=1.0):
-        super(LinearRewardFunction, self).__init__(domain, rmax)
+    def __init__(self, weights, rmax=1.0, domain=None):
+        super(LinearRewardFunction, self).__init__(rmax, domain)
         self._weights = np.asarray(weights)
         assert self._weights.ndim == 1, 'Weights must be 1D arrays'
 
@@ -367,7 +367,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
 
     """
 
-    def __init__(self, domain):
+    def __init__(self, domain=None):
         self._domain = domain
 
     @abstractmethod

@@ -12,7 +12,7 @@ import corner
 import numpy as np
 
 from funzo.domains.gridworld import GridWorld, GridWorldMDP
-from funzo.domains.gridworld import GRewardLFA, GTransition
+from funzo.domains.gridworld import GRewardLFA, GTransition, GReward
 from funzo.planners.dp import PolicyIteration
 
 from funzo.irl.birl import BIRL
@@ -20,41 +20,45 @@ from funzo.irl.birl import GaussianRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
 
-SEED = 42
+SEED = None
 
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
+    w, h = gmap.shape
+
     w_expert = np.array([-0.01, -3.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
-    world = GridWorld(gmap=gmap)
-    rfunc = GRewardLFA(domain=world, weights=w_expert, rmax=1.0)
-    T = GTransition(domain=world)
-    g = GridWorldMDP(domain=world, reward=rfunc, transition=T, discount=0.9)
+    with GridWorld(gmap=gmap) as world:
+        rfunc = GRewardLFA(weights=w_expert, rmax=1.0)
+        # rfunc = GReward(ns=w*h)
+        T = GTransition()
+        g = GridWorldMDP(reward=rfunc, transition=T, discount=0.9)
 
-    # ------------------------
-    planner = PolicyIteration(random_state=SEED)
-    plan = planner.solve(g)
-    policy = plan['pi']
+        # ------------------------
+        planner = PolicyIteration(random_state=SEED)
+        plan = planner.solve(g)
+        policy = plan['pi']
 
-    demos = world.generate_trajectories(policy, num=150, random_state=SEED)
+        demos = world.generate_trajectories(policy, num=150, random_state=SEED)
 
-    # IRL
-    r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.15)
-    irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.8,
-                      max_iter=1000, burn_ratio=0.3, inference='PW',
-                      random_state=SEED)
+        # IRL
+        r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.15)
+        irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.8,
+                          max_iter=200, burn_ratio=0.3, inference='PW',
+                          random_state=SEED)
 
-    trace = irl_solver.solve(mdp=g, demos=demos)
-    trace.save('pw_trace')
-    r = trace['r_mean'][-1]
+        trace = irl_solver.solve(demos=demos, mdp=g)
+        trace.save('pw_trace')
+        r = trace['r_mean'][-1]
 
-    g.reward.update_parameters(reward=r)
-    r_plan = planner.solve(g)
-    print(r_plan['pi'])
-    print('Found reward: {}'.format(r))
-    V = r_plan['V']
+        g.reward.update_parameters(reward=r)
+        r_plan = planner.solve(g)
+        print('Found reward: {}'.format(r))
+        V = r_plan['V']
+
+        # w_expert = rfunc._R
 
     # compute the loss
     L = RewardLoss(order=2)

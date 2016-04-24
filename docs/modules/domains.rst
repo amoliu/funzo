@@ -3,6 +3,11 @@
 
 .. automodule:: funzo.domains
 
+.. autosummary::
+
+    Domain
+    model_domain
+
 1. Grid World
 
     .. autosummary::
@@ -36,6 +41,9 @@
 
 Detailed descriptions
 -----------------------
+.. autoclass:: Domain
+    :memebers:
+.. autofunction:: model_domain
 
 .. autoclass:: GridWorld
     :members:

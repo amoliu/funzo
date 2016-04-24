@@ -20,7 +20,7 @@ from six.moves import range
 from collections import Iterable
 from matplotlib.patches import Rectangle
 
-from .base import Domain
+from .base import Domain, model_domain
 
 from ..models.mdp import MDP
 from ..models.mdp import TabularRewardFunction, LinearRewardFunction
@@ -46,10 +46,13 @@ TERMINAL = 'terminal'
 
 class GReward(TabularRewardFunction):
     """ Grid world MDP reward function """
-    def __init__(self, domain, rmax=1.0):
-        super(GReward, self).__init__(domain,
-                                      n_s=len(domain.states),
+    def __init__(self, ns, rmax=1.0, domain=None):
+        super(GReward, self).__init__(domain=domain,
+                                      n_s=ns,
                                       rmax=rmax)
+
+        self._domain = model_domain(domain, GridWorld)
+
         R = np.zeros(len(self))
         for s in self._domain.states:
             state_ = self._domain.states[s]
@@ -75,9 +78,10 @@ class GReward(TabularRewardFunction):
 
 class GRewardLFA(LinearRewardFunction):
     """ Gridworld reward using linear function approximation """
-    def __init__(self, domain, weights, rmax=1.0):
-        super(GRewardLFA, self).__init__(domain, weights, rmax=rmax)
+    def __init__(self, weights, rmax=1.0, domain=None):
+        super(GRewardLFA, self).__init__(weights, rmax, domain)
         self._T = GTransition(domain=domain)
+        self._domain = model_domain(domain, GridWorld)
 
     def __call__(self, state, action):
         """ Evaluate reward function """
@@ -123,9 +127,10 @@ class GRewardLFA(LinearRewardFunction):
 
 class GTransition(MDPTransition):
     """ Gridworld MDP controller """
-    def __init__(self, domain, wind=0.2):
+    def __init__(self, wind=0.2, domain=None):
         super(GTransition, self).__init__(domain)
         self._wind = wind
+        self._domain = model_domain(domain, GridWorld)
 
     def __call__(self, state, action, **kwargs):
         """ Transition
@@ -368,11 +373,12 @@ class GridWorld(Domain):
 
 class GridWorldMDP(MDP):
     """ Grid world MDP representing the decision making process """
-    def __init__(self, domain, reward, transition, discount=0.9):
-        super(GridWorldMDP, self).__init__(domain,
-                                           reward,
+    def __init__(self, reward, transition, discount=0.9, domain=None):
+        super(GridWorldMDP, self).__init__(reward,
                                            transition,
-                                           discount)
+                                           discount,
+                                           domain)
+        self._domain = model_domain(domain, GridWorld)
 
     @property
     def S(self):
