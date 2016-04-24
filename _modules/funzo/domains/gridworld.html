@@ -164,7 +164,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Rectangle</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Domain</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Domain</span><span class="p">,</span> <span class="n">model_domain</span>
 
 <span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">MDP</span>
 <span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="n">LinearRewardFunction</span>
@@ -190,10 +190,13 @@
 
 <div class="viewcode-block" id="GReward"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GReward">[docs]</a><span class="k">class</span> <span class="nc">GReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Grid world MDP reward function &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span>
-                                      <span class="n">n_s</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">states</span><span class="p">),</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+                                      <span class="n">n_s</span><span class="o">=</span><span class="n">ns</span><span class="p">,</span>
                                       <span class="n">rmax</span><span class="o">=</span><span class="n">rmax</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
+
         <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
@@ -219,9 +222,10 @@
 
 <div class="viewcode-block" id="GRewardLFA"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">GRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Gridworld reward using linear function approximation &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GRewardLFA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="n">rmax</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GRewardLFA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate reward function &quot;&quot;&quot;</span>
@@ -267,9 +271,10 @@
 
 <div class="viewcode-block" id="GTransition"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GTransition">[docs]</a><span class="k">class</span> <span class="nc">GTransition</span><span class="p">(</span><span class="n">MDPTransition</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Gridworld MDP controller &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">wind</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wind</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GTransition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span> <span class="o">=</span> <span class="n">wind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Transition</span>
@@ -512,11 +517,12 @@
 
 <div class="viewcode-block" id="GridWorldMDP"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorldMDP">[docs]</a><span class="k">class</span> <span class="nc">GridWorldMDP</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Grid world MDP representing the decision making process &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GridWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span>
-                                           <span class="n">reward</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GridWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span>
                                            <span class="n">transition</span><span class="p">,</span>
-                                           <span class="n">discount</span><span class="p">)</span>
+                                           <span class="n">discount</span><span class="p">,</span>
+                                           <span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

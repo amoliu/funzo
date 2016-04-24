@@ -155,7 +155,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.MDP" title="funzo.models.MDP"><code class="xref py py-obj docutils literal"><span class="pre">MDP</span></code></a>(domain,&nbsp;reward,&nbsp;transition[,&nbsp;discount])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.MDP" title="funzo.models.MDP"><code class="xref py py-obj docutils literal"><span class="pre">MDP</span></code></a>(reward,&nbsp;transition[,&nbsp;discount,&nbsp;domain])</td>
 <td>Markov Decision Process (MDP) model</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.models.MDPState" title="funzo.models.MDPState"><code class="xref py py-obj docutils literal"><span class="pre">MDPState</span></code></a>(state_id)</td>
@@ -164,16 +164,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.models.MDPAction" title="funzo.models.MDPAction"><code class="xref py py-obj docutils literal"><span class="pre">MDPAction</span></code></a>(action_id)</td>
 <td>MDP Action</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-obj docutils literal"><span class="pre">MDPTransition</span></code></a>(domain)</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-obj docutils literal"><span class="pre">MDPTransition</span></code></a>([domain])</td>
 <td>A MDP transition function</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">RewardFunction</span></code></a>(domain[,&nbsp;rmax])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">RewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
 <td>MDP reward function model</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>(domain,&nbsp;n_s[,&nbsp;n_a,&nbsp;rmax])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>(n_s[,&nbsp;n_a,&nbsp;rmax,&nbsp;domain])</td>
 <td>Reward function with a tabular representation</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.LinearRewardFunction" title="funzo.models.LinearRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">LinearRewardFunction</span></code></a>(domain,&nbsp;weights[,&nbsp;rmax])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.LinearRewardFunction" title="funzo.models.LinearRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">LinearRewardFunction</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
 <td>RewardFunction using linear function approximation</td>
 </tr>
 </tbody>
@@ -182,7 +182,7 @@
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.models.MDP">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Markov Decision Process (MDP) model</p>
 <p>For general MDPs, states and action can be continuous making it hard to
 efficiently represent them using standard data structures. In the case of
@@ -195,11 +195,7 @@ hashable data structure (indexed by state or action ids).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>domain</strong> : <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object</p>
-<blockquote>
-<div><p>The underlying domain (world) on which the MDP operates on</p>
-</div></blockquote>
-<p><strong>discount</strong> : float</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>discount</strong> : float</p>
 <blockquote>
 <div><p>MDP discount factor in the range [0, 1)</p>
 </div></blockquote>
@@ -208,9 +204,13 @@ hashable data structure (indexed by state or action ids).</p>
 <div><p>Reward function for the MDP with all the relevant parameters</p>
 </div></blockquote>
 <p><strong>transition</strong> : <a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-class docutils literal"><span class="pre">MDPTransition</span></code></a> object</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Represents the transition function for the MDP. All transition relevant
 details such as stochasticity are handled therein.</p>
+</div></blockquote>
+<p><strong>domain</strong> : <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object, optional (default: None)</p>
+<blockquote class="last">
+<div><p>The underlying domain (world) on which the MDP operates on</p>
 </div></blockquote>
 </td>
 </tr>
@@ -241,14 +241,14 @@ data needed. This allows a unified interface for both <em>discrete</em> and
 <col width="93%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td>_domain</td>
-<td>(<code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object) The underlying domain (world) on which the MDP operates on</td>
-</tr>
-<tr class="row-even"><td>_reward</td>
+<tr class="row-odd"><td>_reward</td>
 <td>(<a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-class docutils literal"><span class="pre">RewardFunction</span></code></a> object) Reward function for the MDP with all the relevant parameters</td>
 </tr>
-<tr class="row-odd"><td>_transition</td>
+<tr class="row-even"><td>_transition</td>
 <td>(<a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-class docutils literal"><span class="pre">MDPTransition</span></code></a> object) Represents the transition function for the MDP. All transition relevant details such as stochasticity are handled therein.</td>
+</tr>
+<tr class="row-odd"><td>_domain</td>
+<td>(<code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object) The underlying domain (world) on which the MDP operates on</td>
 </tr>
 </tbody>
 </table>
@@ -406,7 +406,7 @@ various quantities.</p>
 
 <dl class="class">
 <dt id="funzo.models.MDPTransition">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPTransition</code><span class="sig-paren">(</span><em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>A MDP transition function</p>
 <div class="math">
 \[T: \mathcal{S} \times \mathcal{A} \times \mathcal{S}
@@ -444,7 +444,7 @@ to be used on</p>
 
 <dl class="class">
 <dt id="funzo.models.RewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">RewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#RewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">RewardFunction</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#RewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.RewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>MDP reward function model</p>
 <p>Rewards are as functions of state and action spaces of MDPs, i.e.</p>
 <div class="math">
@@ -457,7 +457,7 @@ called via <a class="reference internal" href="#funzo.models.MDP.R" title="funzo
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>domain</strong> : <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> derivative object</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>domain</strong> : <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> instance, optional (default: None)</p>
 <blockquote>
 <div><p>Object reference to the domain/world of the MDP that the reward is
 to be used</p>
@@ -507,7 +507,7 @@ to be used</p>
 
 <dl class="class">
 <dt id="funzo.models.TabularRewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>n_s</em>, <em>n_a=None</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>n_s</em>, <em>n_a=None</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function with a tabular representation</p>
 <p>A basic reward function with full tabular representation, mainly suitable
 for discrete and small sized domains. i.e. <span class="math">\(r(s, a) = R[s, a]\)</span> where
@@ -528,7 +528,7 @@ for discrete and small sized domains. i.e. <span class="math">\(r(s, a) = R[s, a
 
 <dl class="class">
 <dt id="funzo.models.LinearRewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">LinearRewardFunction</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#LinearRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">LinearRewardFunction</code><span class="sig-paren">(</span><em>weights</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#LinearRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.LinearRewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>RewardFunction using linear function approximation</p>
 <p>The reward funtion is define as,</p>
 <div class="math">

@@ -148,6 +148,20 @@
   <div class="section" id="module-funzo.domains">
 <span id="funzo-domains"></span><h1><a class="reference internal" href="#module-funzo.domains" title="funzo.domains"><code class="xref py py-mod docutils literal"><span class="pre">funzo.domains</span></code></a><a class="headerlink" href="#module-funzo.domains" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#module-funzo.domains" title="funzo.domains"><code class="xref py py-mod docutils literal"><span class="pre">funzo.domains</span></code></a> module contains reinforcement learning environments</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">Domain</span></code></td>
+<td>Domain (World) interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.model_domain" title="funzo.domains.model_domain"><code class="xref py py-obj docutils literal"><span class="pre">model_domain</span></code></a>([model,&nbsp;domain_type])</td>
+<td>Get the domain model domain</td>
+</tr>
+</tbody>
+</table>
 <ol class="arabic">
 <li><p class="first">Grid World</p>
 <blockquote>
@@ -160,16 +174,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GridWorld" title="funzo.domains.GridWorld"><code class="xref py py-obj docutils literal"><span class="pre">GridWorld</span></code></a>(gmap)</td>
 <td>GridWorld domain</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GridWorldMDP" title="funzo.domains.GridWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">GridWorldMDP</span></code></a>(domain,&nbsp;reward,&nbsp;transition[,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GridWorldMDP" title="funzo.domains.GridWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">GridWorldMDP</span></code></a>(reward,&nbsp;transition[,&nbsp;discount,&nbsp;...])</td>
 <td>Grid world MDP representing the decision making process</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GReward" title="funzo.domains.GReward"><code class="xref py py-obj docutils literal"><span class="pre">GReward</span></code></a>(domain[,&nbsp;rmax])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GReward" title="funzo.domains.GReward"><code class="xref py py-obj docutils literal"><span class="pre">GReward</span></code></a>(ns[,&nbsp;rmax,&nbsp;domain])</td>
 <td>Grid world MDP reward function</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GRewardLFA" title="funzo.domains.GRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">GRewardLFA</span></code></a>(domain,&nbsp;weights[,&nbsp;rmax])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GRewardLFA" title="funzo.domains.GRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">GRewardLFA</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
 <td>Gridworld reward using linear function approximation</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GTransition" title="funzo.domains.GTransition"><code class="xref py py-obj docutils literal"><span class="pre">GTransition</span></code></a>(domain[,&nbsp;wind])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GTransition" title="funzo.domains.GTransition"><code class="xref py py-obj docutils literal"><span class="pre">GTransition</span></code></a>([wind,&nbsp;domain])</td>
 <td>Gridworld MDP controller</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GState" title="funzo.domains.GState"><code class="xref py py-obj docutils literal"><span class="pre">GState</span></code></a>(state_id,&nbsp;cell[,&nbsp;status])</td>
@@ -232,6 +246,12 @@
 </table>
 <div class="section" id="detailed-descriptions">
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="funzo.domains.model_domain">
+<code class="descclassname">funzo.domains.</code><code class="descname">model_domain</code><span class="sig-paren">(</span><em>model=None</em>, <em>domain_type=&lt;class 'funzo.domains.base.Domain'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/base.html#model_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.model_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the domain model domain</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="funzo.domains.GridWorld">
 <em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorld</code><span class="sig-paren">(</span><em>gmap</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorld" title="Permalink to this definition">¶</a></dt>
@@ -267,7 +287,7 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GridWorldMDP">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GridWorldMDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GridWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GridWorldMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid world MDP representing the decision making process</p>
 <dl class="attribute">
 <dt id="funzo.domains.GridWorldMDP.A">
@@ -285,13 +305,13 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GReward">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>ns</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid world MDP reward function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="funzo.domains.GRewardLFA">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GRewardLFA</code><span class="sig-paren">(</span><em>domain</em>, <em>weights</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GRewardLFA</code><span class="sig-paren">(</span><em>weights</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GRewardLFA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gridworld reward using linear function approximation</p>
 <dl class="method">
 <dt id="funzo.domains.GRewardLFA.phi">
@@ -303,7 +323,7 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GTransition">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GTransition</code><span class="sig-paren">(</span><em>domain</em>, <em>wind=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GTransition</code><span class="sig-paren">(</span><em>wind=0.2</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gridworld MDP controller</p>
 </dd></dl>
 

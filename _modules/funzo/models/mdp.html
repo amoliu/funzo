@@ -186,8 +186,6 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ------------</span>
-<span class="sd">    domain : :class:`Domain` object</span>
-<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
 <span class="sd">    discount : float</span>
 <span class="sd">        MDP discount factor in the range [0, 1)</span>
 <span class="sd">    reward : :class:`RewardFunction` object</span>
@@ -195,11 +193,11 @@
 <span class="sd">    transition : :class:`MDPTransition` object</span>
 <span class="sd">        Represents the transition function for the MDP. All transition relevant</span>
 <span class="sd">        details such as stochasticity are handled therein.</span>
+<span class="sd">    domain : :class:`Domain` object, optional (default: None)</span>
+<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ------------</span>
-<span class="sd">    _domain : :class:`Domain` object</span>
-<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
 <span class="sd">    gamma : float</span>
 <span class="sd">        MDP discount factor</span>
 <span class="sd">    _reward : :class:`RewardFunction` object</span>
@@ -207,6 +205,8 @@
 <span class="sd">    _transition : :class:`MDPTransition` object</span>
 <span class="sd">        Represents the transition function for the MDP. All transition relevant</span>
 <span class="sd">        details such as stochasticity are handled therein.</span>
+<span class="sd">    _domain : :class:`Domain` object</span>
+<span class="sd">        The underlying domain (world) on which the MDP operates on</span>
 
 
 <span class="sd">    Notes</span>
@@ -220,11 +220,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reward</span> <span class="o">=</span> <span class="n">reward</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transition</span> <span class="o">=</span> <span class="n">transition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">discount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
 
 <div class="viewcode-block" id="MDP.R"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDP.R">[docs]</a>    <span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate the reward function for a (state-action) pair</span>
@@ -343,7 +343,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    -----------</span>
-<span class="sd">    domain : :class:`Domain` derivative object</span>
+<span class="sd">    domain : :class:`Domain` instance, optional (default: None)</span>
 <span class="sd">        Object reference to the domain/world of the MDP that the reward is</span>
 <span class="sd">        to be used</span>
 <span class="sd">    rmax : float, optional (default: 1.0)</span>
@@ -358,7 +358,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c1"># keep a reference to parent MDP to get access to domain and dynamics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rmax</span> <span class="o">=</span> <span class="n">rmax</span>
@@ -397,9 +397,9 @@
 <span class="sd">    :math:`R` is a tensor.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">n_s</span><span class="p">,</span> <span class="n">n_a</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">,</span> <span class="n">n_a</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c1"># If n_a is 0, assume only state based reward function</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">n_s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Number of states must be greater than 0&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_s</span> <span class="o">=</span> <span class="n">n_s</span>
 
@@ -446,8 +446,8 @@
 
     <span class="n">_template</span> <span class="o">=</span> <span class="s1">&#39;_feature_&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Weights must be 1D arrays&#39;</span>
 
@@ -511,7 +511,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
 
     <span class="nd">@abstractmethod</span>
