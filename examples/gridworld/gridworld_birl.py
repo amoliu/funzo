@@ -7,8 +7,6 @@ matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 plt.style.use('fivethirtyeight')
 
-import corner
-
 import numpy as np
 
 from funzo.domains.gridworld import GridWorld, GridWorldMDP
@@ -34,7 +32,7 @@ def main():
         rfunc = GRewardLFA(weights=w_expert, rmax=1.0)
         # rfunc = GReward(ns=w*h)
         T = GTransition()
-        g = GridWorldMDP(reward=rfunc, transition=T, discount=0.9)
+        g = GridWorldMDP(reward=rfunc, transition=T, discount=0.99)
 
         # ------------------------
         planner = PolicyIteration(random_state=SEED)
@@ -44,7 +42,7 @@ def main():
         demos = world.generate_trajectories(policy, num=150, random_state=SEED)
 
         # IRL
-        r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.15)
+        r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.35)
         irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.8,
                           max_iter=200, burn_ratio=0.3, inference='PW',
                           random_state=SEED)

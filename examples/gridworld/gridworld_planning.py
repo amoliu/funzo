@@ -20,9 +20,9 @@ def main(map_name, planner):
     w, h = gmap.shape
 
     with GridWorld(gmap=gmap) as world:
-        R = GReward(ns=w*h)
+        R = GReward(ns=w * h)
         T = GTransition(wind=0.1)
-        g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.9)
+        g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.99)
 
         # ------------------------
         mdp_planner = PolicyIteration(max_iter=200, random_state=None)
