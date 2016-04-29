@@ -16,10 +16,8 @@ class IRLSolver(six.with_metaclass(ABCMeta, Model)):
     This interface assumes the most general formulation of the IRL problem.
     The task requires at minimum only expert demonstrations.
 
-    Notes
-    ------
-    In case the underlying MDP is needed by an algorithm, a utility function
-    for solving the MDP is included for convenience.
+    .. note:: In case the underlying MDP is needed by an algorithm, a utility
+        :function:`solve_mdp` for solving the MDP is included for convenience.
 
     """
     def __init__(self, mdp_planner=None):
@@ -32,17 +30,44 @@ class IRLSolver(six.with_metaclass(ABCMeta, Model)):
         Parameters
         -----------
         demos : array-like
-            Expert demonstrations in form of state-action pairs
-        mdp : :class:`MDP` derivative instance, optional
+            Expert demonstrations in form of sets of state-action pairs. Some
+            algorithms require these to be *trajectories* while others need
+            just state-action pairs in any order.
+        mdp : :class:`funzo.models.MDP` instance, optional (default: None)
             The MDP model (in relevant form, e.g. a generative model) if the
             IRL algorithm requires repeated solving of the forward problem
             (planning) to get a policy
 
+        Returns
+        --------
+        trace : :class:`funzo.utils.Trace` object
+            Results container with variables for all relevant quantities as per
+            algorithm, e.g for iterative algorithms this includes all the
+            intermediate reward functions, respective Qs, etc.
+
         """
         raise NotImplementedError('Abstract interface')
 
-    def _solve_mdp(self, mdp, r, V_init=None, pi_init=None):
-        """ Solve and MDP using a given reward function """
+    def solve_mdp(self, mdp, r, V_init=None, pi_init=None):
+        """ Solve the given MDP using a given reward function
+
+        Parameters
+        ----------
+        mdp : :class:`funzo.models.MDP` instance
+            MDP model underlying the IRL task
+        r : array-like
+            Parameters of the reward function used in the MDP model
+        V_init : array-like
+            Initialization for value function of the MDP, e.g. using old V
+        pi_init : array-like
+            Initialization of the policy for the MDP
+
+        Returns
+        ---------
+        plan : dict
+            Dictionary of policy (pi), value function (V) and Q-function (Q)
+
+        """
         mdp.reward.update_parameters(reward=r)
         plan = self._mdp_planner.solve(mdp, V_init, pi_init)
         return plan

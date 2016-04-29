@@ -29,7 +29,7 @@ __all__ = [
 
 
 class MDP(six.with_metaclass(ABCMeta, Model)):
-    """ Markov Decision Process (MDP) model
+    """ Markov Decision Problem (MDP) model
 
     For general MDPs, states and action can be continuous making it hard to
     efficiently represent them using standard data structures. In the case of
@@ -38,41 +38,60 @@ class MDP(six.with_metaclass(ABCMeta, Model)):
 
     In the continuous cases, we assume that only a sample of the state and
     action spaces will be used, and these can also be represented a simple
-    hashable data structure (indexed by state or action ids).
+    hash-able data structure (indexed by state or action ids).
+
+    .. note:: This design deliberately leaves out the details of **states** and
+        **actions** to be handled by the domain object which includes a
+        reference to an MDP object. Additionally, transitions and reward which
+        are in general functions are represented as separate *callable*
+        objects with references to relevant data needed. This allows a unified
+        interface for both **discrete** and **continuous** MDPs and further
+        extensions
 
     Parameters
     ------------
-    discount : float
-        MDP discount factor in the range [0, 1)
     reward : :class:`RewardFunction` object
         Reward function for the MDP with all the relevant parameters
     transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochasticity are handled therein.
+    discount : float, optional (default: 0.9)
+        MDP discount factor in the range [0, 1)
     domain : :class:`Domain` object, optional (default: None)
         The underlying domain (world) on which the MDP operates on
 
     Attributes
     ------------
-    gamma : float
-        MDP discount factor
+    gamma
     _reward : :class:`RewardFunction` object
         Reward function for the MDP with all the relevant parameters
     _transition : :class:`MDPTransition` object
         Represents the transition function for the MDP. All transition relevant
         details such as stochasticity are handled therein.
-    _domain : :class:`Domain` object
-        The underlying domain (world) on which the MDP operates on
+    _domain : :class:`funzo.domains.Domain` object, optional (default: None)
+        The underlying domain (world) on which the MDP operates on. This is
+        inferred from the domain context using the ``with`` statement.
 
-
-    Notes
-    ------
-    This design deliberately leaves out the details of *states* and *actions*
-    to be handled by the domain object which includes a reference to an MDP
-    object. Additionally, transitions and reward which are in general functions
-    are represented as separate *callable* objects with references to relevant
-    data needed. This allows a unified interface for both *discrete* and
-    *continuous* MDPs and further extensions
+    Examples
+    ---------
+    >>> import numpy as np
+    >>> gmap = np.zeros(shape=(3, 3))
+    >>> gmap[2, 2] = 2  # set goal with flag 2
+    >>> gmap[1, 1] = 1  # set cell blocked
+    >>> gmap
+    array([[ 0.,  0.,  0.],
+       [ 0.,  1.,  0.],
+       [ 0.,  0.,  2.]])
+    >>> from funzo.domains import GridWorld, GridWorldMDP, GReward, GTransition
+    >>> from funzo.planners import PolicyIteration
+    >>> planner = PolicyIteration()
+    >>> with GridWorld(gmap) as world:
+    >>>     R = GReward(9)
+    >>>     T = GTransition(wind=0.1)
+    >>>     g_mdp = GridWorldMDP(R, T, 0.99)
+    >>>     plan = planner.solve(g_mdp)
+    >>>     print('Policy: {}'.format(plan['pi']))
+    Policy: [0 0 4 3 0 3 0 0 3]
 
     """
 
@@ -207,6 +226,8 @@ class RewardFunction(six.with_metaclass(ABCMeta, Model)):
 
     Attributes
     -----------
+    kind
+    rmax
     _domain : :class:`Domain` derivative object
         Object reference to the domain of the MDP
     _rmax : float
@@ -334,8 +355,6 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
             if inspect.ismethod(item):
                 if item.__name__.startswith(self._template):
                     dim += 1
-        # features = self.__class__.__dict__
-        # dim = sum([f[0].startswith(self._template) for f in features])
         return dim
 
 ########################################################################
