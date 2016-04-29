@@ -6,6 +6,8 @@ Bayesian inverse reinforcement learning
 from __future__ import division
 
 import six
+
+import scipy.stats
 import numpy as np
 
 from abc import abstractmethod, ABCMeta
@@ -15,7 +17,6 @@ from six.moves import range, zip
 
 from scipy.optimize import minimize
 from scipy.misc import logsumexp
-from scipy.stats import multivariate_normal
 
 from .base import IRLSolver
 from ..base import Model
@@ -92,7 +93,7 @@ class BIRL(IRLSolver):
             raise ValueError('BIRL requires an MDP model')
 
         v = ['step', 'r', 'r_mean', 'sample', 'a_ratio']
-        trace = Trace(v, save_interval=self._max_iter//2)
+        trace = Trace(v, save_interval=self._max_iter // 2)
 
         if self._inference == 'PW':
             return self._policy_walk(mdp, demos, trace)
@@ -109,19 +110,20 @@ class BIRL(IRLSolver):
         plan_r = self._solve_mdp(mdp, r)
 
         r_mean = np.array(r)
-        for step in tqdm(range(1, self._max_iter+1), desc='PolicyWalk'):
+        for step in tqdm(range(1, self._max_iter + 1), desc='PolicyWalk'):
             r_new = self._proposal.step(r)
             plan_r_new = self._solve_mdp(mdp, r_new, plan_r['V'], plan_r['pi'])
             p_accept = self._acceptance_ratio(mdp, demos, r, r_new,
                                               plan_r['Q'], plan_r_new['Q'])
-            if self._rng.uniform() < min([1.0, p_accept])**self._cooling(step):
+            if self._rng.uniform() < min([1.0, p_accept]):
                 r = np.array(r_new)
                 plan_r = deepcopy(plan_r_new)
 
-            if step > self._burn:
-                r_mean = self._iterative_mean(r_mean, r, step-self._burn)
-                trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
-                             a_ratio=p_accept)
+                # if step > self._burn:
+            r_mean = self._iterative_mean(r_mean, r, step)
+            trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
+                         a_ratio=p_accept)
+
         return trace
 
     def _find_map(self, mdp, demos, trace):
@@ -170,7 +172,7 @@ class BIRL(IRLSolver):
             if len(traj) > 0:
                 for (s, a) in traj:
                     rr = np.exp(self._beta * Q_r[a, s]) /\
-                            sum(np.exp(self._beta * Q_r[b, s]) for b in mdp.A)
+                        sum(np.exp(self._beta * Q_r[b, s]) for b in mdp.A)
                     rr_new = np.exp(self._beta * Q_r_new[a, s]) /\
                         sum(np.exp(self._beta * Q_r_new[b, s])
                             for b in mdp.A)
@@ -264,7 +266,7 @@ class PolicyWalkProposal(Proposal):
         sample = np.array(location)
         d = self.rng.choice([-self.delta, self.delta])
         i = self.rng.randint(self.dim)
-        if -self.rmax <= sample[i]+d <= self.rmax:
+        if -self.rmax <= sample[i] + d <= self.rmax:
             sample[i] += d
         return sample
 
@@ -281,7 +283,9 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
     is available before running the algorithm, i.e. all the relevant domain
     knowledge.
 
-    These distributions are multivariate, i.e. samples are vectors
+    .. note:: These distributions are multivariate, i.e. reward samples are
+        vectors or equivalently functions over :math:`\mathcal{S}`, or more
+        generally :math:`\mathcal{S} \\times \mathcal{A}` or subsets of these.
 
     """
 
@@ -292,20 +296,21 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
 
     @abstractmethod
     def pdf(self, r):
-        """ Evaluate the pdf of the reward prior distribution
+        """ Estimate the probability of the reward under the prior
 
         .. math::
 
             p(r \in A) = \int_A f d\mu
 
-        for any :math:`A \in \mathcal{A}`, given some measurable space :math:`(\mathcal{X}, \mathcal{A})` and a measure :math:`\mu`.
+        for any :math:`A \in \mathcal{A}`, given some measurable space
+        :math:`(\mathcal{X}, \mathcal{A})` and a measure :math:`\mu`.
 
         """
         raise NotImplementedError('Abstract method')
 
     @abstractmethod
     def log_p(self, r):
-        """ Evaluate the logpdf of the reward prior distribution """
+        """ Estimate the log probability of the reward under the prior """
         raise NotImplementedError('Abstract method')
 
     @abstractmethod
@@ -321,27 +326,36 @@ class RewardPrior(six.with_metaclass(ABCMeta, Model)):
 
 
 class GaussianRewardPrior(RewardPrior):
-    """ Gaussian reward prior """
+    """ Gaussian reward prior
+
+    Suitable for many real world tasks with parsimonious reward structures,
+    where most states have negligible rewards [RamBIRL07]_.
+
+    .. math:: p(r(s, a) = x) = \\frac{1}{\sqrt{2\pi}\sigma}
+        \exp\left(-\\frac{x^2}{2\sigma^2}\\right)
+
+    .. [RamBIRL07] Deepak Ramachandran and Eyal Amir, "Bayesian inverse
+        reinforcement learning," IJCAI, 2007
+
+    """
     def __init__(self, dim=1, mean=0.0, sigma=0.5):
         super(GaussianRewardPrior, self).__init__(dim)
-        self._cov = np.eye(self._dim) * sigma
-        self._mu = np.ones(self._dim) * mean
-        # TODO - allow different covariance shapes, and full mean vectors
+        self._dist = scipy.stats.norm(loc=mean, scale=sigma)
 
     def pdf(self, r):
-        """ Evaluate the pdf of the reward prior distribution """
-        return multivariate_normal.pdf(r, mean=self._mu, cov=self._cov)
+        """ Estimate the probability of the reward under the prior """
+        return np.prod([self._dist.pdf(x) for x in r])
 
     def log_p(self, r):
-        """ Evaluate the logpdf of the reward prior distribution """
-        return multivariate_normal.logpdf(r, mean=self._mu, cov=self._cov)
+        """ Estimate the log probability of the reward under the prior """
+        return np.sum(self._dist.logpdf(x) for x in r)
 
     def sample(self):
         """ Generate a sample from the reward prior distribution
 
         .. math::
 
-            r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})
+            r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\sigma})
 
         """
-        return multivariate_normal.rvs(mean=self._mu, cov=self._cov, size=1)
+        return self._dist.rvs(size=self._dim)
