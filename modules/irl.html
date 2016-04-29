@@ -190,9 +190,11 @@
 <dd><p>IRL algorithm interface</p>
 <p>This interface assumes the most general formulation of the IRL problem.
 The task requires at minimum only expert demonstrations.</p>
-<p class="rubric">Notes</p>
-<p>In case the underlying MDP is needed by an algorithm, a utility function
-for solving the MDP is included for convenience.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In case the underlying MDP is needed by an algorithm, a utility
+<a href="#id1"><span class="problematic" id="id2">:function:`solve_mdp`</span></a> for solving the MDP is included for convenience.</p>
+</div>
 <dl class="method">
 <dt id="funzo.irl.IRLSolver.solve">
 <code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#IRLSolver.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve" title="Permalink to this definition">¶</a></dt>
@@ -203,13 +205,59 @@ for solving the MDP is included for convenience.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>demos</strong> : array-like</p>
 <blockquote>
-<div><p>Expert demonstrations in form of state-action pairs</p>
+<div><p>Expert demonstrations in form of sets of state-action pairs. Some
+algorithms require these to be <em>trajectories</em> while others need
+just state-action pairs in any order.</p>
 </div></blockquote>
-<p><strong>mdp</strong> : <code class="xref py py-class docutils literal"><span class="pre">MDP</span></code> derivative instance, optional</p>
-<blockquote class="last">
+<p><strong>mdp</strong> : <a class="reference internal" href="models.html#funzo.models.MDP" title="funzo.models.MDP"><code class="xref py py-class docutils literal"><span class="pre">funzo.models.MDP</span></code></a> instance, optional (default: None)</p>
+<blockquote>
 <div><p>The MDP model (in relevant form, e.g. a generative model) if the
 IRL algorithm requires repeated solving of the forward problem
 (planning) to get a policy</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>trace</strong> : <a class="reference internal" href="utils.html#funzo.utils.Trace" title="funzo.utils.Trace"><code class="xref py py-class docutils literal"><span class="pre">funzo.utils.Trace</span></code></a> object</p>
+<blockquote class="last">
+<div><p>Results container with variables for all relevant quantities as per
+algorithm, e.g for iterative algorithms this includes all the
+intermediate reward functions, respective Qs, etc.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.IRLSolver.solve_mdp">
+<code class="descname">solve_mdp</code><span class="sig-paren">(</span><em>mdp</em>, <em>r</em>, <em>V_init=None</em>, <em>pi_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#IRLSolver.solve_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve_mdp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the given MDP using a given reward function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mdp</strong> : <a class="reference internal" href="models.html#funzo.models.MDP" title="funzo.models.MDP"><code class="xref py py-class docutils literal"><span class="pre">funzo.models.MDP</span></code></a> instance</p>
+<blockquote>
+<div><p>MDP model underlying the IRL task</p>
+</div></blockquote>
+<p><strong>r</strong> : array-like</p>
+<blockquote>
+<div><p>Parameters of the reward function used in the MDP model</p>
+</div></blockquote>
+<p><strong>V_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initialization for value function of the MDP, e.g. using old V</p>
+</div></blockquote>
+<p><strong>pi_init</strong> : array-like</p>
+<blockquote>
+<div><p>Initialization of the policy for the MDP</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>plan</strong> : dict</p>
+<blockquote class="last">
+<div><p>Dictionary of policy (pi), value function (V) and Q-function (Q)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -293,20 +341,26 @@ product of exponential distributions</p>
 <p>The reward prior summarizes information about the reward distribution that
 is available before running the algorithm, i.e. all the relevant domain
 knowledge.</p>
-<p>These distributions are multivariate, i.e. samples are vectors</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These distributions are multivariate, i.e. reward samples are
+vectors or equivalently functions over <span class="math">\(\mathcal{S}\)</span>, or more
+generally <span class="math">\(\mathcal{S} \times \mathcal{A}\)</span> or subsets of these.</p>
+</div>
 <dl class="method">
 <dt id="funzo.irl.RewardPrior.log_p">
 <code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the logpdf of the reward prior distribution</p>
+<dd><p>Estimate the log probability of the reward under the prior</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.irl.RewardPrior.pdf">
 <code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the pdf of the reward prior distribution</p>
+<dd><p>Estimate the probability of the reward under the prior</p>
 <div class="math">
 \[p(r \in A) = \int_A f d\mu\]</div>
-<p>for any <span class="math">\(A \in \mathcal{A}\)</span>, given some measurable space <span class="math">\((\mathcal{X}, \mathcal{A})\)</span> and a measure <span class="math">\(\mu\)</span>.</p>
+<p>for any <span class="math">\(A \in \mathcal{A}\)</span>, given some measurable space
+<span class="math">\((\mathcal{X}, \mathcal{A})\)</span> and a measure <span class="math">\(\mu\)</span>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -323,16 +377,28 @@ knowledge.</p>
 <dt id="funzo.irl.GaussianRewardPrior">
 <em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">GaussianRewardPrior</code><span class="sig-paren">(</span><em>dim=1</em>, <em>mean=0.0</em>, <em>sigma=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gaussian reward prior</p>
+<p>Suitable for many real world tasks with parsimonious reward structures,
+where most states have negligible rewards <a class="reference internal" href="#rambirl07" id="id3">[RamBIRL07]</a>.</p>
+<div class="math">
+\[p(r(s, a) = x) = \frac{1}{\sqrt{2\pi}\sigma}
+\exp\left(-\frac{x^2}{2\sigma^2}\right)\]</div>
+<table class="docutils citation" frame="void" id="rambirl07" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[RamBIRL07]</a></td><td>Deepak Ramachandran and Eyal Amir, &#8220;Bayesian inverse
+reinforcement learning,&#8221; IJCAI, 2007</td></tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="funzo.irl.GaussianRewardPrior.log_p">
 <code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the logpdf of the reward prior distribution</p>
+<dd><p>Estimate the log probability of the reward under the prior</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="funzo.irl.GaussianRewardPrior.pdf">
 <code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the pdf of the reward prior distribution</p>
+<dd><p>Estimate the probability of the reward under the prior</p>
 </dd></dl>
 
 <dl class="method">
@@ -340,7 +406,7 @@ knowledge.</p>
 <code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a sample from the reward prior distribution</p>
 <div class="math">
-\[r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})\]</div>
+\[r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\sigma})\]</div>
 </dd></dl>
 
 </dd></dl>

@@ -160,10 +160,8 @@
 <span class="sd">    This interface assumes the most general formulation of the IRL problem.</span>
 <span class="sd">    The task requires at minimum only expert demonstrations.</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    ------</span>
-<span class="sd">    In case the underlying MDP is needed by an algorithm, a utility function</span>
-<span class="sd">    for solving the MDP is included for convenience.</span>
+<span class="sd">    .. note:: In case the underlying MDP is needed by an algorithm, a utility</span>
+<span class="sd">        :function:`solve_mdp` for solving the MDP is included for convenience.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp_planner</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -176,20 +174,47 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        -----------</span>
 <span class="sd">        demos : array-like</span>
-<span class="sd">            Expert demonstrations in form of state-action pairs</span>
-<span class="sd">        mdp : :class:`MDP` derivative instance, optional</span>
+<span class="sd">            Expert demonstrations in form of sets of state-action pairs. Some</span>
+<span class="sd">            algorithms require these to be *trajectories* while others need</span>
+<span class="sd">            just state-action pairs in any order.</span>
+<span class="sd">        mdp : :class:`funzo.models.MDP` instance, optional (default: None)</span>
 <span class="sd">            The MDP model (in relevant form, e.g. a generative model) if the</span>
 <span class="sd">            IRL algorithm requires repeated solving of the forward problem</span>
 <span class="sd">            (planning) to get a policy</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        trace : :class:`funzo.utils.Trace` object</span>
+<span class="sd">            Results container with variables for all relevant quantities as per</span>
+<span class="sd">            algorithm, e.g for iterative algorithms this includes all the</span>
+<span class="sd">            intermediate reward functions, respective Qs, etc.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract interface&#39;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_solve_mdp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Solve and MDP using a given reward function &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IRLSolver.solve_mdp"><a class="viewcode-back" href="../../../modules/irl.html#funzo.irl.IRLSolver.solve_mdp">[docs]</a>    <span class="k">def</span> <span class="nf">solve_mdp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">V_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pi_init</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Solve the given MDP using a given reward function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mdp : :class:`funzo.models.MDP` instance</span>
+<span class="sd">            MDP model underlying the IRL task</span>
+<span class="sd">        r : array-like</span>
+<span class="sd">            Parameters of the reward function used in the MDP model</span>
+<span class="sd">        V_init : array-like</span>
+<span class="sd">            Initialization for value function of the MDP, e.g. using old V</span>
+<span class="sd">        pi_init : array-like</span>
+<span class="sd">            Initialization of the policy for the MDP</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ---------</span>
+<span class="sd">        plan : dict</span>
+<span class="sd">            Dictionary of policy (pi), value function (V) and Q-function (Q)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mdp</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">reward</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
         <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdp_planner</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="n">V_init</span><span class="p">,</span> <span class="n">pi_init</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">plan</span></div>
+        <span class="k">return</span> <span class="n">plan</span></div></div>
 
 
 <span class="c1">########################################################################</span>

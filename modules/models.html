@@ -156,7 +156,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.models.MDP" title="funzo.models.MDP"><code class="xref py py-obj docutils literal"><span class="pre">MDP</span></code></a>(reward,&nbsp;transition[,&nbsp;discount,&nbsp;domain])</td>
-<td>Markov Decision Process (MDP) model</td>
+<td>Markov Decision Problem (MDP) model</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.models.MDPState" title="funzo.models.MDPState"><code class="xref py py-obj docutils literal"><span class="pre">MDPState</span></code></a>(state_id)</td>
 <td>MDP State</td>
@@ -183,23 +183,29 @@
 <dl class="class">
 <dt id="funzo.models.MDP">
 <em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Markov Decision Process (MDP) model</p>
+<dd><p>Markov Decision Problem (MDP) model</p>
 <p>For general MDPs, states and action can be continuous making it hard to
 efficiently represent them using standard data structures. In the case of
 discrete MDPs, it is straightforward to use array of comparable objects to
 represent the states.</p>
 <p>In the continuous cases, we assume that only a sample of the state and
 action spaces will be used, and these can also be represented a simple
-hashable data structure (indexed by state or action ids).</p>
+hash-able data structure (indexed by state or action ids).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This design deliberately leaves out the details of <strong>states</strong> and
+<strong>actions</strong> to be handled by the domain object which includes a
+reference to an MDP object. Additionally, transitions and reward which
+are in general functions are represented as separate <em>callable</em>
+objects with references to relevant data needed. This allows a unified
+interface for both <strong>discrete</strong> and <strong>continuous</strong> MDPs and further
+extensions</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>discount</strong> : float</p>
-<blockquote>
-<div><p>MDP discount factor in the range [0, 1)</p>
-</div></blockquote>
-<p><strong>reward</strong> : <a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-class docutils literal"><span class="pre">RewardFunction</span></code></a> object</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>reward</strong> : <a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-class docutils literal"><span class="pre">RewardFunction</span></code></a> object</p>
 <blockquote>
 <div><p>Reward function for the MDP with all the relevant parameters</p>
 </div></blockquote>
@@ -207,6 +213,10 @@ hashable data structure (indexed by state or action ids).</p>
 <blockquote>
 <div><p>Represents the transition function for the MDP. All transition relevant
 details such as stochasticity are handled therein.</p>
+</div></blockquote>
+<p><strong>discount</strong> : float, optional (default: 0.9)</p>
+<blockquote>
+<div><p>MDP discount factor in the range [0, 1)</p>
 </div></blockquote>
 <p><strong>domain</strong> : <code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object, optional (default: None)</p>
 <blockquote class="last">
@@ -216,13 +226,27 @@ details such as stochasticity are handled therein.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
-<p>This design deliberately leaves out the details of <em>states</em> and <em>actions</em>
-to be handled by the domain object which includes a reference to an MDP
-object. Additionally, transitions and reward which are in general functions
-are represented as separate <em>callable</em> objects with references to relevant
-data needed. This allows a unified interface for both <em>discrete</em> and
-<em>continuous</em> MDPs and further extensions</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gmap</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># set goal with flag 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gmap</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># set cell blocked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gmap</span>
+<span class="go">array([[ 0.,  0.,  0.],</span>
+<span class="go">   [ 0.,  1.,  0.],</span>
+<span class="go">   [ 0.,  0.,  2.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">funzo.domains</span> <span class="k">import</span> <span class="n">GridWorld</span><span class="p">,</span> <span class="n">GridWorldMDP</span><span class="p">,</span> <span class="n">GReward</span><span class="p">,</span> <span class="n">GTransition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">funzo.planners</span> <span class="k">import</span> <span class="n">PolicyIteration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">planner</span> <span class="o">=</span> <span class="n">PolicyIteration</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">GridWorld</span><span class="p">(</span><span class="n">gmap</span><span class="p">)</span> <span class="k">as</span> <span class="n">world</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">R</span> <span class="o">=</span> <span class="n">GReward</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">wind</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">g_mdp</span> <span class="o">=</span> <span class="n">GridWorldMDP</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">g_mdp</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Policy: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plan</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]))</span>
+<span class="go">Policy: [0 0 4 3 0 3 0 0 3]</span>
+</pre></div>
+</div>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -237,8 +261,8 @@ data needed. This allows a unified interface for both <em>discrete</em> and
 </table>
 <table border="1" class="docutils">
 <colgroup>
-<col width="7%" />
-<col width="93%" />
+<col width="5%" />
+<col width="95%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>_reward</td>
@@ -248,7 +272,7 @@ data needed. This allows a unified interface for both <em>discrete</em> and
 <td>(<a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-class docutils literal"><span class="pre">MDPTransition</span></code></a> object) Represents the transition function for the MDP. All transition relevant details such as stochasticity are handled therein.</td>
 </tr>
 <tr class="row-odd"><td>_domain</td>
-<td>(<code class="xref py py-class docutils literal"><span class="pre">Domain</span></code> object) The underlying domain (world) on which the MDP operates on</td>
+<td>(<code class="xref py py-class docutils literal"><span class="pre">funzo.domains.Domain</span></code> object, optional (default: None)) The underlying domain (world) on which the MDP operates on. This is inferred from the domain context using the <code class="docutils literal"><span class="pre">with</span></code> statement.</td>
 </tr>
 </tbody>
 </table>
@@ -471,6 +495,20 @@ to be used</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.RewardFunction.kind" title="funzo.models.RewardFunction.kind"><code class="xref py py-obj docutils literal"><span class="pre">kind</span></code></a></td>
+<td>Type of reward function (e.g.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.RewardFunction.rmax" title="funzo.models.RewardFunction.rmax"><code class="xref py py-obj docutils literal"><span class="pre">rmax</span></code></a></td>
+<td>Reward upper bound</td>
+</tr>
+</tbody>
+</table>
 <table border="1" class="docutils">
 <colgroup>
 <col width="8%" />
