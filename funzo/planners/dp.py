@@ -53,7 +53,8 @@ class PolicyIteration(Planner):
 
     References
     ------------
-    "Reinforcement Learning: An introduction", Sutton R. and Barto A., MIT Press
+    "Reinforcement Learning: An introduction", Sutton R. and Barto A.,
+    MIT Press
 
     """
     def __init__(self, max_iter=200, epsilon=1e-05, random_state=None):
@@ -66,7 +67,7 @@ class PolicyIteration(Planner):
 
         Parameters
         ------------
-        mdp : :class:`MDP` instance
+        mdp : :class:`funzo.models.MDP` instance
             The MDP to plan on.
         V_init : array-like
             Initial value function
@@ -155,7 +156,8 @@ class ValueIteration(Planner):
 
     References
     ------------
-    "Reinforcement Learning: An introduction", Sutton R. and Barto A., MIT Press
+    "Reinforcement Learning: An introduction", Sutton R. and Barto A.,
+    MIT Press
 
     """
     def __init__(self, max_iter=200, epsilon=1e-05):
@@ -167,7 +169,7 @@ class ValueIteration(Planner):
 
         Parameters
         ------------
-        mdp : :class:`MDP` instance
+        mdp : :class:`funzo.models.MDP` instance
             The MDP to plan on.
         V_init : array-like
             Initial value function

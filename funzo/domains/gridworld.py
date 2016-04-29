@@ -162,8 +162,8 @@ class GTransition(MDPTransition):
             state, if transition leads to outside of the world)
 
         """
-        new_coords = (state.cell[0]+action.direction[0],
-                      state.cell[1]+action.direction[1])
+        new_coords = (state.cell[0] + action.direction[0],
+                      state.cell[1] + action.direction[1])
 
         if new_coords in self._domain.state_map:
             return self._domain.state_map[new_coords]
