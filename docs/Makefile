@@ -186,5 +186,5 @@ publish: html
 	cd _build/funzo && git checkout gh-pages && \
 	rsync -r ../html/* ./ && \
 	git add * && \
-	git commit -a -m 'Make install' && \
+	git commit -a -m 'Updating docs' && \
 	git push origin gh-pages
