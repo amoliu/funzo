@@ -16,7 +16,7 @@ class BIRLBase(IRLSolver):
 
     BIRL algorithms seek to find a reward function underlying a set of
     expert demonstrations by computing the reward posterior distribution
-    :math:`p(r | \Xi)`.
+    :math:`p(r | D)`.
 
     These algorithms typically can return a single reward estimate by
     computing the various quantities e.g. mean
@@ -60,7 +60,7 @@ class BIRLBase(IRLSolver):
 
         .. math::
 
-            \log p(r | \Xi) = \log p(\Xi | r) + \log p(r)
+            \log p(r | D) = \log p(D | r) + \log p(r)
 
         """
         llk = self.log_likelihood(plan_r['Q'], demos, mdp)
@@ -72,11 +72,11 @@ class BIRLBase(IRLSolver):
 
         .. math::
 
-            log p(\Xi | r) = \sum_{\xi \in \Xi} \sum_{(s,a) \in \xi}
+            log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}
             \left((\\beta Q(s,a;r)) - \log \sum_{b \in \A} (\\beta Q(s,b;r))
             \\right)
 
-        where :math:`\xi` are trajectories or sets of state-action pairs.
+        where :math:`d` are trajectories or sets of state-action pairs.
 
         """
         llk = 0.0

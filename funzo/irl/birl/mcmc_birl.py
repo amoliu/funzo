@@ -19,14 +19,14 @@ from ...utils.validation import check_random_state
 from ...utils.data_structures import Trace
 
 
-__all__ = ['PolicaWalkBIRL', 'PolicyWalkProposal']
+__all__ = ['PolicyWalkBIRL', 'PolicyWalkProposal']
 
 
-class PolicaWalkBIRL(BIRLBase):
+class PolicyWalkBIRL(BIRLBase):
     """ BIRL using PolicyWalk algorithm for inference """
     def __init__(self, prior, beta=0.7, delta=0.2, max_iter=100, burn=0.27,
                  planner=None, random_state=None):
-        super(PolicaWalkBIRL, self).__init__(prior, beta,
+        super(PolicyWalkBIRL, self).__init__(prior, beta,
                                              planner, random_state)
 
         if 0 >= max_iter > np.inf:

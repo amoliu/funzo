@@ -4,7 +4,7 @@ The :mod:`funzo.irl.birl` module contains BIRL algorithms
 
 from .priors import RewardPriorBase, GaussianRewardPrior, UniformRewardPrior
 
-from .mcmc_birl import PolicaWalkBIRL, PolicyWalkProposal
+from .mcmc_birl import PolicyWalkBIRL, PolicyWalkProposal
 
 from .opt_birl import MAPBIRL
 
@@ -16,7 +16,7 @@ __all__ = [
     #
     'RewardPriorBase', 'GaussianRewardPrior', 'UniformRewardPrior',
     #
-    'PolicaWalkBIRL', 'PolicyWalkProposal',
+    'PolicyWalkBIRL', 'PolicyWalkProposal',
     #
     'MAPBIRL',
 ]
