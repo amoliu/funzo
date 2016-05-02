@@ -7,7 +7,7 @@ from __future__ import division
 
 from scipy.misc import logsumexp
 
-from ..base import IRLSolver
+from ..irl_base import IRLSolver
 from ...utils.validation import check_random_state
 
 

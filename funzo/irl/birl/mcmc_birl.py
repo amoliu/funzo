@@ -2,7 +2,7 @@
 BIRL algorithms with MCMC based inference
 """
 
-from __future__ import division
+from __future__ import division, absolute_import
 
 import six
 
@@ -13,7 +13,7 @@ from tqdm import tqdm
 from copy import deepcopy
 from six.moves import range
 
-from .base import BIRLBase
+from .birl_base import BIRLBase
 from ...base import Model
 from ...utils.validation import check_random_state
 from ...utils.data_structures import Trace

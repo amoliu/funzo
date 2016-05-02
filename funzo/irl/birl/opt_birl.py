@@ -5,15 +5,14 @@ BIRL algorithms with Optimization based inference. Includes;
     -
 """
 
-from __future__ import division
+from __future__ import division, absolute_import
 
 import numpy as np
 
 from six.moves import range
 from scipy.optimize import minimize
 
-
-from .base import BIRLBase
+from .birl_base import BIRLBase
 from ...utils.data_structures import Trace
 
 

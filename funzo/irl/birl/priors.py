@@ -12,7 +12,7 @@ import numpy as np
 
 from abc import abstractmethod, ABCMeta
 
-from ..base import Model
+from ...base import Model
 
 
 __all__ = [
