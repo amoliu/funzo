@@ -17,10 +17,9 @@ from funzo.planners.dp import PolicyIteration, ValueIteration
 
 def main(map_name, planner):
     gmap = np.loadtxt(map_name)
-    w, h = gmap.shape
 
     with GridWorld(gmap=gmap) as world:
-        R = GReward(ns=w * h)
+        R = GReward(rmax=1.0)
         T = GTransition(wind=0.1)
         g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.99)
 
@@ -32,7 +31,6 @@ def main(map_name, planner):
         res = mdp_planner.solve(g_mdp)
         V = res['V']
         print('Policy: ', res['pi'])
-
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()

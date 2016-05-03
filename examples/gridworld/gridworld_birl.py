@@ -23,14 +23,13 @@ SEED = None
 
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
-    w, h = gmap.shape
 
     w_expert = np.array([-0.01, -3.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
     with GridWorld(gmap=gmap) as world:
         rfunc = GRewardLFA(weights=w_expert, rmax=1.0)
-        # rfunc = GReward(ns=w*h)
+        # rfunc = GReward()
         T = GTransition()
         g = GridWorldMDP(reward=rfunc, transition=T, discount=0.99)
 

@@ -4,42 +4,39 @@ import matplotlib
 matplotlib.use('Qt4Agg')
 
 from matplotlib import pyplot as plt
-
 plt.style.use('fivethirtyeight')
 
 import numpy as np
 
 from funzo.domains.puddleworld import PuddleWorld, PuddleWorldMDP
-from funzo.domains.puddleworld import PuddleReward
+from funzo.domains.puddleworld import PuddleReward, PuddleRewardLFA
 from funzo.domains.puddleworld import PWTransition
-from funzo.planners.dp import PolicyIteration, ValueIteration
+from funzo.planners import PolicyIteration
 
 
 def main():
-    world = PuddleWorld(start=(0.5, 0.5), resolution=0.05)
-    R = PuddleReward(domain=world)
-    T = PWTransition(domain=world)
 
-    g = PuddleWorldMDP(domain=world, reward=R, transition=T, discount=0.9)
+    with PuddleWorld(start=(0.5, 0.1), resolution=0.05) as world:
+        # R = PuddleReward(rmax=1.0, step_reward=0.1)
+        R = PuddleRewardLFA(weights=[1, -1], rmax=1.0)
+        T = PWTransition()
+        g = PuddleWorldMDP(reward=R, transition=T, discount=0.98)
 
-    # ------------------------
-    mdp_planner = PolicyIteration(verbose=0)
-    res = mdp_planner(g)
-    V = res['V']
-    print(V)
-    # print(res['Q'])
-    print(res['pi'])
+        # ------------------------
+        mdp_planner = PolicyIteration()
+        res = mdp_planner.solve(g)
+        V = res['V']
+        print(V)
+        print(res['pi'])
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.gca()
     ax = world.visualize(ax, policy=res['pi'])
     # plt.savefig('world.svg')
 
-    # ------------------------
-
     plt.figure(figsize=(8, 8))
-    plt.imshow(V.reshape(world.shape),
-               interpolation='nearest', cmap='inferno', origin='lower',
+    plt.imshow(V.reshape(world.shape).T,  # interpolation='nearest',
+               cmap='viridis', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
     plt.grid(False)
     plt.title('Value function')
