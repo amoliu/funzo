@@ -49,3 +49,4 @@ notebooks
 .DS_Store
 docs/auto_examples
 docs/modules/generated
+examples/gridworld/*.hdf5
