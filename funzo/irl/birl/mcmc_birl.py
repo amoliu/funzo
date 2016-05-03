@@ -79,9 +79,12 @@ class PolicyWalkBIRL(BIRLBase):
 
     def _iterative_mean(self, r_mean, r_new, step):
         """ Compute the iterative mean of the reward """
-        r_mean = [((step - 1) / float(step)) *
-                  r_m + 1.0 / step * r for r_m, r in zip(r_mean, r_new)]
-        return np.array(r_mean)
+        if step < 1:
+            return r_new
+
+        old_sum = r_mean * (step - 1)
+        new_sum = old_sum + r_new
+        return new_sum / step
 
 
 ########################################################################
