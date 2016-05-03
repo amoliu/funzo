@@ -217,7 +217,7 @@
 <span class="sd">        .. math::</span>
 
 <span class="sd">            \log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}</span>
-<span class="sd">            \left((\\beta Q(s,a;r)) - \log \sum_{b \in A} (\\beta Q(s,b;r))</span>
+<span class="sd">            \left((\\beta Q(s,a;r)) - \log \sum_{b \in A} \exp(\\beta Q(s,b;r))</span>
 <span class="sd">            \\right)</span>
 
 <span class="sd">        where :math:`d` are trajectories or sets of state-action pairs.</span>

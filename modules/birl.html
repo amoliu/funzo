@@ -251,7 +251,7 @@ computing the various quantities e.g. mean</p>
 <dd><p>Evaluate the log likelihood of the demonstrations w.r.t reward</p>
 <div class="math">
 \[\log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}
-\left((\beta Q(s,a;r)) - \log \sum_{b \in A} (\beta Q(s,b;r))
+\left((\beta Q(s,a;r)) - \log \sum_{b \in A} \exp(\beta Q(s,b;r))
 \right)\]</div>
 <p>where <span class="math">\(d\)</span> are trajectories or sets of state-action pairs.</p>
 </dd></dl>
