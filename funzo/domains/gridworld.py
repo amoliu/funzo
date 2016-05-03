@@ -46,9 +46,8 @@ TERMINAL = 'terminal'
 
 class GReward(TabularRewardFunction):
     """ Grid world MDP reward function """
-    def __init__(self, ns, rmax=1.0, domain=None):
+    def __init__(self, rmax=1.0, domain=None):
         super(GReward, self).__init__(domain=domain,
-                                      n_s=ns,
                                       rmax=rmax)
 
         self._domain = model_domain(domain, GridWorld)
@@ -75,6 +74,9 @@ class GReward(TabularRewardFunction):
             return -10.0
         return self._R[s_p]
 
+    def __len__(self):
+        return len(self._domain.states)
+
 
 class GRewardLFA(LinearRewardFunction):
     """ Gridworld reward using linear function approximation """
@@ -89,8 +91,8 @@ class GRewardLFA(LinearRewardFunction):
             return self.__call__(state, 4)
         # get the resulting state to determine if movement occurred
         s_p = self._T(state, action)[0][1]
-        if s_p == state and action != 4:  # out or domain movements penalty
-            return -10.0
+        # if s_p == state and action != 4:  # out or domain movements penalty
+        #     return -10.0
 
         phi = self.phi(s_p, action)
         return np.dot(self._weights, phi)
