@@ -170,7 +170,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">RewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
 <td>MDP reward function model</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>(n_s[,&nbsp;n_a,&nbsp;rmax,&nbsp;domain])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
 <td>Reward function with a tabular representation</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.models.LinearRewardFunction" title="funzo.models.LinearRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">LinearRewardFunction</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
@@ -545,7 +545,7 @@ to be used</p>
 
 <dl class="class">
 <dt id="funzo.models.TabularRewardFunction">
-<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>n_s</em>, <em>n_a=None</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">TabularRewardFunction</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#TabularRewardFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.TabularRewardFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function with a tabular representation</p>
 <p>A basic reward function with full tabular representation, mainly suitable
 for discrete and small sized domains. i.e. <span class="math">\(r(s, a) = R[s, a]\)</span> where

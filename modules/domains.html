@@ -158,7 +158,7 @@
 <td>Domain (World) interface</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.domains.model_domain" title="funzo.domains.model_domain"><code class="xref py py-obj docutils literal"><span class="pre">model_domain</span></code></a>([model,&nbsp;domain_type])</td>
-<td>Get the domain model domain</td>
+<td>Get the domain of the model</td>
 </tr>
 </tbody>
 </table>
@@ -177,7 +177,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GridWorldMDP" title="funzo.domains.GridWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">GridWorldMDP</span></code></a>(reward,&nbsp;transition[,&nbsp;discount,&nbsp;...])</td>
 <td>Grid world MDP representing the decision making process</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GReward" title="funzo.domains.GReward"><code class="xref py py-obj docutils literal"><span class="pre">GReward</span></code></a>(ns[,&nbsp;rmax,&nbsp;domain])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.GReward" title="funzo.domains.GReward"><code class="xref py py-obj docutils literal"><span class="pre">GReward</span></code></a>([rmax,&nbsp;domain])</td>
 <td>Grid world MDP reward function</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.domains.GRewardLFA" title="funzo.domains.GRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">GRewardLFA</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
@@ -207,19 +207,22 @@
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PuddleWorld" title="funzo.domains.PuddleWorld"><code class="xref py py-obj docutils literal"><span class="pre">PuddleWorld</span></code></a>(start[,&nbsp;resolution])</td>
 <td>PuddleWorld domain</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PuddleWorldMDP" title="funzo.domains.PuddleWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">PuddleWorldMDP</span></code></a>(domain,&nbsp;reward,&nbsp;transition[,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PuddleWorldMDP" title="funzo.domains.PuddleWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">PuddleWorldMDP</span></code></a>(reward,&nbsp;transition[,&nbsp;...])</td>
 <td>PuddleWorld MDP representing the decision making process</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PuddleReward" title="funzo.domains.PuddleReward"><code class="xref py py-obj docutils literal"><span class="pre">PuddleReward</span></code></a>(domain[,&nbsp;rmax,&nbsp;step_reward])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PuddleReward" title="funzo.domains.PuddleReward"><code class="xref py py-obj docutils literal"><span class="pre">PuddleReward</span></code></a>([rmax,&nbsp;step_reward,&nbsp;domain])</td>
 <td>Reward function for the puddle</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PWTransition" title="funzo.domains.PWTransition"><code class="xref py py-obj docutils literal"><span class="pre">PWTransition</span></code></a>(domain)</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PuddleRewardLFA" title="funzo.domains.PuddleRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">PuddleRewardLFA</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
+<td>Reward function for the puddle using linear function approximation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PWTransition" title="funzo.domains.PWTransition"><code class="xref py py-obj docutils literal"><span class="pre">PWTransition</span></code></a>([domain])</td>
 <td>PuddleWorld transition function</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PWState" title="funzo.domains.PWState"><code class="xref py py-obj docutils literal"><span class="pre">PWState</span></code></a>(state_id,&nbsp;location)</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PWState" title="funzo.domains.PWState"><code class="xref py py-obj docutils literal"><span class="pre">PWState</span></code></a>(state_id,&nbsp;location)</td>
 <td>PuddleWorld state</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.PWAction" title="funzo.domains.PWAction"><code class="xref py py-obj docutils literal"><span class="pre">PWAction</span></code></a>(action_id,&nbsp;direction[,&nbsp;step])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.PWAction" title="funzo.domains.PWAction"><code class="xref py py-obj docutils literal"><span class="pre">PWAction</span></code></a>(action_id,&nbsp;direction[,&nbsp;step])</td>
 <td>PuddleWorld action</td>
 </tr>
 </tbody>
@@ -249,7 +252,7 @@
 <dl class="function">
 <dt id="funzo.domains.model_domain">
 <code class="descclassname">funzo.domains.</code><code class="descname">model_domain</code><span class="sig-paren">(</span><em>model=None</em>, <em>domain_type=&lt;class 'funzo.domains.base.Domain'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/base.html#model_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.model_domain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the domain model domain</p>
+<dd><p>Get the domain of the model</p>
 </dd></dl>
 
 <dl class="class">
@@ -305,7 +308,7 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.GReward">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>ns</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.GReward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid world MDP reward function</p>
 </dd></dl>
 
@@ -359,7 +362,7 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.PuddleWorldMDP">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorldMDP</code><span class="sig-paren">(</span><em>domain</em>, <em>reward</em>, <em>transition</em>, <em>discount=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleWorldMDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleWorldMDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld MDP representing the decision making process</p>
 <dl class="attribute">
 <dt id="funzo.domains.PuddleWorldMDP.A">
@@ -377,13 +380,25 @@ and obstacle cells are specified using a matrix or list of lists.</p>
 
 <dl class="class">
 <dt id="funzo.domains.PuddleReward">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleReward</code><span class="sig-paren">(</span><em>domain</em>, <em>rmax=1.0</em>, <em>step_reward=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleReward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleReward</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>step_reward=0.1</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleReward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward function for the puddle</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="funzo.domains.PuddleRewardLFA">
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PuddleRewardLFA</code><span class="sig-paren">(</span><em>weights</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleRewardLFA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward function for the puddle using linear function approximation</p>
+<dl class="method">
+<dt id="funzo.domains.PuddleRewardLFA.phi">
+<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PuddleRewardLFA.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PuddleRewardLFA.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the reward features for state-action pair</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="funzo.domains.PWTransition">
-<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWTransition</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PWTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWTransition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.domains.</code><code class="descname">PWTransition</code><span class="sig-paren">(</span><em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/domains/puddleworld.html#PWTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.PWTransition" title="Permalink to this definition">¶</a></dt>
 <dd><p>PuddleWorld transition function</p>
 </dd></dl>
 

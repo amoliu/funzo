@@ -223,9 +223,12 @@
 
     <span class="k">def</span> <span class="nf">_iterative_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_mean</span><span class="p">,</span> <span class="n">r_new</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Compute the iterative mean of the reward &quot;&quot;&quot;</span>
-        <span class="n">r_mean</span> <span class="o">=</span> <span class="p">[((</span><span class="n">step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">step</span><span class="p">))</span> <span class="o">*</span>
-                  <span class="n">r_m</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">step</span> <span class="o">*</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r_m</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r_mean</span><span class="p">,</span> <span class="n">r_new</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_mean</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r_new</span>
+
+        <span class="n">old_sum</span> <span class="o">=</span> <span class="n">r_mean</span> <span class="o">*</span> <span class="p">(</span><span class="n">step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">new_sum</span> <span class="o">=</span> <span class="n">old_sum</span> <span class="o">+</span> <span class="n">r_new</span>
+        <span class="k">return</span> <span class="n">new_sum</span> <span class="o">/</span> <span class="n">step</span></div>
 
 
 <span class="c1">########################################################################</span>

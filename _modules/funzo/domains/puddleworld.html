@@ -159,10 +159,10 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Rectangle</span><span class="p">,</span> <span class="n">Wedge</span><span class="p">,</span> <span class="n">Circle</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Domain</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Domain</span><span class="p">,</span> <span class="n">model_domain</span>
 
 <span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">MDP</span>
-<span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">TabularRewardFunction</span>
+<span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">TabularRewardFunction</span><span class="p">,</span> <span class="n">LinearRewardFunction</span>
 <span class="kn">from</span> <span class="nn">..models.mdp</span> <span class="kn">import</span> <span class="n">MDPTransition</span><span class="p">,</span> <span class="n">MDPState</span><span class="p">,</span> <span class="n">MDPAction</span>
 
 <span class="kn">from</span> <span class="nn">.geometry</span> <span class="kn">import</span> <span class="n">distance_to_segment</span><span class="p">,</span> <span class="n">edist</span><span class="p">,</span> <span class="n">discretize_space</span>
@@ -172,6 +172,7 @@
     <span class="s1">&#39;PuddleWorld&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PuddleWorldMDP&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PuddleReward&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PuddleRewardLFA&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PWTransition&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PWAction&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PWState&#39;</span><span class="p">,</span>
@@ -247,29 +248,66 @@
 
 <div class="viewcode-block" id="PuddleReward"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.PuddleReward">[docs]</a><span class="k">class</span> <span class="nc">PuddleReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Reward function for the puddle &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">step_reward</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PuddleReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">rmax</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">step_reward</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PuddleReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">PuddleWorld</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">PWTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">=</span> <span class="n">step_reward</span>
 
+        <span class="c1"># pre-compute _R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">])</span>
+
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">s_p</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">10.0</span>
+            <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mf">0.1</span>
+            <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span>
 
-        <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">s_p</span><span class="p">):</span>
-            <span class="k">return</span> <span class="mf">10.0</span>
-
-        <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
-
-        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span>
         <span class="n">p_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">state_</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state_</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">puddles</span><span class="p">)</span>
         <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_sr</span> <span class="o">+</span> <span class="n">p_cost</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PuddleRewardLFA"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.PuddleRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">PuddleRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reward function for the puddle using linear function approximation &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PuddleRewardLFA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">PuddleWorld</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">PWTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># if self._domain.terminal(s_p):</span>
+            <span class="c1">#     return 10.0</span>
+            <span class="c1"># if s_p == state:  # out or domain movements penalty</span>
+            <span class="c1">#     return -0.1</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">s_p</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PuddleRewardLFA.phi"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.PuddleRewardLFA.phi">[docs]</a>    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the reward features for state-action pair &quot;&quot;&quot;</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature_puddle</span><span class="p">(</span><span class="n">state_</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_goal_distance</span><span class="p">(</span><span class="n">state_</span><span class="p">)])</span></div>
+
+    <span class="k">def</span> <span class="nf">_feature_puddle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">p_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">puddles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p_cost</span>
+
+    <span class="k">def</span> <span class="nf">_feature_goal_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">edist</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">))</span></div>
 
 <span class="c1">#############################################################################</span>
 
@@ -314,6 +352,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_a</span> <span class="o">=</span> <span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;DOWN&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_a</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">step</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;UP&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_a</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">direction</span>
 
     <span class="nd">@property</span>
@@ -338,8 +378,9 @@
 
 <div class="viewcode-block" id="PWTransition"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.PWTransition">[docs]</a><span class="k">class</span> <span class="nc">PWTransition</span><span class="p">(</span><span class="n">MDPTransition</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PuddleWorld transition function &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PWTransition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">PuddleWorld</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate transition function</span>
@@ -382,7 +423,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">):</span>
-                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">resolution</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">resolution</span><span class="o">/</span><span class="mf">2.</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">resolution</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">resolution</span> <span class="o">/</span> <span class="mf">2.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">PWState</span><span class="p">(</span><span class="n">state_id</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
                 <span class="n">state_id</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -437,7 +478,7 @@
 
         <span class="c1"># draw puddles</span>
         <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.05</span>
         <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">length</span>
         <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">length</span>
         <span class="n">pd1</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
@@ -448,7 +489,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">Wedge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span>
                             <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;brown&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">aa</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 
-        <span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.05</span>
         <span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">puddles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">pd2</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">((</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
                         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;brown&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
@@ -459,7 +500,7 @@
                             <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;brown&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">aa</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 
         <span class="c1"># draw the agent at initial pose</span>
-        <span class="n">robot_start</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">)</span>
+        <span class="n">robot_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>  <span class="c1"># (0.3, 0.65)</span>
         <span class="n">robot_visual</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">robot_start</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">robot_visual</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robot</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">robot_start</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -495,11 +536,13 @@
 
 <div class="viewcode-block" id="PuddleWorldMDP"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.PuddleWorldMDP">[docs]</a><span class="k">class</span> <span class="nc">PuddleWorldMDP</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PuddleWorld MDP representing the decision making process &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PuddleWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span>
-                                             <span class="n">reward</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PuddleWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span>
                                              <span class="n">transition</span><span class="p">,</span>
-                                             <span class="n">discount</span><span class="p">)</span>
+                                             <span class="n">discount</span><span class="p">,</span>
+                                             <span class="n">domain</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">PuddleWorld</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -190,9 +190,8 @@
 
 <div class="viewcode-block" id="GReward"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GReward">[docs]</a><span class="k">class</span> <span class="nc">GReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Grid world MDP reward function &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
-                                      <span class="n">n_s</span><span class="o">=</span><span class="n">ns</span><span class="p">,</span>
                                       <span class="n">rmax</span><span class="o">=</span><span class="n">rmax</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
@@ -217,7 +216,10 @@
         <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
             <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GRewardLFA"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">GRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
@@ -233,8 +235,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
         <span class="c1"># get the resulting state to determine if movement occurred</span>
         <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
+        <span class="c1"># if s_p == state and action != 4:  # out or domain movements penalty</span>
+        <span class="c1">#     return -10.0</span>
 
         <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">s_p</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>

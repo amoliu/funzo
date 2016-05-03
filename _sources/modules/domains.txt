@@ -28,6 +28,7 @@
         PuddleWorld
         PuddleWorldMDP
         PuddleReward
+        PuddleRewardLFA
         PWTransition
         PWState
         PWAction
@@ -65,6 +66,8 @@ Detailed descriptions
 .. autoclass:: PuddleWorldMDP
     :members:
 .. autoclass:: PuddleReward
+    :members:
+.. autoclass:: PuddleRewardLFA
     :members:
 .. autoclass:: PWTransition
     :members:
