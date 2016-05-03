@@ -72,8 +72,8 @@ class BIRLBase(IRLSolver):
 
         .. math::
 
-            log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}
-            \left((\\beta Q(s,a;r)) - \log \sum_{b \in \A} (\\beta Q(s,b;r))
+            \log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}
+            \left((\\beta Q(s,a;r)) - \log \sum_{b \in A} (\\beta Q(s,b;r))
             \\right)
 
         where :math:`d` are trajectories or sets of state-action pairs.

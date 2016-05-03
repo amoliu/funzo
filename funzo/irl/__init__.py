@@ -1,6 +1,3 @@
-"""
-The :mod:`funzo.irl` module contains inverse reinforcement learning algorithms
-"""
 
 from .irl_base import IRLSolver
 from .irl_base import Loss, PolicyLoss, RewardLoss

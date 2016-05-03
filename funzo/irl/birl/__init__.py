@@ -1,6 +1,3 @@
-"""
-The :mod:`funzo.irl.birl` module contains BIRL algorithms
-"""
 
 from .priors import RewardPriorBase, GaussianRewardPrior, UniformRewardPrior
 

@@ -44,7 +44,7 @@ def main():
         # IRL
         r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.35)
         irl_solver = PolicyWalkBIRL(prior=r_prior, delta=0.2, planner=planner,
-                                    beta=0.8, max_iter=200, burn=0.3,
+                                    beta=0.8, max_iter=1000, burn=0.3,
                                     random_state=SEED)
 
         trace = irl_solver.solve(demos=demos, mdp=g)
