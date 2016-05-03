@@ -75,7 +75,7 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
 
 
 def model_domain(model=None, domain_type=Domain):
-    """ Get the domain model domain  """
+    """ Get the domain of the model """
     if model is None:
         return domain_type.get_domain()
     return model
