@@ -15,10 +15,10 @@ from six.moves import range
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle, Wedge, Circle
 
-from .base import Domain
+from .base import Domain, model_domain
 
 from ..models.mdp import MDP
-from ..models.mdp import TabularRewardFunction
+from ..models.mdp import TabularRewardFunction, LinearRewardFunction
 from ..models.mdp import MDPTransition, MDPState, MDPAction
 
 from .geometry import distance_to_segment, edist, discretize_space
@@ -28,6 +28,7 @@ __all__ = [
     'PuddleWorld',
     'PuddleWorldMDP',
     'PuddleReward',
+    'PuddleRewardLFA',
     'PWTransition',
     'PWAction',
     'PWState',
@@ -103,29 +104,66 @@ class Puddle(object):
 
 class PuddleReward(TabularRewardFunction):
     """ Reward function for the puddle """
-    def __init__(self, domain, rmax=1.0, step_reward=0.1):
-        super(PuddleReward, self).__init__(domain, rmax)
+    def __init__(self, rmax=1.0, step_reward=0.1, domain=None):
+        super(PuddleReward, self).__init__(rmax, domain)
+        self._domain = model_domain(domain, PuddleWorld)
+
         self._T = PWTransition(domain=domain)
         self._sr = step_reward
 
+        # pre-compute _R
+        self._R = np.array([self(s, 0) for s in self._domain.states])
+
     def __call__(self, state, action):
-        if action is None:
-            return -self._sr
+        state_ = self._domain.states[state]
+        if action is not None:
+            s_p = self._T(state, action)[0][1]
+            if self._domain.terminal(s_p):
+                return 10.0
+            if s_p == state:  # out or domain movements penalty
+                return -0.1
+            state_ = self._domain.states[s_p]
 
-        s_p = self._T(state, action)[0][1]
-        if self._domain.terminal(s_p):
-            return 10.0
-
-        if s_p == state:  # out or domain movements penalty
-            return -10.0
-
-        state_ = self._domain.states[s_p]
         p_cost = np.sum(p.cost(state_.location[0], state_.location[1])
                         for p in self._domain.puddles)
         return -self._sr + p_cost
 
     def __len__(self):
-        return 1
+        return len(self._domain.states)
+
+
+class PuddleRewardLFA(LinearRewardFunction):
+    """ Reward function for the puddle using linear function approximation """
+    def __init__(self, weights, rmax=1.0, domain=None):
+        super(PuddleRewardLFA, self).__init__(weights, rmax, domain)
+        self._domain = model_domain(domain, PuddleWorld)
+        self._T = PWTransition(domain=domain)
+
+    def __call__(self, state, action):
+        if action is not None:
+            s_p = self._T(state, action)[0][1]
+            # if self._domain.terminal(s_p):
+            #     return 10.0
+            # if s_p == state:  # out or domain movements penalty
+            #     return -0.1
+
+            return np.dot(self._weights, self.phi(s_p, action))
+        else:
+            return np.dot(self._weights, self.phi(state, action))
+
+    def phi(self, state, action):
+        """ Evaluate the reward features for state-action pair """
+        state_ = self._domain.states[state]
+        return np.array([self._feature_puddle(state_),
+                        self._feature_goal_distance(state_)])
+
+    def _feature_puddle(self, state):
+        p_cost = np.sum(p.cost(state.location[0], state.location[1])
+                        for p in self._domain.puddles)
+        return p_cost
+
+    def _feature_goal_distance(self, state):
+        return edist(state.location, (0.95, 0.95))
 
 #############################################################################
 
@@ -170,6 +208,8 @@ class PWAction(MDPAction):
             self._a = (step, 0.0)
         elif direction == 'DOWN':
             self._a = (0.0, -step)
+        elif direction == 'UP':
+            self._a = (0.0, step)
         self.name = direction
 
     @property
@@ -194,8 +234,9 @@ class PWAction(MDPAction):
 
 class PWTransition(MDPTransition):
     """ PuddleWorld transition function """
-    def __init__(self, domain):
+    def __init__(self, domain=None):
         super(PWTransition, self).__init__(domain)
+        self._domain = model_domain(domain, PuddleWorld)
 
     def __call__(self, state, action, **kwargs):
         """ Evaluate transition function
@@ -238,7 +279,7 @@ class PuddleWorld(Domain):
         self.w, self.h = a.shape
         for i in range(self.w):
             for j in range(self.h):
-                x, y = a[i, j] + resolution/2., b[i, j] + resolution/2.
+                x, y = a[i, j] + resolution / 2., b[i, j] + resolution / 2.
                 self.states[state_id] = PWState(state_id, (x, y))
                 state_id += 1
 
@@ -293,7 +334,7 @@ class PuddleWorld(Domain):
 
         # draw puddles
         x1 = self.puddles[0].start[0]
-        y1 = self.puddles[0].start[1]-0.05
+        y1 = self.puddles[0].start[1] - 0.05
         width = self.puddles[0].length
         height = self.puddles[1].length
         pd1 = Rectangle((x1, y1), height=0.1, width=width,
@@ -304,7 +345,7 @@ class PuddleWorld(Domain):
         ax.add_artist(Wedge(self.puddles[0].end, 0.05, 270, 90,
                             fc='brown', alpha=0.7, aa=True, lw=0))
 
-        x2 = self.puddles[1].start[0]-0.05
+        x2 = self.puddles[1].start[0] - 0.05
         y2 = self.puddles[1].start[1]
         pd2 = Rectangle((x2, y2), width=0.1, height=height,
                         color='brown', alpha=0.7)
@@ -315,7 +356,7 @@ class PuddleWorld(Domain):
                             fc='brown', alpha=0.7, aa=True, lw=0))
 
         # draw the agent at initial pose
-        robot_start = (0.3, 0.65)
+        robot_start = self._start  # (0.3, 0.65)
         robot_visual = Circle(robot_start, 0.01, fc='b', ec='k', zorder=3)
         ax.add_artist(robot_visual)
         self.robot = Agent(position=robot_start, orientation=(1, 1),
@@ -351,11 +392,13 @@ class PuddleWorld(Domain):
 
 class PuddleWorldMDP(MDP):
     """ PuddleWorld MDP representing the decision making process """
-    def __init__(self, domain, reward, transition, discount=0.9):
-        super(PuddleWorldMDP, self).__init__(domain,
-                                             reward,
+    def __init__(self, reward, transition, discount=0.9, domain=None):
+        super(PuddleWorldMDP, self).__init__(reward,
                                              transition,
-                                             discount)
+                                             discount,
+                                             domain)
+
+        self._domain = model_domain(domain, PuddleWorld)
 
     @property
     def S(self):
