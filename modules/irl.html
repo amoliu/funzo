@@ -35,7 +35,7 @@
 
   
     <link rel="top" title="funzo 0.1.0 documentation" href="../index.html"/>
-        <link rel="next" title="funzo.domains" href="domains.html"/> 
+        <link rel="next" title="funzo.irl.birl Bayesian inverse reinforcement learning (BIRL)" href="birl.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -93,6 +93,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#algorithms">Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="birl.html"><code class="docutils literal"><span class="pre">funzo.irl.birl</span></code> Bayesian inverse reinforcement learning (BIRL)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a></li>
 </ul>
 </li>
@@ -146,7 +150,6 @@
             
   <div class="section" id="module-funzo.irl">
 <span id="funzo-irl"></span><h1><a class="reference internal" href="#module-funzo.irl" title="funzo.irl"><code class="xref py py-mod docutils literal"><span class="pre">funzo.irl</span></code></a><a class="headerlink" href="#module-funzo.irl" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="#module-funzo.irl" title="funzo.irl"><code class="xref py py-mod docutils literal"><span class="pre">funzo.irl</span></code></a> module contains inverse reinforcement learning algorithms</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -156,37 +159,30 @@
 <tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.IRLSolver" title="funzo.irl.IRLSolver"><code class="xref py py-obj docutils literal"><span class="pre">IRLSolver</span></code></a>([mdp_planner])</td>
 <td>IRL algorithm interface</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.BIRL" title="funzo.irl.BIRL"><code class="xref py py-obj docutils literal"><span class="pre">BIRL</span></code></a>(planner,&nbsp;prior[,&nbsp;inference,&nbsp;beta,&nbsp;...])</td>
-<td>Bayesian IRL algorithm</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.RewardPrior" title="funzo.irl.RewardPrior"><code class="xref py py-obj docutils literal"><span class="pre">RewardPrior</span></code></a>(dim)</td>
-<td>Reward prior interface</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.GaussianRewardPrior" title="funzo.irl.GaussianRewardPrior"><code class="xref py py-obj docutils literal"><span class="pre">GaussianRewardPrior</span></code></a>([dim,&nbsp;mean,&nbsp;sigma])</td>
-<td>Gaussian reward prior</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.Proposal" title="funzo.irl.Proposal"><code class="xref py py-obj docutils literal"><span class="pre">Proposal</span></code></a>(dim)</td>
-<td>Proposal for MCMC sampling</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.PolicyWalkProposal" title="funzo.irl.PolicyWalkProposal"><code class="xref py py-obj docutils literal"><span class="pre">PolicyWalkProposal</span></code></a>(dim,&nbsp;delta[,&nbsp;rmax,&nbsp;...])</td>
-<td>PolicyWalk MCMC proposal</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.Loss" title="funzo.irl.Loss"><code class="xref py py-obj docutils literal"><span class="pre">Loss</span></code></a>(name)</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.Loss" title="funzo.irl.Loss"><code class="xref py py-obj docutils literal"><span class="pre">Loss</span></code></a>(name)</td>
 <td>A loss function for evaluating progress of IRL algorithms</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.PolicyLoss" title="funzo.irl.PolicyLoss"><code class="xref py py-obj docutils literal"><span class="pre">PolicyLoss</span></code></a>(mdp,&nbsp;planner[,&nbsp;order])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.PolicyLoss" title="funzo.irl.PolicyLoss"><code class="xref py py-obj docutils literal"><span class="pre">PolicyLoss</span></code></a>(mdp,&nbsp;planner[,&nbsp;order])</td>
 <td>Policy loss with respect to a reward function</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.RewardLoss" title="funzo.irl.RewardLoss"><code class="xref py py-obj docutils literal"><span class="pre">RewardLoss</span></code></a>([order])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.RewardLoss" title="funzo.irl.RewardLoss"><code class="xref py py-obj docutils literal"><span class="pre">RewardLoss</span></code></a>([order])</td>
 <td>Reward loss with respect to a reward function</td>
 </tr>
 </tbody>
 </table>
+<div class="section" id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="birl.html"><code class="docutils literal"><span class="pre">funzo.irl.birl</span></code> Bayesian inverse reinforcement learning (BIRL)</a></li>
+</ul>
+</div>
+</div>
 <div class="section" id="detailed-descriptions">
 <h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.irl.IRLSolver">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">IRLSolver</code><span class="sig-paren">(</span><em>mdp_planner=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#IRLSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">IRLSolver</code><span class="sig-paren">(</span><em>mdp_planner=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#IRLSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>IRL algorithm interface</p>
 <p>This interface assumes the most general formulation of the IRL problem.
 The task requires at minimum only expert demonstrations.</p>
@@ -197,7 +193,7 @@ The task requires at minimum only expert demonstrations.</p>
 </div>
 <dl class="method">
 <dt id="funzo.irl.IRLSolver.solve">
-<code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#IRLSolver.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve" title="Permalink to this definition">¶</a></dt>
+<code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#IRLSolver.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve the IRL problem</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -231,7 +227,7 @@ intermediate reward functions, respective Qs, etc.</p>
 
 <dl class="method">
 <dt id="funzo.irl.IRLSolver.solve_mdp">
-<code class="descname">solve_mdp</code><span class="sig-paren">(</span><em>mdp</em>, <em>r</em>, <em>V_init=None</em>, <em>pi_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#IRLSolver.solve_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve_mdp" title="Permalink to this definition">¶</a></dt>
+<code class="descname">solve_mdp</code><span class="sig-paren">(</span><em>mdp</em>, <em>r</em>, <em>V_init=None</em>, <em>pi_init=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#IRLSolver.solve_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver.solve_mdp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve the given MDP using a given reward function</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -268,187 +264,12 @@ intermediate reward functions, respective Qs, etc.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="funzo.irl.BIRL">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">BIRL</code><span class="sig-paren">(</span><em>planner</em>, <em>prior</em>, <em>inference='PW'</em>, <em>beta=0.7</em>, <em>delta=0.2</em>, <em>burn_ratio=0.27</em>, <em>max_iter=100</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#BIRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.BIRL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bayesian IRL algorithm</p>
-<p>BIRL algorithm that seeks to find a reward function underlying a set of
-expert demonstrations by computing the posterior of the reward distribution
-<span class="math">\(p(r | \Xi)\)</span>.</p>
-<p>These algorithms typically summarize the distribution by taking a single
-value such as the mean.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>planner</strong> : a callable</p>
-<blockquote>
-<div><p>A planner for MDP e.g. policy iteration as a callable</p>
-</div></blockquote>
-<p><strong>prior</strong> : <a class="reference internal" href="#funzo.irl.RewardPrior" title="funzo.irl.RewardPrior"><code class="xref py py-class docutils literal"><span class="pre">RewardPrior</span></code></a> or derivative object</p>
-<blockquote>
-<div><p>Reward prior callable object</p>
-</div></blockquote>
-<p><strong>inference</strong> : str, optional (default=&#8217;PW&#8217;)</p>
-<blockquote>
-<div><p>Inference procedure [&#8216;PW&#8217;, &#8216;MPW&#8217;, &#8216;MAP&#8217;]</p>
-</div></blockquote>
-<p><strong>beta</strong> : float, optional (default=0.7)</p>
-<blockquote>
-<div><p>Expert optimality parameter for the reward likelihood term in the
-product of exponential distributions</p>
-</div></blockquote>
-<p><strong>random_state</strong> : <code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>, optional (default: None)</p>
-<blockquote class="last">
-<div><p>Random number generation seed control</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="7%" />
-<col width="93%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>_prior</td>
-<td>(<a class="reference internal" href="#funzo.irl.RewardPrior" title="funzo.irl.RewardPrior"><code class="xref py py-class docutils literal"><span class="pre">RewardPrior</span></code></a> or derivative object) Reference to the reward prior callable object</td>
-</tr>
-<tr class="row-even"><td>_beta</td>
-<td>(float, optional (default=0.9)) Expert optimality parameter for the reward likelihood term in the product of exponential distributions</td>
-</tr>
-<tr class="row-odd"><td>_rng</td>
-<td>(<code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>) Random number generator</td>
-</tr>
-<tr class="row-even"><td>_inference</td>
-<td>(str) Inference procedure</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="funzo.irl.BIRL.solve">
-<code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#BIRL.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.BIRL.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve the BIRL problem</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="funzo.irl.RewardPrior">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">RewardPrior</code><span class="sig-paren">(</span><em>dim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reward prior interface</p>
-<p>The reward prior summarizes information about the reward distribution that
-is available before running the algorithm, i.e. all the relevant domain
-knowledge.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">These distributions are multivariate, i.e. reward samples are
-vectors or equivalently functions over <span class="math">\(\mathcal{S}\)</span>, or more
-generally <span class="math">\(\mathcal{S} \times \mathcal{A}\)</span> or subsets of these.</p>
-</div>
-<dl class="method">
-<dt id="funzo.irl.RewardPrior.log_p">
-<code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the log probability of the reward under the prior</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="funzo.irl.RewardPrior.pdf">
-<code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the probability of the reward under the prior</p>
-<div class="math">
-\[p(r \in A) = \int_A f d\mu\]</div>
-<p>for any <span class="math">\(A \in \mathcal{A}\)</span>, given some measurable space
-<span class="math">\((\mathcal{X}, \mathcal{A})\)</span> and a measure <span class="math">\(\mu\)</span>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="funzo.irl.RewardPrior.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#RewardPrior.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardPrior.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a sample from the reward prior distribution</p>
-<div class="math">
-\[r \sim f_{\theta}\]</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="funzo.irl.GaussianRewardPrior">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">GaussianRewardPrior</code><span class="sig-paren">(</span><em>dim=1</em>, <em>mean=0.0</em>, <em>sigma=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gaussian reward prior</p>
-<p>Suitable for many real world tasks with parsimonious reward structures,
-where most states have negligible rewards <a class="reference internal" href="#rambirl07" id="id3">[RamBIRL07]</a>.</p>
-<div class="math">
-\[p(r(s, a) = x) = \frac{1}{\sqrt{2\pi}\sigma}
-\exp\left(-\frac{x^2}{2\sigma^2}\right)\]</div>
-<table class="docutils citation" frame="void" id="rambirl07" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[RamBIRL07]</a></td><td>Deepak Ramachandran and Eyal Amir, &#8220;Bayesian inverse
-reinforcement learning,&#8221; IJCAI, 2007</td></tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="funzo.irl.GaussianRewardPrior.log_p">
-<code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the log probability of the reward under the prior</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="funzo.irl.GaussianRewardPrior.pdf">
-<code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the probability of the reward under the prior</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="funzo.irl.GaussianRewardPrior.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#GaussianRewardPrior.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.GaussianRewardPrior.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a sample from the reward prior distribution</p>
-<div class="math">
-\[r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\sigma})\]</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="funzo.irl.Proposal">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">Proposal</code><span class="sig-paren">(</span><em>dim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#Proposal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Proposal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Proposal for MCMC sampling</p>
-<dl class="method">
-<dt id="funzo.irl.Proposal.step">
-<code class="descname">step</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#Proposal.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Proposal.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a single MCMC chain step</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="funzo.irl.PolicyWalkProposal">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">PolicyWalkProposal</code><span class="sig-paren">(</span><em>dim</em>, <em>delta</em>, <em>rmax=1.0</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#PolicyWalkProposal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyWalkProposal" title="Permalink to this definition">¶</a></dt>
-<dd><p>PolicyWalk MCMC proposal</p>
-<p>Sampling in the hypercube with limits [-rmax, rmax]</p>
-<dl class="method">
-<dt id="funzo.irl.PolicyWalkProposal.step">
-<code class="descname">step</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl.html#PolicyWalkProposal.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyWalkProposal.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a single MCMC chain step</p>
-<p>PolicyWalk takes steps in the grid defined by,</p>
-<div class="math">
-\[\mathbb{R}^{|R|} / \delta\]</div>
-<p>where <span class="math">\(|R|\)</span> is the dimension of the reward space, which can get
-very large. In this case a lot of samples are needed before the MCMC
-chain converges.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="funzo.irl.Loss">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">Loss</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#Loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Loss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">Loss</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#Loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>A loss function for evaluating progress of IRL algorithms</p>
 <dl class="method">
 <dt id="funzo.irl.Loss.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#Loss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Loss.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#Loss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.Loss.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the loss function</p>
 </dd></dl>
 
@@ -456,14 +277,14 @@ chain converges.</p>
 
 <dl class="class">
 <dt id="funzo.irl.PolicyLoss">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">PolicyLoss</code><span class="sig-paren">(</span><em>mdp</em>, <em>planner</em>, <em>order=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#PolicyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">PolicyLoss</code><span class="sig-paren">(</span><em>mdp</em>, <em>planner</em>, <em>order=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#PolicyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Policy loss with respect to a reward function</p>
 <div class="math">
 \[L_p = || V^*(r) - V^{\pi}(r) ||_p\]</div>
 <p>Suited for apprenticeship learning (AL) scenarios</p>
 <dl class="method">
 <dt id="funzo.irl.PolicyLoss.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#PolicyLoss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyLoss.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#PolicyLoss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.PolicyLoss.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the policy loss</p>
 </dd></dl>
 
@@ -471,7 +292,7 @@ chain converges.</p>
 
 <dl class="class">
 <dt id="funzo.irl.RewardLoss">
-<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">RewardLoss</code><span class="sig-paren">(</span><em>order=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#RewardLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">RewardLoss</code><span class="sig-paren">(</span><em>order=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#RewardLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reward loss with respect to a reward function</p>
 <div class="math">
 \[L_p = || r_e - r_{\pi} ||_p\]</div>
@@ -480,7 +301,7 @@ learning. The reward is generally accepted as being a more succint
 representation of behavior and more transferable.</p>
 <dl class="method">
 <dt id="funzo.irl.RewardLoss.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/base.html#RewardLoss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardLoss.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>r_e</em>, <em>r_pi</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#RewardLoss.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.RewardLoss.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the reward loss</p>
 </dd></dl>
 
@@ -496,7 +317,7 @@ representation of behavior and more transferable.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="domains.html" class="btn btn-neutral float-right" title="funzo.domains" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="birl.html" class="btn btn-neutral float-right" title="funzo.irl.birl Bayesian inverse reinforcement learning (BIRL)" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.irl.birl Bayesian inverse reinforcement learning (BIRL) &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="funzo.irl" href="irl.html"/>
+        <link rel="next" title="funzo.domains" href="domains.html"/>
+        <link rel="prev" title="funzo.irl" href="irl.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/development.html">Development</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="irl.html#algorithms">Algorithms</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.irl.birl</span></code> Bayesian inverse reinforcement learning (BIRL)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="irl.html#detailed-descriptions">Detailed descriptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">funzo.irl.birl</span></code> Bayesian inverse reinforcement learning (BIRL)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/modules/birl.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-funzo.irl.birl">
+<span id="funzo-irl-birl-bayesian-inverse-reinforcement-learning-birl"></span><h1><a class="reference internal" href="#module-funzo.irl.birl" title="funzo.irl.birl"><code class="xref py py-mod docutils literal"><span class="pre">funzo.irl.birl</span></code></a> Bayesian inverse reinforcement learning (BIRL)<a class="headerlink" href="#module-funzo.irl.birl" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.birl.BIRLBase" title="funzo.irl.birl.BIRLBase"><code class="xref py py-obj docutils literal"><span class="pre">BIRLBase</span></code></a>(prior[,&nbsp;beta,&nbsp;planner,&nbsp;random_state])</td>
+<td>Bayesian IRL algorithm</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.birl.RewardPriorBase" title="funzo.irl.birl.RewardPriorBase"><code class="xref py py-obj docutils literal"><span class="pre">RewardPriorBase</span></code></a>(dim)</td>
+<td>Reward prior distribution API</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.birl.GaussianRewardPrior" title="funzo.irl.birl.GaussianRewardPrior"><code class="xref py py-obj docutils literal"><span class="pre">GaussianRewardPrior</span></code></a>([dim,&nbsp;mean,&nbsp;sigma])</td>
+<td>Gaussian reward prior distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.birl.UniformRewardPrior" title="funzo.irl.birl.UniformRewardPrior"><code class="xref py py-obj docutils literal"><span class="pre">UniformRewardPrior</span></code></a>([dim,&nbsp;rmin,&nbsp;rmax])</td>
+<td>Uniform reward prior distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.birl.PolicyWalkBIRL" title="funzo.irl.birl.PolicyWalkBIRL"><code class="xref py py-obj docutils literal"><span class="pre">PolicyWalkBIRL</span></code></a>(prior[,&nbsp;beta,&nbsp;delta,&nbsp;...])</td>
+<td>BIRL using PolicyWalk algorithm for inference</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.irl.birl.PolicyWalkProposal" title="funzo.irl.birl.PolicyWalkProposal"><code class="xref py py-obj docutils literal"><span class="pre">PolicyWalkProposal</span></code></a>(dim,&nbsp;delta[,&nbsp;rmax,&nbsp;...])</td>
+<td>PolicyWalk MCMC proposal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.irl.birl.MAPBIRL" title="funzo.irl.birl.MAPBIRL"><code class="xref py py-obj docutils literal"><span class="pre">MAPBIRL</span></code></a>(prior[,&nbsp;beta,&nbsp;max_iter,&nbsp;planner,&nbsp;...])</td>
+<td>BIRL using MAP for inference</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="detailed-descriptions">
+<h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="funzo.irl.birl.BIRLBase">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">BIRLBase</code><span class="sig-paren">(</span><em>prior</em>, <em>beta=0.7</em>, <em>planner=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/birl_base.html#BIRLBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.BIRLBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bayesian IRL algorithm</p>
+<p>BIRL algorithms seek to find a reward function underlying a set of
+expert demonstrations by computing the reward posterior distribution
+<span class="math">\(p(r | D)\)</span>.</p>
+<p>These algorithms typically can return a single reward estimate by
+computing the various quantities e.g. mean</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>prior</strong> : <a class="reference internal" href="#funzo.irl.birl.RewardPriorBase" title="funzo.irl.birl.RewardPriorBase"><code class="xref py py-class docutils literal"><span class="pre">RewardPriorBase</span></code></a> object</p>
+<blockquote>
+<div><p>Reward prior callable object</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional (default=0.7)</p>
+<blockquote>
+<div><p>Expert optimality parameter</p>
+</div></blockquote>
+<p><strong>planner</strong> : a callable, optional (default=None)</p>
+<blockquote>
+<div><p>A planner for MDP e.g. policy iteration as a callable</p>
+</div></blockquote>
+<p><strong>random_state</strong> : <code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>, optional (default: None)</p>
+<blockquote class="last">
+<div><p>Random number generation seed</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="93%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>_prior</td>
+<td>(<a class="reference internal" href="#funzo.irl.birl.RewardPriorBase" title="funzo.irl.birl.RewardPriorBase"><code class="xref py py-class docutils literal"><span class="pre">RewardPriorBase</span></code></a> instance) Reference to the reward prior callable object</td>
+</tr>
+<tr class="row-even"><td>_beta</td>
+<td>(float) Expert optimality parameter</td>
+</tr>
+<tr class="row-odd"><td>_rng</td>
+<td>(<code class="xref py py-class docutils literal"><span class="pre">numpy.RandomState</span></code>) Random number generator</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="funzo.irl.birl.BIRLBase.initialize_reward">
+<code class="descname">initialize_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/birl_base.html#BIRLBase.initialize_reward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.BIRLBase.initialize_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a reward vector using the prior distribution</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.BIRLBase.log_likelihood">
+<code class="descname">log_likelihood</code><span class="sig-paren">(</span><em>Q_r</em>, <em>demos</em>, <em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/birl_base.html#BIRLBase.log_likelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.BIRLBase.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the log likelihood of the demonstrations w.r.t reward</p>
+<div class="math">
+\[\log p(D | r) = \sum_{d \in D} \sum_{(s,a) \in d}
+\left((\beta Q(s,a;r)) - \log \sum_{b \in A} (\beta Q(s,b;r))
+\right)\]</div>
+<p>where <span class="math">\(d\)</span> are trajectories or sets of state-action pairs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.BIRLBase.log_posterior">
+<code class="descname">log_posterior</code><span class="sig-paren">(</span><em>r</em>, <em>demos</em>, <em>mdp</em>, <em>plan_r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/birl_base.html#BIRLBase.log_posterior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.BIRLBase.log_posterior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward posterior distribution (unnormalized)</p>
+<div class="math">
+\[\log p(r | D) = \log p(D | r) + \log p(r)\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.BIRLBase.log_prior">
+<code class="descname">log_prior</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/birl_base.html#BIRLBase.log_prior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.BIRLBase.log_prior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute log prior probability</p>
+<p>Scales with the dimension of the reward function.</p>
+<div class="math">
+\[\log p(r) = \sum_i p(r(s_i, a_i))\]</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.RewardPriorBase">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">RewardPriorBase</code><span class="sig-paren">(</span><em>dim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#RewardPriorBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.RewardPriorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward prior distribution API</p>
+<p>The reward prior summarizes information about the reward distribution that
+is available before running the algorithm, i.e. all the relevant domain
+knowledge.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These distributions are multivariate, i.e. reward samples are
+vectors or equivalently functions over <span class="math">\(\mathcal{S}\)</span>, or more
+generally <span class="math">\(\mathcal{S} \times \mathcal{A}\)</span> or subsets of these.</p>
+</div>
+<dl class="method">
+<dt id="funzo.irl.birl.RewardPriorBase.log_p">
+<code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#RewardPriorBase.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.RewardPriorBase.log_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the log probability of the reward under the prior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.RewardPriorBase.pdf">
+<code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#RewardPriorBase.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.RewardPriorBase.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the probability of the reward under the prior</p>
+<div class="math">
+\[p(r \in A) = \int_A f d\mu\]</div>
+<p>for any <span class="math">\(A \in \mathcal{A}\)</span>, given some measurable space
+<span class="math">\((\mathcal{X}, \mathcal{A})\)</span> and a measure <span class="math">\(\mu\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.RewardPriorBase.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#RewardPriorBase.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.RewardPriorBase.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a sample from the reward prior distribution</p>
+<div class="math">
+\[r \sim f_{\theta}\]</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.GaussianRewardPrior">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">GaussianRewardPrior</code><span class="sig-paren">(</span><em>dim=1</em>, <em>mean=0.0</em>, <em>sigma=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#GaussianRewardPrior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.GaussianRewardPrior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian reward prior distribution</p>
+<p>Suitable for many real world tasks with parsimonious reward structures,
+where most states have negligible rewards <a class="reference internal" href="#rambirl07" id="id1">[RamBIRL07]</a>.</p>
+<div class="math">
+\[p(r(s, a) = x) = \frac{1}{\sqrt{2\pi}\sigma}
+\exp\left(-\frac{x^2}{2\sigma^2}\right)\]</div>
+<table class="docutils citation" frame="void" id="rambirl07" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[RamBIRL07]</a></td><td>Deepak Ramachandran and Eyal Amir, &#8220;Bayesian inverse
+reinforcement learning,&#8221; IJCAI, 2007</td></tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="funzo.irl.birl.GaussianRewardPrior.log_p">
+<code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#GaussianRewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.GaussianRewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the log probability of the reward under the prior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.GaussianRewardPrior.pdf">
+<code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#GaussianRewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.GaussianRewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the probability of the reward under the prior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.GaussianRewardPrior.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#GaussianRewardPrior.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.GaussianRewardPrior.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a sample from the reward prior distribution</p>
+<div class="math">
+\[r \sim \mathcal{N}(\mathbf{\mu}, \mathbf{\sigma})\]</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.UniformRewardPrior">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">UniformRewardPrior</code><span class="sig-paren">(</span><em>dim=1</em>, <em>rmin=0.0</em>, <em>rmax=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#UniformRewardPrior"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.UniformRewardPrior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform reward prior distribution</p>
+<p>Suitable to task in which there is no clear insight into the nature of the
+reward function.</p>
+<div class="math">
+\[p(r(s, a) = x) = \text{Uni}(a, b)\]</div>
+<dl class="method">
+<dt id="funzo.irl.birl.UniformRewardPrior.log_p">
+<code class="descname">log_p</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#UniformRewardPrior.log_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.UniformRewardPrior.log_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the log probability of the reward under the prior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.UniformRewardPrior.pdf">
+<code class="descname">pdf</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#UniformRewardPrior.pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.UniformRewardPrior.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the probability of the reward under the prior</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.irl.birl.UniformRewardPrior.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/priors.html#UniformRewardPrior.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.UniformRewardPrior.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a sample from the reward prior distribution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.PolicyWalkBIRL">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">PolicyWalkBIRL</code><span class="sig-paren">(</span><em>prior</em>, <em>beta=0.7</em>, <em>delta=0.2</em>, <em>max_iter=100</em>, <em>burn=0.27</em>, <em>planner=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/mcmc_birl.html#PolicyWalkBIRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.PolicyWalkBIRL" title="Permalink to this definition">¶</a></dt>
+<dd><p>BIRL using PolicyWalk algorithm for inference</p>
+<dl class="method">
+<dt id="funzo.irl.birl.PolicyWalkBIRL.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/mcmc_birl.html#PolicyWalkBIRL.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.PolicyWalkBIRL.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the BIRL problem using PolicyWalk</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.PolicyWalkProposal">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">PolicyWalkProposal</code><span class="sig-paren">(</span><em>dim</em>, <em>delta</em>, <em>rmax=1.0</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/mcmc_birl.html#PolicyWalkProposal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.PolicyWalkProposal" title="Permalink to this definition">¶</a></dt>
+<dd><p>PolicyWalk MCMC proposal</p>
+<p>Sampling in the hypercube with limits [-rmax, rmax]</p>
+<dl class="method">
+<dt id="funzo.irl.birl.PolicyWalkProposal.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/mcmc_birl.html#PolicyWalkProposal.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.PolicyWalkProposal.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a single MCMC chain step</p>
+<p>PolicyWalk takes steps in the grid defined by,</p>
+<div class="math">
+\[\mathbb{R}^{|R|} / \delta\]</div>
+<p>where <span class="math">\(|R|\)</span> is the dimension of the reward space, which can get
+very large. In this case a lot of samples are needed before the MCMC
+chain converges.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.irl.birl.MAPBIRL">
+<em class="property">class </em><code class="descclassname">funzo.irl.birl.</code><code class="descname">MAPBIRL</code><span class="sig-paren">(</span><em>prior</em>, <em>beta=0.7</em>, <em>max_iter=100</em>, <em>planner=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/opt_birl.html#MAPBIRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.MAPBIRL" title="Permalink to this definition">¶</a></dt>
+<dd><p>BIRL using MAP for inference</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Returns a single estimate of the reward function</p>
+</div>
+<dl class="method">
+<dt id="funzo.irl.birl.MAPBIRL.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>demos</em>, <em>mdp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/birl/opt_birl.html#MAPBIRL.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.birl.MAPBIRL.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the BIRL problem using MAP</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="domains.html" class="btn btn-neutral float-right" title="funzo.domains" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="irl.html" class="btn btn-neutral" title="funzo.irl" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
