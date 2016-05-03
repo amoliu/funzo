@@ -274,35 +274,32 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
     :math:`R` is a tensor.
 
     """
-    def __init__(self, n_s, n_a=None, rmax=1.0, domain=None):
-        # If n_a is 0, assume only state based reward function
+    def __init__(self, rmax=1.0, domain=None):
         super(TabularRewardFunction, self).__init__(rmax, domain)
-        assert n_s > 0, 'Number of states must be greater than 0'
-        self._n_s = n_s
-
-        if n_a is not None:
-            assert n_a > 0, 'Number of actions must be greater than 0'
-            self._n_a = n_a
-            self._R = np.zeros(self._n_s, self._n_a)
-        else:
-            self._R = np.zeros(self._n_s)
+        self._R = None
 
     def update_parameters(self, **kwargs):
         """ Update the internal reward representation parameters """
         if 'reward' in kwargs:
             r = np.asarray(kwargs['reward'])
-            assert r.shape == self._R.shape,\
-                'New reward array shape must match reward function dimension'
-            self._R = r
+
+            if self._R is None:
+                self._R = r
+            else:
+                if r.shape != self._R.shape:
+                    raise ValueError('New reward array shape must match\
+                                     reward function dimension')
+                self._R = r
 
     @property
     def kind(self):
         """ Type of reward function (e.g. tabular, LFA) """
         return 'Tabular'
 
+    @abstractmethod
     def __len__(self):
         """ Dimension of the reward function """
-        return self._R.size
+        raise NotImplementedError('abstract')
 
 
 class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
