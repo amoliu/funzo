@@ -59,12 +59,12 @@ class PolicyWalkBIRL(BIRLBase):
             r_new = proposal.step(r)
             plan_r_new = self.solve_mdp(mdp, r_new, plan_r['V'], plan_r['pi'])
             p_accept = self._acceptance_ratio(mdp, demos, r, r_new,
-                                              plan_r['Q'], plan_r_new['Q'])
+                                              plan_r, plan_r_new)
             if self._rng.uniform() < min([1.0, p_accept]):
                 r = np.array(r_new)
                 plan_r = deepcopy(plan_r_new)
 
-                # if step > self._burn:
+            # if step > self._burn:
             r_mean = self._iterative_mean(r_mean, r, step)
             trace.record(step=step, r=r, r_mean=r_mean, sample=r_new,
                          a_ratio=p_accept)

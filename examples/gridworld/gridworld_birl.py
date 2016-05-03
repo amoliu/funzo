@@ -13,7 +13,7 @@ from funzo.domains.gridworld import GridWorld, GridWorldMDP
 from funzo.domains.gridworld import GRewardLFA, GTransition, GReward
 from funzo.planners.dp import PolicyIteration
 
-from funzo.irl.birl import BIRL
+from funzo.irl.birl import PolicyWalkBIRL, MAPBIRL
 from funzo.irl.birl import GaussianRewardPrior
 from funzo.irl import PolicyLoss, RewardLoss
 
@@ -43,9 +43,9 @@ def main():
 
         # IRL
         r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.35)
-        irl_solver = BIRL(prior=r_prior, delta=0.2, planner=planner, beta=0.8,
-                          max_iter=200, burn_ratio=0.3, inference='PW',
-                          random_state=SEED)
+        irl_solver = PolicyWalkBIRL(prior=r_prior, delta=0.2, planner=planner,
+                                    beta=0.8, max_iter=200, burn=0.3,
+                                    random_state=SEED)
 
         trace = irl_solver.solve(demos=demos, mdp=g)
         trace.save('pw_trace')
