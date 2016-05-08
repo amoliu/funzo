@@ -206,7 +206,7 @@ class GState(MDPState):
 
 
 class GAction(MDPAction):
-    """ Grirdworld action """
+    """ Gridworld action """
     def __init__(self, action_id, direction):
         super(GAction, self).__init__(action_id)
         self.direction = direction

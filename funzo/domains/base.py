@@ -24,8 +24,6 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
     details of the task. i.e. the environment.
 
     """
-    # def __init__(self):
-    #     self._domain = self
 
     @abstractmethod
     def terminal(self, state):
