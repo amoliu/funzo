@@ -4,6 +4,10 @@
 .. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master
     :target: https://coveralls.io/github/makokal/funzo?branch=master
 
+.. image:: https://requires.io/github/makokal/funzo/requirements.svg?branch=master
+     :target: https://requires.io/github/makokal/funzo/requirements/?branch=master
+     :alt: Requirements Status
+
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/makokal/funzo/blob/master/LICENSE
 
