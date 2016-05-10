@@ -116,12 +116,12 @@ class PolicyLoss(Loss):
     def evaluate(self, r_e, r_pi, **kwargs):
         """ Evaluate the policy loss """
         self._mdp.reward.update_parameters(reward=r_e)
-        plan_e = self._planner(self._mdp, self._ve, self._pi_e)
+        plan_e = self._planner.solve(self._mdp, self._ve, self._pi_e)
         self._ve = plan_e['V']
         self._pi_e = plan_e['pi']
 
         self._mdp.reward.update_parameters(reward=r_pi)
-        plan_pi = self._planner(self._mdp, self._vpi, self._pi_pi)
+        plan_pi = self._planner.solve(self._mdp, self._vpi, self._pi_pi)
         self._vpi = plan_pi['V']
         self._pi_pi = plan_pi['pi']
 
