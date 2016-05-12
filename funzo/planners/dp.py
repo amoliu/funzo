@@ -88,7 +88,8 @@ class PolicyIteration(Planner):
         if pi_init is not None:
             policy = np.array(pi_init)
         else:
-            policy = [self._rng.randint(len(mdp.A)) for _ in range(len(mdp.S))]
+            policy = [self._rng.randint(len(mdp.actions(s)))
+                      for s in range(len(mdp.S))]
 
         R = mdp.R
         T = mdp.T

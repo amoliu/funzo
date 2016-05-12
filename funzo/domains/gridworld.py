@@ -63,38 +63,23 @@ class GReward(TabularRewardFunction):
                 R[s] = -0.01
         self.update_parameters(reward=R)
 
-        self._T = GTransition(domain=domain)
-
     def __call__(self, state, action):
         """ Evaluate reward function """
-        if action is None:
-            return self._R[state]
-        s_p = self._T(state, action)[0][1]
-        if s_p == state and action != 4:  # out or domain movements penalty
-            return -10.0
-        return self._R[s_p]
+        return self._R[state]
 
     def __len__(self):
         return len(self._domain.states)
 
 
 class GRewardLFA(LinearRewardFunction):
-    """ Gridworld reward using linear function approximation """
+    """ GridWorld reward using linear function approximation """
     def __init__(self, weights, rmax=1.0, domain=None):
         super(GRewardLFA, self).__init__(weights, rmax, domain)
-        self._T = GTransition(domain=domain)
         self._domain = model_domain(domain, GridWorld)
 
     def __call__(self, state, action):
         """ Evaluate reward function """
-        if action is None:
-            return self.__call__(state, 4)
-        # get the resulting state to determine if movement occurred
-        s_p = self._T(state, action)[0][1]
-        # if s_p == state and action != 4:  # out or domain movements penalty
-        #     return -10.0
-
-        phi = self.phi(s_p, action)
+        phi = self.phi(state, action)
         return np.dot(self._weights, phi)
 
     def phi(self, state, action):
@@ -119,8 +104,7 @@ class GRewardLFA(LinearRewardFunction):
 
     def _feature_free(self, state):
         """ Check is the agent is in a free cell """
-        # Terminal state is always free by definition
-        if state.status == FREE or state.status == TERMINAL:
+        if state.status == TERMINAL:
             return 1.0
         return 0.0
 
@@ -128,7 +112,7 @@ class GRewardLFA(LinearRewardFunction):
 
 
 class GTransition(MDPTransition):
-    """ Gridworld MDP controller """
+    """ GridWorld MDP controller """
     def __init__(self, wind=0.2, domain=None):
         super(GTransition, self).__init__(domain)
         self._wind = wind
@@ -186,7 +170,7 @@ class GTransition(MDPTransition):
 
 
 class GState(MDPState):
-    """ Gridworld state """
+    """ GridWorld state """
     def __init__(self, state_id, cell, status=FREE):
         super(GState, self).__init__(state_id)
         self.cell = cell
@@ -206,7 +190,7 @@ class GState(MDPState):
 
 
 class GAction(MDPAction):
-    """ Gridworld action """
+    """ GridWorld action """
     def __init__(self, action_id, direction):
         super(GAction, self).__init__(action_id)
         self.direction = direction
@@ -328,7 +312,7 @@ class GridWorld(Domain):
                 elif self.actions[a].direction == (0, -1):
                     text = '$\\downarrow$'
                 else:
-                    text = 'S'
+                    text = 'G'
                 ss = self.states[s]
                 ax.text((ss.cell[0] * 1) + (1 / 2.),
                         (ss.cell[1] * 1) + (1 / 2.3),
@@ -393,4 +377,7 @@ class GridWorldMDP(MDP):
         return self._domain.actions.keys()
 
     def actions(self, state):
+        """ Get the set of actions available at a state """
+        if self._domain.terminal(state):
+            return [4]
         return self._domain.actions.keys()

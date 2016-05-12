@@ -19,9 +19,10 @@ def main(map_name, planner):
     gmap = np.loadtxt(map_name)
 
     with GridWorld(gmap=gmap) as world:
-        R = GReward(rmax=1.0)
+        # R = GReward(rmax=1.0)
+        R = GRewardLFA(weights=[-0.01, -10.0, 1.0], rmax=1.0)
         T = GTransition(wind=0.1)
-        g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.99)
+        g_mdp = GridWorldMDP(reward=R, transition=T, discount=0.95)
 
         # ------------------------
         mdp_planner = PolicyIteration(max_iter=200, random_state=None)
@@ -38,7 +39,7 @@ def main(map_name, planner):
 
     plt.figure(figsize=(8, 8))
     plt.imshow(V.reshape(gmap.shape),
-               interpolation='nearest', cmap='inferno', origin='lower',
+               interpolation='nearest', cmap='viridis', origin='lower',
                vmin=np.min(V), vmax=np.max(V))
     plt.grid(False)
     plt.title('Value function')
