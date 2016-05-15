@@ -24,24 +24,24 @@ SEED = None
 def main():
     gmap = np.loadtxt('maps/map_a.txt')
 
-    w_expert = np.array([-0.01, -3.0, 1.0])
+    w_expert = np.array([-0.01, -10.0, 1.0])
     w_expert /= (w_expert.max() - w_expert.min())
 
     with GridWorld(gmap=gmap) as world:
         rfunc = GRewardLFA(weights=w_expert, rmax=1.0)
         # rfunc = GReward()
         T = GTransition()
-        g = GridWorldMDP(reward=rfunc, transition=T, discount=0.99)
+        g = GridWorldMDP(reward=rfunc, transition=T, discount=0.95)
 
         # ------------------------
         planner = PolicyIteration(random_state=SEED)
         plan = planner.solve(g)
         policy = plan['pi']
 
-        demos = world.generate_trajectories(policy, num=150, random_state=SEED)
+        demos = world.generate_trajectories(policy, num=50, random_state=SEED)
 
         # IRL
-        r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.35)
+        r_prior = GaussianRewardPrior(dim=len(rfunc), mean=0.0, sigma=0.15)
         irl_solver = PolicyWalkBIRL(prior=r_prior, delta=0.2, planner=planner,
                                     beta=0.8, max_iter=1000, burn=0.3,
                                     random_state=SEED)
@@ -82,6 +82,10 @@ def main():
     plt.ylabel('Loss function $\mathcal{L}_{\pi}$')
     plt.xlabel('Iteration')
     plt.tight_layout()
+
+    import corner
+    corner.corner(trace['r'])
+    corner.corner(trace['r_mean'])
 
     plt.show()
 
