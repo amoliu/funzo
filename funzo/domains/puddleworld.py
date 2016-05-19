@@ -300,6 +300,7 @@ class PuddleWorld(Domain):
         return state_.location[0] > 0.95 and state_.location[1] > 0.95
 
     def in_domain(self, location):
+        """ Check if a state value is within domain bounds """
         return 0.0 < location[0] < 1.0 and 0.0 < location[1] < 1.0
 
     def visualize(self, ax, **kwargs):

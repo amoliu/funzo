@@ -49,6 +49,11 @@ class Domain(six.with_metaclass(ABCMeta, Model)):
         """
         raise NotImplementedError('This method is abstract')
 
+    @abstractmethod
+    def in_domain(self, state):
+        """ Check if a state is within domain's bounds """
+        raise NotImplementedError('Abstract')
+
     def __enter__(self):
         type(self).get_domains().append(self)
         return self

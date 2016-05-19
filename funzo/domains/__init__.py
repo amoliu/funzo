@@ -18,6 +18,8 @@ from .chainworld import ChainState, ChainAction, ChainTransition
 from .chainworld import ChainReward
 from .chainworld import ChainMDP, ChainWorld
 
+from . import social_navigation
+
 
 __all__ = [
     'Domain', 'model_domain',
@@ -33,4 +35,6 @@ __all__ = [
     'ChainState', 'ChainAction', 'ChainTransition',
     'ChainReward',
     'ChainMDP', 'ChainWorld',
+    #
+    'social_navigation',
 ]

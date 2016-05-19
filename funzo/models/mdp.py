@@ -24,7 +24,8 @@ __all__ = [
     'TabularRewardFunction',
     'MDPTransition',
     'MDPState',
-    'MDPAction'
+    'MDPAction',
+    'MDPLocalControler',
 ]
 
 
@@ -358,7 +359,7 @@ class LinearRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
 
 
 class MDPTransition(six.with_metaclass(ABCMeta, Model)):
-    """ A MDP transition function
+    """ A MDP single step transition function
 
     .. math::
 
@@ -396,6 +397,26 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
         """
         raise NotImplementedError('Abstract method')
 
+
+class MDPLocalControler(six.with_metaclass(ABCMeta, Model)):
+    """ A MDP local controller
+
+    Representing multiple step transition, which can be interpreted as a
+    Markov option with only one possible terminal state.
+
+    """
+    def __init__(self, domain):
+        self._domain = domain
+
+    @abstractmethod
+    def __call__(self, state, action, duration, **kwargs):
+        """ Execute the local controller """
+        raise NotImplementedError('Abstract method')
+
+    @abstractmethod
+    def trajectory(self, source, target, **kwargs):
+        """ Compute the trajectory/policy between two states """
+        raise NotImplementedError('Abstract')
 
 ########################################################################
 

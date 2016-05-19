@@ -136,7 +136,7 @@ class RewardLoss(Loss):
         L_p = || r_e - r_{\pi} ||_p
 
     More appropriate in reward learning scenarios as opposed to apprenticeship
-    learning. The reward is generally accepted as being a more succint
+    learning. The reward is generally accepted as being a more succinct
     representation of behavior and more transferable.
 
     """
