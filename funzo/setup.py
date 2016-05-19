@@ -6,6 +6,9 @@ def configuration(parent_package='', top_path=None):
     config = Configuration('funzo', parent_package, top_path)
 
     config.add_subpackage('domains')
+    config.add_subpackage('domains/tests')
+    config.add_subpackage('domains/social_navigation')
+    config.add_subpackage('domains/social_navigation/tests')
     config.add_subpackage('irl')
     config.add_subpackage('irl/tests')
     config.add_subpackage('irl/birl')
