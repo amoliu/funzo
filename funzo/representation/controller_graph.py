@@ -4,6 +4,7 @@ import json
 
 import numpy as np
 
+from sklearn import gaussian_process
 
 from .state_graph import StateGraph
 
@@ -18,9 +19,28 @@ class ControllerGraph(object):
     action space via these local controllers.
 
     """
-    def __init__(self, params, controller, domain=None):
-        super(ControllerGraph, self).__init__()
+    def __init__(self, params, controller, state_dim=3):
+        self._params = params
         self._controller = controller
+
+        # setup the graph structure and internal variables
+        self._g = StateGraph(state_dim=state_dim)
+        self._best_trajs = []
+        self._node_id = 0
+        self._max_conc = 1.0
+        self._max_es = 1.0
+        self._min_es = 0.0
+
+        self._gp = gaussian_process.GaussianProcess(corr='squared_exponential',
+                                                    theta0=1e-2,
+                                                    thetaL=1e-4,
+                                                    thetaU=1e-1)
+
+    def initialize_state_graph(self, samples=None):
+        pass
+
+    def build_graph(self):
+        pass
 
 
 class CGParameters(object):
