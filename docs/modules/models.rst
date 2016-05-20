@@ -9,6 +9,7 @@
    MDPState
    MDPAction
    MDPTransition
+   MDPLocalController
    RewardFunction
    TabularRewardFunction
    LinearRewardFunction
@@ -25,6 +26,8 @@ Detailed descriptions
     :members:
 .. autoclass:: MDPTransition
     :members:
+.. autoclass:: MDPLocalController
+  :member:
 .. autoclass:: RewardFunction
     :members:
 .. autoclass:: TabularRewardFunction

@@ -288,8 +288,8 @@ class TabularRewardFunction(six.with_metaclass(ABCMeta, RewardFunction)):
                 self._R = r
             else:
                 if r.shape != self._R.shape:
-                    raise ValueError('New reward array shape must match\
-                                     reward function dimension')
+                    raise ValueError('New reward array shape must match'
+                                     'reward function dimension')
                 self._R = r
 
     @property
