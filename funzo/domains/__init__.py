@@ -2,6 +2,7 @@
 from .base import Domain, model_domain
 
 from .geometry import discretize_space, distance_to_segment, edist
+from .geometry import normangle
 
 from .gridworld import GAction, GState, GTransition
 from .gridworld import GReward, GRewardLFA
@@ -21,7 +22,7 @@ from . import social_navigation
 __all__ = [
     'Domain', 'model_domain',
     #
-    'discretize_space', 'distance_to_segment', 'edist',
+    'discretize_space', 'distance_to_segment', 'edist', 'normangle',
     #
     'GAction', 'GState', 'GTransition', 'GReward', 'GRewardLFA',
     'GridWorldMDP', 'GridWorld',

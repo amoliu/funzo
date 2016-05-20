@@ -13,10 +13,12 @@ from __future__ import division
 
 import numpy as np
 
+
 __all__ = [
     'discretize_space',
     'distance_to_segment',
     'edist',
+    'normangle',
 ]
 
 
@@ -42,6 +44,33 @@ def discretize_space(*extents, **kwargs):
     coords = (np.arange(e[0], e[1], e[2]) for e in extents)
     cell_indices = np.meshgrid(*coords, indexing='ij')
     return cell_indices
+
+
+def normangle(theta, start=0):
+    """ Normalize an angle to be in the range :math:`[0, 2\pi]`
+
+    Parameters
+    -----------
+    theta : float
+        input angle to normalize
+
+    start: float
+        input start angle (optional, default: 0.0)
+
+    Returns
+    --------
+    res : float
+        normalized angle or :math:`\infty`
+
+    """
+    if theta < np.inf:
+        while theta >= start + 2 * np.pi:
+            theta -= 2 * np.pi
+        while theta < start:
+            theta += 2 * np.pi
+        return theta
+    else:
+        return np.inf
 
 
 def edist(v1, v2):
@@ -74,28 +103,30 @@ def distance_to_segment(point, line_start, line_end):
     xp, yp = point[0], point[1]
 
     # x-coordinates
-    A = xb-xa
-    B = yb-ya
-    C = yp*B+xp*A
-    a = 2*((B*B)+(A*A))
-    b = -4*A*C+(2*yp+ya+yb)*A*B-(2*xp+xa+xb)*(B*B)
-    c = 2*(C*C)-(2*yp+ya+yb)*C*B+(yp*(ya+yb)+xp*(xa+xb))*(B*B)
-    if b*b < 4*a*c:
+    A = xb - xa
+    B = yb - ya
+    C = yp * B + xp * A
+    a = 2 * ((B * B) + (A * A))
+    b = -4 * A * C + (2 * yp + ya + yb) * A * B - (2 * xp + xa + xb) * (B * B)
+    c = 2 * (C * C) - (2 * yp + ya + yb) * C * B + \
+        (yp * (ya + yb) + xp * (xa + xb)) * (B * B)
+    if b * b < 4 * a * c:
         return None, False
-    x1 = (-b + np.sqrt((b*b)-4*a*c))/(2*a)
-    x2 = (-b - np.sqrt((b*b)-4*a*c))/(2*a)
+    x1 = (-b + np.sqrt((b * b) - 4 * a * c)) / (2 * a)
+    x2 = (-b - np.sqrt((b * b) - 4 * a * c)) / (2 * a)
 
     # y-coordinates
-    A = yb-ya
-    B = xb-xa
-    C = xp*B+yp*A
-    a = 2*((B*B)+(A*A))
-    b = -4*A*C+(2*xp+xa+xb)*A*B-(2*yp+ya+yb)*(B*B)
-    c = 2*(C*C)-(2*xp+xa+xb)*C*B+(xp*(xa+xb)+yp*(ya+yb))*(B*B)
-    if b*b < 4*a*c:
+    A = yb - ya
+    B = xb - xa
+    C = xp * B + yp * A
+    a = 2 * ((B * B) + (A * A))
+    b = -4 * A * C + (2 * xp + xa + xb) * A * B - (2 * yp + ya + yb) * (B * B)
+    c = 2 * (C * C) - (2 * xp + xa + xb) * C * B + \
+        (xp * (xa + xb) + yp * (ya + yb)) * (B * B)
+    if b * b < 4 * a * c:
         return None, False
-    y1 = (-b + np.sqrt((b*b)-4*a*c))/(2*a)
-    y2 = (-b - np.sqrt((b*b)-4*a*c))/(2*a)
+    y1 = (-b + np.sqrt((b * b) - 4 * a * c)) / (2 * a)
+    y2 = (-b - np.sqrt((b * b) - 4 * a * c)) / (2 * a)
 
     # Put point candidates together
     candidates = ((x1, y2), (x2, y2), (x1, y2), (x2, y1))
@@ -105,8 +136,8 @@ def distance_to_segment(point, line_start, line_end):
     cand = candidates[max_index]
     dmax = distances[max_index]
 
-    start_cand = (line_start[0]-cand[0], line_start[1]-cand[1])
-    end_cand = (line_end[0]-cand[0], line_end[1]-cand[1])
+    start_cand = (line_start[0] - cand[0], line_start[1] - cand[1])
+    end_cand = (line_end[0] - cand[0], line_end[1] - cand[1])
     dotp = (start_cand[0] * end_cand[0]) + (start_cand[1] * end_cand[1])
 
     inside = False
