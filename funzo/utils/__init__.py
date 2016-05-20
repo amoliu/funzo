@@ -1,6 +1,3 @@
-"""
-The :mod:`funzo.utils` module contains general helper functions and classes
-"""
 
 from .data_structures import Trace
 

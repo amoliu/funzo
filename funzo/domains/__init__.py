@@ -1,6 +1,3 @@
-"""
-The :mod:`funzo.domains` module contains reinforcement learning environments
-"""
 
 from .base import Domain, model_domain
 

@@ -17,8 +17,8 @@ Algorithms
   birl
 
 
-Detailed descriptions
-------------------------
+API
+--------
 
 .. autoclass:: IRLSolver
     :members:

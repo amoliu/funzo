@@ -26,8 +26,6 @@ class SocialNavigationWorld(object):
     as an array of :math:`(x_p, y_p, \theta_p)`. The goal position is a 2D
     location.
 
-    .. note:: The environment is continuous which is one of the main challenges
-
 
     Parameters
     -----------

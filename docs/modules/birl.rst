@@ -13,8 +13,8 @@
     MAPBIRL
 
 
-Detailed descriptions
-------------------------
+API
+-----
 
 .. autoclass:: BIRLBase
     :members:

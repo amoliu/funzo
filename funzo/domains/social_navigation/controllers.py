@@ -9,7 +9,7 @@ import numpy as np
 
 from ..base import model_domain
 from ..geometry import edist
-from ...models import MDPLocalControler
+from ...models import MDPLocalController
 
 from .nav_world import SocialNavigationWorld
 
@@ -17,7 +17,7 @@ from .nav_world import SocialNavigationWorld
 __all__ = ['LinearController']
 
 
-class LinearController(MDPLocalControler):
+class LinearController(MDPLocalController):
     """ Linear local controller
 
     Connect two pairs of states in :math:`\mathbb{R}^n` using a straight line

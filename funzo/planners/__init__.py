@@ -1,7 +1,3 @@
-"""
-The :mod:`funzo.planners` module contains reinforcement learning *planning*
-algorithms
-"""
 
 from .base import Planner
 

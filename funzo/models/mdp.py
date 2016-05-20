@@ -25,7 +25,7 @@ __all__ = [
     'MDPTransition',
     'MDPState',
     'MDPAction',
-    'MDPLocalControler',
+    'MDPLocalController',
 ]
 
 
@@ -398,7 +398,7 @@ class MDPTransition(six.with_metaclass(ABCMeta, Model)):
         raise NotImplementedError('Abstract method')
 
 
-class MDPLocalControler(six.with_metaclass(ABCMeta, Model)):
+class MDPLocalController(six.with_metaclass(ABCMeta, Model)):
     """ A MDP local controller
 
     Representing multiple step transition, which can be interpreted as a

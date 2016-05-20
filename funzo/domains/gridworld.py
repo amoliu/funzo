@@ -1,15 +1,5 @@
 """
-GridWorld Domain
-
-An agent moves in the world using a choice of 5 actions:
-(LEFT, RIGHT, UP, DOWN and STAY).
-
-The agent gets a reward that based on the action taken (i.e. depending on the
-resulting state). The goal state provides a large positive reward, obstacles
-provide large negative reward whiles the remaining states incur a small
-constant negative reward (the cost of movement). Additionally, actions that
-make the agent go outside of the domain limits incur a negative cost
-
+Action set: (LEFT, RIGHT, UP, DOWN and STAY).
 """
 
 from __future__ import division

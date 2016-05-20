@@ -1,11 +1,3 @@
-"""
-PuddleWorld Domain
-===================
-
-A continuous environment in which the agent has to avoid getting into various
-puddles on the way to the goal.
-
-"""
 
 from __future__ import division
 
