@@ -97,7 +97,7 @@
 <li class="toctree-l3"><a class="reference internal" href="birl.html"><code class="docutils literal"><span class="pre">funzo.irl.birl</span></code> Bayesian inverse reinforcement learning (BIRL)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
@@ -178,8 +178,8 @@
 </ul>
 </div>
 </div>
-<div class="section" id="detailed-descriptions">
-<h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.irl.IRLSolver">
 <em class="property">class </em><code class="descclassname">funzo.irl.</code><code class="descname">IRLSolver</code><span class="sig-paren">(</span><em>mdp_planner=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/irl/irl_base.html#IRLSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.irl.IRLSolver" title="Permalink to this definition">¶</a></dt>
@@ -297,7 +297,7 @@ intermediate reward functions, respective Qs, etc.</p>
 <div class="math">
 \[L_p = || r_e - r_{\pi} ||_p\]</div>
 <p>More appropriate in reward learning scenarios as opposed to apprenticeship
-learning. The reward is generally accepted as being a more succint
+learning. The reward is generally accepted as being a more succinct
 representation of behavior and more transferable.</p>
 <dl class="method">
 <dt id="funzo.irl.RewardLoss.evaluate">

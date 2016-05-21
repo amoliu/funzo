@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.domains.puddleworld 2D Puddle world &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="funzo.domains" href="../domains.html"/>
+        <link rel="next" title="funzo.domains.social_navigation Social robot navigation" href="social_navigation.html"/>
+        <link rel="prev" title="funzo.domains.gridworld 2D Grid world" href="gridworld.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/development.html">Development</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../domains.html#implemented-domains">Implemented domains</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gridworld.html"><code class="docutils literal"><span class="pre">funzo.domains.gridworld</span></code> 2D Grid world</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.domains.puddleworld</span></code> 2D Puddle world</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="social_navigation.html"><code class="docutils literal"><span class="pre">funzo.domains.social_navigation</span></code> Social robot navigation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../domains.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">funzo.domains.puddleworld</span></code> 2D Puddle world</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/domains/puddleworld.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="funzo-domains-puddleworld-2d-puddle-world">
+<h1><a class="reference internal" href="#module-funzo.domains.puddleworld" title="funzo.domains.puddleworld"><code class="xref py py-mod docutils literal"><span class="pre">funzo.domains.puddleworld</span></code></a> 2D Puddle world<a class="headerlink" href="#funzo-domains-puddleworld-2d-puddle-world" title="Permalink to this headline">¶</a></h1>
+<p>Puddle world is a 2D continuous world, populated with puddles of water.
+The agent is required to safely navigate to a goal position while avoiding
+these puddles. The penalty for entering the puddles is proportional to the
+extent inside the puddle. Additionally, there is travel cost for each step
+taken to encourage shorter paths.</p>
+<span class="target" id="module-funzo.domains.puddleworld"></span><table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.puddleworld.PuddleWorld" title="funzo.domains.puddleworld.PuddleWorld"><code class="xref py py-obj docutils literal"><span class="pre">PuddleWorld</span></code></a>(start[,&nbsp;resolution])</td>
+<td>PuddleWorld domain</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.puddleworld.PuddleWorldMDP" title="funzo.domains.puddleworld.PuddleWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">PuddleWorldMDP</span></code></a>(reward,&nbsp;transition[,&nbsp;...])</td>
+<td>PuddleWorld MDP representing the decision making process</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.puddleworld.PuddleReward" title="funzo.domains.puddleworld.PuddleReward"><code class="xref py py-obj docutils literal"><span class="pre">PuddleReward</span></code></a>([rmax,&nbsp;step_reward,&nbsp;domain])</td>
+<td>Reward function for the puddle</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.puddleworld.PuddleRewardLFA" title="funzo.domains.puddleworld.PuddleRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">PuddleRewardLFA</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
+<td>Reward function for the puddle using linear function approximation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.puddleworld.PWTransition" title="funzo.domains.puddleworld.PWTransition"><code class="xref py py-obj docutils literal"><span class="pre">PWTransition</span></code></a>([domain])</td>
+<td>PuddleWorld transition function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.puddleworld.PWState" title="funzo.domains.puddleworld.PWState"><code class="xref py py-obj docutils literal"><span class="pre">PWState</span></code></a>(state_id,&nbsp;location)</td>
+<td>PuddleWorld state</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PuddleWorld">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PuddleWorld</code><span class="sig-paren">(</span><em>start</em>, <em>resolution=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleWorld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorld" title="Permalink to this definition">¶</a></dt>
+<dd><p>PuddleWorld domain</p>
+<dl class="method">
+<dt id="funzo.domains.puddleworld.PuddleWorld.in_domain">
+<code class="descname">in_domain</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleWorld.in_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorld.in_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a state value is within domain bounds</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.puddleworld.PuddleWorld.show_policy">
+<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleWorld.show_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorld.show_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a policy on the interface</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.puddleworld.PuddleWorld.terminal">
+<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleWorld.terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorld.terminal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a state is terminal</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PuddleWorldMDP">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PuddleWorldMDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorldMDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>PuddleWorld MDP representing the decision making process</p>
+<dl class="attribute">
+<dt id="funzo.domains.puddleworld.PuddleWorldMDP.A">
+<code class="descname">A</code><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorldMDP.A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actions of the MDP in an indexable container</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="funzo.domains.puddleworld.PuddleWorldMDP.S">
+<code class="descname">S</code><a class="headerlink" href="#funzo.domains.puddleworld.PuddleWorldMDP.S" title="Permalink to this definition">¶</a></dt>
+<dd><p>States of the MDP in an indexable container</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PuddleReward">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PuddleReward</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>step_reward=0.1</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleReward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward function for the puddle</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PuddleRewardLFA">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PuddleRewardLFA</code><span class="sig-paren">(</span><em>weights</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleRewardLFA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reward function for the puddle using linear function approximation</p>
+<dl class="method">
+<dt id="funzo.domains.puddleworld.PuddleRewardLFA.phi">
+<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PuddleRewardLFA.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PuddleRewardLFA.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the reward features for state-action pair</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PWTransition">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PWTransition</code><span class="sig-paren">(</span><em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PWTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PWTransition" title="Permalink to this definition">¶</a></dt>
+<dd><p>PuddleWorld transition function</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PWState">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PWState</code><span class="sig-paren">(</span><em>state_id</em>, <em>location</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PWState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PWState" title="Permalink to this definition">¶</a></dt>
+<dd><p>PuddleWorld state</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.puddleworld.PWAction">
+<em class="property">class </em><code class="descclassname">funzo.domains.puddleworld.</code><code class="descname">PWAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em>, <em>step=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/puddleworld.html#PWAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.puddleworld.PWAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>PuddleWorld action</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="social_navigation.html" class="btn btn-neutral float-right" title="funzo.domains.social_navigation Social robot navigation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gridworld.html" class="btn btn-neutral" title="funzo.domains.gridworld 2D Grid world" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

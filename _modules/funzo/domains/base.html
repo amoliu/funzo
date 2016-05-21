@@ -160,7 +160,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Domain&#39;</span><span class="p">,</span> <span class="s1">&#39;model_domain&#39;</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">Domain</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
+<div class="viewcode-block" id="Domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.Domain">[docs]</a><span class="k">class</span> <span class="nc">Domain</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
 
     <span class="sd">&quot;&quot;&quot; Domain (World) interface</span>
 
@@ -170,12 +170,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="Domain.terminal"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.Domain.terminal">[docs]</a>    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check if a state is terminal (absorbing state) &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span></div>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Domain.visualize"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.Domain.visualize">[docs]</a>    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; visualize a domain</span>
 
 <span class="sd">        Parameters</span>
@@ -191,7 +191,12 @@
 <span class="sd">            The axis with the visual elements on the domain drawn</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;This method is abstract&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;This method is abstract&#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Domain.in_domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.Domain.in_domain">[docs]</a>    <span class="k">def</span> <span class="nf">in_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check if a state is within domain&#39;s bounds &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract&#39;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_domains</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -208,12 +213,12 @@
         <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">domains</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_domain</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="Domain.get_domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.Domain.get_domain">[docs]</a>    <span class="k">def</span> <span class="nf">get_domain</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the deepest domain on the stack.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">get_domains</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;No domain on domain stack&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;No domain on domain stack&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="model_domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.model_domain">[docs]</a><span class="k">def</span> <span class="nf">model_domain</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">domain_type</span><span class="o">=</span><span class="n">Domain</span><span class="p">):</span>

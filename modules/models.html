@@ -92,7 +92,8 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.models</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#detailed-descriptions">Detailed descriptions</a><ul class="simple">
+<li class="toctree-l2"><a class="reference internal" href="#markov-decision-processes-mdp">Markov decision processes (MDP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul class="simple">
 </ul>
 </li>
 </ul>
@@ -148,7 +149,15 @@
             
   <div class="section" id="module-funzo.models">
 <span id="funzo-models"></span><h1><a class="reference internal" href="#module-funzo.models" title="funzo.models"><code class="xref py py-mod docutils literal"><span class="pre">funzo.models</span></code></a><a class="headerlink" href="#module-funzo.models" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="#module-funzo.models" title="funzo.models"><code class="xref py py-mod docutils literal"><span class="pre">funzo.models</span></code></a> module contains reinforcement learning models</p>
+<p>The core models for reinforcement learning. The implementation here strives to
+be as general as possible to allow for easy switching of algorithms for working
+on these models.</p>
+<div class="section" id="markov-decision-processes-mdp">
+<h2>Markov decision processes (MDP)<a class="headerlink" href="#markov-decision-processes-mdp" title="Permalink to this headline">¶</a></h2>
+<p>Strictly speaking, Markov decision <em>processes</em> only contain state space,
+action space, transition function and possible discounting factor. By adding a
+reward function they become Markov decision <em>problems</em>. We however use MDP to
+refer to both interchangeably.</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -165,21 +174,25 @@
 <td>MDP Action</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-obj docutils literal"><span class="pre">MDPTransition</span></code></a>([domain])</td>
-<td>A MDP transition function</td>
+<td>A MDP single step transition function</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">RewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.MDPLocalController" title="funzo.models.MDPLocalController"><code class="xref py py-obj docutils literal"><span class="pre">MDPLocalController</span></code></a>(domain)</td>
+<td>A MDP local controller</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.RewardFunction" title="funzo.models.RewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">RewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
 <td>MDP reward function model</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.TabularRewardFunction" title="funzo.models.TabularRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">TabularRewardFunction</span></code></a>([rmax,&nbsp;domain])</td>
 <td>Reward function with a tabular representation</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#funzo.models.LinearRewardFunction" title="funzo.models.LinearRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">LinearRewardFunction</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.models.LinearRewardFunction" title="funzo.models.LinearRewardFunction"><code class="xref py py-obj docutils literal"><span class="pre">LinearRewardFunction</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
 <td>RewardFunction using linear function approximation</td>
 </tr>
 </tbody>
 </table>
-<div class="section" id="detailed-descriptions">
-<h2>Detailed descriptions<a class="headerlink" href="#detailed-descriptions" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="funzo.models.MDP">
 <em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDP" title="Permalink to this definition">¶</a></dt>
@@ -272,7 +285,7 @@ details such as stochasticity are handled therein.</p>
 <td>(<a class="reference internal" href="#funzo.models.MDPTransition" title="funzo.models.MDPTransition"><code class="xref py py-class docutils literal"><span class="pre">MDPTransition</span></code></a> object) Represents the transition function for the MDP. All transition relevant details such as stochasticity are handled therein.</td>
 </tr>
 <tr class="row-odd"><td>_domain</td>
-<td>(<code class="xref py py-class docutils literal"><span class="pre">funzo.domains.Domain</span></code> object, optional (default: None)) The underlying domain (world) on which the MDP operates on. This is inferred from the domain context using the <code class="docutils literal"><span class="pre">with</span></code> statement.</td>
+<td>(<a class="reference internal" href="domains.html#funzo.domains.Domain" title="funzo.domains.Domain"><code class="xref py py-class docutils literal"><span class="pre">funzo.domains.Domain</span></code></a> object, optional (default: None)) The underlying domain (world) on which the MDP operates on. This is inferred from the domain context using the <code class="docutils literal"><span class="pre">with</span></code> statement.</td>
 </tr>
 </tbody>
 </table>
@@ -431,7 +444,7 @@ various quantities.</p>
 <dl class="class">
 <dt id="funzo.models.MDPTransition">
 <em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPTransition</code><span class="sig-paren">(</span><em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPTransition" title="Permalink to this definition">¶</a></dt>
-<dd><p>A MDP transition function</p>
+<dd><p>A MDP single step transition function</p>
 <div class="math">
 \[T: \mathcal{S} \times \mathcal{A} \times \mathcal{S}
 \longmapsto \mathbb{R}\]</div>
@@ -464,6 +477,20 @@ to be used on</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.models.MDPLocalController">
+<em class="property">class </em><code class="descclassname">funzo.models.</code><code class="descname">MDPLocalController</code><span class="sig-paren">(</span><em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPLocalController"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPLocalController" title="Permalink to this definition">¶</a></dt>
+<dd><p>A MDP local controller</p>
+<p>Representing multiple step transition, which can be interpreted as a
+Markov option with only one possible terminal state.</p>
+<dl class="method">
+<dt id="funzo.models.MDPLocalController.trajectory">
+<code class="descname">trajectory</code><span class="sig-paren">(</span><em>source</em>, <em>target</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funzo/models/mdp.html#MDPLocalController.trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.models.MDPLocalController.trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the trajectory/policy between two states</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">

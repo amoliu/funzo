@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.domains.gridworld 2D Grid world &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="funzo.domains" href="../domains.html"/>
+        <link rel="next" title="funzo.domains.puddleworld 2D Puddle world" href="puddleworld.html"/>
+        <link rel="prev" title="funzo.domains" href="../domains.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/development.html">Development</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../domains.html#implemented-domains">Implemented domains</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal"><span class="pre">funzo.domains.gridworld</span></code> 2D Grid world</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="puddleworld.html"><code class="docutils literal"><span class="pre">funzo.domains.puddleworld</span></code> 2D Puddle world</a></li>
+<li class="toctree-l3"><a class="reference internal" href="social_navigation.html"><code class="docutils literal"><span class="pre">funzo.domains.social_navigation</span></code> Social robot navigation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../domains.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">funzo.domains.gridworld</span></code> 2D Grid world</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/domains/gridworld.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="funzo-domains-gridworld-2d-grid-world">
+<h1><a class="reference internal" href="#module-funzo.domains.gridworld" title="funzo.domains.gridworld"><code class="xref py py-mod docutils literal"><span class="pre">funzo.domains.gridworld</span></code></a> 2D Grid world<a class="headerlink" href="#funzo-domains-gridworld-2d-grid-world" title="Permalink to this headline">¶</a></h1>
+<p>The grid world is a classic Reinforcement learning (RL) domain. The world is
+defined by a collection of cells in a 2D grid. Cells can be:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Free</li>
+<li>Blocked (obstacle)</li>
+<li>Terminal (indicating the goal position) and end of episode</li>
+</ol>
+</div></blockquote>
+<p>The agent has to move from any start position to the goal position while
+avoiding blocked cells. The agent incurs travel cost to encourage shorter paths
+and also heavy penalties for getting into blocked cells.</p>
+<span class="target" id="module-funzo.domains.gridworld"></span><p>Action set: (LEFT, RIGHT, UP, DOWN and STAY).</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.gridworld.GridWorld" title="funzo.domains.gridworld.GridWorld"><code class="xref py py-obj docutils literal"><span class="pre">GridWorld</span></code></a>(gmap)</td>
+<td>GridWorld domain</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.gridworld.GridWorldMDP" title="funzo.domains.gridworld.GridWorldMDP"><code class="xref py py-obj docutils literal"><span class="pre">GridWorldMDP</span></code></a>(reward,&nbsp;transition[,&nbsp;discount,&nbsp;...])</td>
+<td>Grid world MDP representing the decision making process</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.gridworld.GReward" title="funzo.domains.gridworld.GReward"><code class="xref py py-obj docutils literal"><span class="pre">GReward</span></code></a>([rmax,&nbsp;domain])</td>
+<td>Grid world MDP reward function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.gridworld.GRewardLFA" title="funzo.domains.gridworld.GRewardLFA"><code class="xref py py-obj docutils literal"><span class="pre">GRewardLFA</span></code></a>(weights[,&nbsp;rmax,&nbsp;domain])</td>
+<td>GridWorld reward using linear function approximation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.gridworld.GTransition" title="funzo.domains.gridworld.GTransition"><code class="xref py py-obj docutils literal"><span class="pre">GTransition</span></code></a>([wind,&nbsp;domain])</td>
+<td>GridWorld MDP controller</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#funzo.domains.gridworld.GState" title="funzo.domains.gridworld.GState"><code class="xref py py-obj docutils literal"><span class="pre">GState</span></code></a>(state_id,&nbsp;cell[,&nbsp;status])</td>
+<td>GridWorld state</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#funzo.domains.gridworld.GAction" title="funzo.domains.gridworld.GAction"><code class="xref py py-obj docutils literal"><span class="pre">GAction</span></code></a>(action_id,&nbsp;direction)</td>
+<td>GridWorld action</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="funzo.domains.gridworld.GridWorld">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GridWorld</code><span class="sig-paren">(</span><em>gmap</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorld" title="Permalink to this definition">¶</a></dt>
+<dd><p>GridWorld domain</p>
+<p>A discrete world with cells (free, obstacles, and goal). The main task
+is to find a path from any start cell to a goal cell. The start, goal
+and obstacle cells are specified using a matrix or list of lists.</p>
+<dl class="method">
+<dt id="funzo.domains.gridworld.GridWorld.generate_trajectories">
+<code class="descname">generate_trajectories</code><span class="sig-paren">(</span><em>policy</em>, <em>num=5</em>, <em>starts=None</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorld.generate_trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorld.generate_trajectories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate trajectories of varying lengths using a policy</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.gridworld.GridWorld.in_domain">
+<code class="descname">in_domain</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorld.in_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorld.in_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a cell is in the domain</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.gridworld.GridWorld.show_policy">
+<code class="descname">show_policy</code><span class="sig-paren">(</span><em>ax</em>, <em>policy=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorld.show_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorld.show_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a policy on the gridworld interface</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.gridworld.GridWorld.terminal">
+<code class="descname">terminal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorld.terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorld.terminal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a state is terminal</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GridWorldMDP">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GridWorldMDP</code><span class="sig-paren">(</span><em>reward</em>, <em>transition</em>, <em>discount=0.9</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorldMDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorldMDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grid world MDP representing the decision making process</p>
+<dl class="attribute">
+<dt id="funzo.domains.gridworld.GridWorldMDP.A">
+<code class="descname">A</code><a class="headerlink" href="#funzo.domains.gridworld.GridWorldMDP.A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actions of the MDP in an indexable container</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="funzo.domains.gridworld.GridWorldMDP.S">
+<code class="descname">S</code><a class="headerlink" href="#funzo.domains.gridworld.GridWorldMDP.S" title="Permalink to this definition">¶</a></dt>
+<dd><p>States of the MDP in an indexable container</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="funzo.domains.gridworld.GridWorldMDP.actions">
+<code class="descname">actions</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GridWorldMDP.actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GridWorldMDP.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the set of actions available at a state</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GReward">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GReward</code><span class="sig-paren">(</span><em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GReward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GReward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grid world MDP reward function</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GRewardLFA">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GRewardLFA</code><span class="sig-paren">(</span><em>weights</em>, <em>rmax=1.0</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GRewardLFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GRewardLFA" title="Permalink to this definition">¶</a></dt>
+<dd><p>GridWorld reward using linear function approximation</p>
+<dl class="method">
+<dt id="funzo.domains.gridworld.GRewardLFA.phi">
+<code class="descname">phi</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GRewardLFA.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GRewardLFA.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the reward features for state-action pair</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GTransition">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GTransition</code><span class="sig-paren">(</span><em>wind=0.2</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GTransition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GTransition" title="Permalink to this definition">¶</a></dt>
+<dd><p>GridWorld MDP controller</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GState">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GState</code><span class="sig-paren">(</span><em>state_id</em>, <em>cell</em>, <em>status='free'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GState" title="Permalink to this definition">¶</a></dt>
+<dd><p>GridWorld state</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="funzo.domains.gridworld.GAction">
+<em class="property">class </em><code class="descclassname">funzo.domains.gridworld.</code><code class="descname">GAction</code><span class="sig-paren">(</span><em>action_id</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/funzo/domains/gridworld.html#GAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#funzo.domains.gridworld.GAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>GridWorld action</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="puddleworld.html" class="btn btn-neutral float-right" title="funzo.domains.puddleworld 2D Puddle world" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../domains.html" class="btn btn-neutral" title="funzo.domains" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

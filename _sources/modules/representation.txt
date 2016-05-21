@@ -7,8 +7,8 @@
 
     StateGraph
 
-Detailed descriptions
------------------------
+API
+-----
 
 .. autoclass:: StateGraph
     :members:

@@ -143,17 +143,7 @@
             
   <h1>Source code for funzo.domains.gridworld</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">GridWorld Domain</span>
-
-<span class="sd">An agent moves in the world using a choice of 5 actions:</span>
-<span class="sd">(LEFT, RIGHT, UP, DOWN and STAY).</span>
-
-<span class="sd">The agent gets a reward that based on the action taken (i.e. depending on the</span>
-<span class="sd">resulting state). The goal state provides a large positive reward, obstacles</span>
-<span class="sd">provide large negative reward whiles the remaining states incur a small</span>
-<span class="sd">constant negative reward (the cost of movement). Additionally, actions that</span>
-<span class="sd">make the agent go outside of the domain limits incur a negative cost</span>
-
+<span class="sd">Action set: (LEFT, RIGHT, UP, DOWN and STAY).</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
@@ -188,7 +178,7 @@
 <span class="n">TERMINAL</span> <span class="o">=</span> <span class="s1">&#39;terminal&#39;</span>
 
 
-<div class="viewcode-block" id="GReward"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GReward">[docs]</a><span class="k">class</span> <span class="nc">GReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="GReward"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GReward">[docs]</a><span class="k">class</span> <span class="nc">GReward</span><span class="p">(</span><span class="n">TabularRewardFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Grid world MDP reward function &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GReward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
@@ -207,41 +197,26 @@
                 <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.01</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">reward</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate reward function &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
-        <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">s_p</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># out or domain movements penalty</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mf">10.0</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">s_p</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="GRewardLFA"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">GRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gridworld reward using linear function approximation &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GRewardLFA"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GRewardLFA">[docs]</a><span class="k">class</span> <span class="nc">GRewardLFA</span><span class="p">(</span><span class="n">LinearRewardFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GridWorld reward using linear function approximation &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GRewardLFA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">rmax</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">GTransition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">GridWorld</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate reward function &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="c1"># get the resulting state to determine if movement occurred</span>
-        <span class="n">s_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c1"># if s_p == state and action != 4:  # out or domain movements penalty</span>
-        <span class="c1">#     return -10.0</span>
-
-        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">s_p</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GRewardLFA.phi"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GRewardLFA.phi">[docs]</a>    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="GRewardLFA.phi"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GRewardLFA.phi">[docs]</a>    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate the reward features for state-action pair &quot;&quot;&quot;</span>
         <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
         <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature_free</span><span class="p">(</span><span class="n">state_</span><span class="p">),</span>
@@ -263,16 +238,15 @@
 
     <span class="k">def</span> <span class="nf">_feature_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check is the agent is in a free cell &quot;&quot;&quot;</span>
-        <span class="c1"># Terminal state is always free by definition</span>
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">FREE</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TERMINAL</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">1.0</span>
         <span class="k">return</span> <span class="mf">0.0</span></div>
 
 <span class="c1">#############################################################################</span>
 
 
-<div class="viewcode-block" id="GTransition"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GTransition">[docs]</a><span class="k">class</span> <span class="nc">GTransition</span><span class="p">(</span><span class="n">MDPTransition</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gridworld MDP controller &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GTransition"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GTransition">[docs]</a><span class="k">class</span> <span class="nc">GTransition</span><span class="p">(</span><span class="n">MDPTransition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GridWorld MDP controller &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wind</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GTransition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wind</span> <span class="o">=</span> <span class="n">wind</span>
@@ -329,8 +303,8 @@
 <span class="c1">#############################################################################</span>
 
 
-<div class="viewcode-block" id="GState"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GState">[docs]</a><span class="k">class</span> <span class="nc">GState</span><span class="p">(</span><span class="n">MDPState</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gridworld state &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GState"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GState">[docs]</a><span class="k">class</span> <span class="nc">GState</span><span class="p">(</span><span class="n">MDPState</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GridWorld state &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_id</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">FREE</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">state_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span>
@@ -349,8 +323,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="GAction"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GAction">[docs]</a><span class="k">class</span> <span class="nc">GAction</span><span class="p">(</span><span class="n">MDPAction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gridworld action &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GAction"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GAction">[docs]</a><span class="k">class</span> <span class="nc">GAction</span><span class="p">(</span><span class="n">MDPAction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GridWorld action &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_id</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">action_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
@@ -371,7 +345,7 @@
 <span class="c1">#############################################################################</span>
 
 
-<div class="viewcode-block" id="GridWorld"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld">[docs]</a><span class="k">class</span> <span class="nc">GridWorld</span><span class="p">(</span><span class="n">Domain</span><span class="p">):</span>
+<div class="viewcode-block" id="GridWorld"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorld">[docs]</a><span class="k">class</span> <span class="nc">GridWorld</span><span class="p">(</span><span class="n">Domain</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; GridWorld domain</span>
 
 <span class="sd">    A discrete world with cells (free, obstacles, and goal). The main task</span>
@@ -413,7 +387,7 @@
             <span class="mi">4</span><span class="p">:</span> <span class="n">GAction</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="p">}</span>
 
-<div class="viewcode-block" id="GridWorld.terminal"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.terminal">[docs]</a>    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="GridWorld.terminal"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorld.terminal">[docs]</a>    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check if a state is terminal&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;terminal&#39;</span></div>
 
@@ -425,7 +399,7 @@
 
         <span class="k">return</span> <span class="n">ax</span>
 
-<div class="viewcode-block" id="GridWorld.in_domain"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.in_domain">[docs]</a>    <span class="k">def</span> <span class="nf">in_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="GridWorld.in_domain"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorld.in_domain">[docs]</a>    <span class="k">def</span> <span class="nf">in_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check if a cell is in the domain &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_map</span></div>
 
@@ -456,7 +430,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
         <span class="k">return</span> <span class="n">ax</span>
 
-<div class="viewcode-block" id="GridWorld.show_policy"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.show_policy">[docs]</a>    <span class="k">def</span> <span class="nf">show_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GridWorld.show_policy"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorld.show_policy">[docs]</a>    <span class="k">def</span> <span class="nf">show_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Show a policy on the gridworld interface &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">),</span>\
@@ -472,14 +446,14 @@
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                     <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">downarrow$&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;G&#39;</span>
                 <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">ss</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">),</span>
                         <span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">2.3</span><span class="p">),</span>
                         <span class="n">text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="GridWorld.generate_trajectories"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorld.generate_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">generate_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">starts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<div class="viewcode-block" id="GridWorld.generate_trajectories"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorld.generate_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">generate_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">starts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                               <span class="n">random_state</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Generate trajectories of varying lengths using a policy &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Number of trajectories must be greater than zero&#39;</span>
@@ -517,7 +491,7 @@
         <span class="k">return</span> <span class="n">state</span></div>
 
 
-<div class="viewcode-block" id="GridWorldMDP"><a class="viewcode-back" href="../../../modules/domains.html#funzo.domains.GridWorldMDP">[docs]</a><span class="k">class</span> <span class="nc">GridWorldMDP</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
+<div class="viewcode-block" id="GridWorldMDP"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorldMDP">[docs]</a><span class="k">class</span> <span class="nc">GridWorldMDP</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Grid world MDP representing the decision making process &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">transition</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GridWorldMDP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span>
@@ -536,8 +510,11 @@
         <span class="sd">&quot;&quot;&quot; Actions of the MDP in an indexable container &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+<div class="viewcode-block" id="GridWorldMDP.actions"><a class="viewcode-back" href="../../../modules/domains/gridworld.html#funzo.domains.gridworld.GridWorldMDP.actions">[docs]</a>    <span class="k">def</span> <span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the set of actions available at a state &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

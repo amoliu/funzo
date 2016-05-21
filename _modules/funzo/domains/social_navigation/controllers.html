@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>funzo.domains.social_navigation.controllers &mdash; funzo 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/gallery.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../../../_static/fix_rtd.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="funzo 0.1.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> funzo
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/development.html">Development</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/models.html"><code class="docutils literal"><span class="pre">funzo.models</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/irl.html"><code class="docutils literal"><span class="pre">funzo.irl</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/domains.html"><code class="docutils literal"><span class="pre">funzo.domains</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/planners.html"><code class="docutils literal"><span class="pre">funzo.planners</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/representation.html"><code class="docutils literal"><span class="pre">funzo.representation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/utils.html"><code class="docutils literal"><span class="pre">funzo.utils</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">funzo</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>funzo.domains.social_navigation.controllers</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for funzo.domains.social_navigation.controllers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Controllers (transition functions) for social navigation</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">model_domain</span>
+<span class="kn">from</span> <span class="nn">..geometry</span> <span class="kn">import</span> <span class="n">edist</span><span class="p">,</span> <span class="n">normangle</span>
+<span class="kn">from</span> <span class="nn">...models</span> <span class="kn">import</span> <span class="n">MDPLocalController</span>
+
+<span class="kn">from</span> <span class="nn">.nav_world</span> <span class="kn">import</span> <span class="n">SocialNavigationWorld</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LinearController&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="LinearController"><a class="viewcode-back" href="../../../../modules/domains/social_navigation.html#funzo.domains.social_navigation.LinearController">[docs]</a><span class="k">class</span> <span class="nc">LinearController</span><span class="p">(</span><span class="n">MDPLocalController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Linear local controller</span>
+
+<span class="sd">    Connect two pairs of states in :math:`\mathbb{R}^n` using a straight line</span>
+<span class="sd">    with equally placed way-points as a specified resolution. The direction of</span>
+<span class="sd">    the line is specified by the action which represents the continuous action.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LinearController</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">SocialNavigationWorld</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">resolution</span> <span class="o">&lt;</span> <span class="mf">1e-05</span><span class="p">:</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Local controller resolution is too low!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Execute the local controller</span>
+
+<span class="sd">        Run the local controller for a specified duration, and return the</span>
+<span class="sd">        resulting trajectory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        state : int</span>
+<span class="sd">            State in an MDP (usually represented using a controller graph)</span>
+<span class="sd">        action : float</span>
+<span class="sd">            Action to take (here corresponding to an angle in [0, 2pi])</span>
+
+<span class="sd">        duration : float</span>
+<span class="sd">            Time to run the controller. The exact advancement depends of the</span>
+<span class="sd">            speed of the robot</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        traj : array-like</span>
+<span class="sd">            A 2D trajectory with way-points :math:`(x, y, \theta,</span>
+<span class="sd">            v_{\text{max}})`</span>
+<span class="sd">            Will return `None` is the controller drives the robot outside of</span>
+<span class="sd">            the world.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;speed&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">nx</span> <span class="o">=</span> <span class="n">state_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">*</span> <span class="n">duration</span>
+        <span class="n">ny</span> <span class="o">=</span> <span class="n">state_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">*</span> <span class="n">duration</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world</span><span class="o">.</span><span class="n">in_world</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">)):</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">speed</span><span class="p">]</span>
+            <span class="n">traj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">speed</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">traj</span>
+
+        <span class="k">return</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="LinearController.trajectory"><a class="viewcode-back" href="../../../../modules/domains/social_navigation.html#funzo.domains.social_navigation.LinearController.trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute the local trajectory to connect two states &quot;&quot;&quot;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;speed&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">edist</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="n">V</span> <span class="o">*</span> <span class="n">duration</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">traj</span> <span class="o">=</span> <span class="p">[</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span> <span class="o">/</span> <span class="n">dt</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dt</span><span class="p">))]</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">theta</span><span class="p">,</span> <span class="n">V</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">]</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">traj</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">POSQController</span><span class="p">(</span><span class="n">LinearController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; POSQ local controller for differential drive mobile robots</span>
+
+<span class="sd">    A two-point boundary value problem solver with guaranteed convergence. For</span>
+<span class="sd">    a detailed exposition, see [Palmieri14]_.</span>
+
+<span class="sd">    .. [Palmieri14] Luigi Palmieri and Kai O. Arras, &quot;A Novel RRT Extend</span>
+<span class="sd">    Function for Efficient and Smooth Mobile Robot Motion Planning,&quot; IROS,</span>
+<span class="sd">    2014</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">baseline</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">POSQController</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">model_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">SocialNavigationWorld</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">baseline</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Diff-drive robot baseline must be &gt; 0.0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">baseline</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;POSQ direction can only be -1 or 1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="o">=</span> <span class="n">direction</span>
+
+    <span class="k">def</span> <span class="nf">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute the local trajectory to connect two states &quot;&quot;&quot;</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">theta</span><span class="p">])</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">theta</span><span class="p">])</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;speed&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">init_t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">traj</span><span class="p">,</span> <span class="n">speedvec</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">inct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_posq_integrate</span><span class="p">(</span>
+            <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_base</span><span class="p">,</span> <span class="n">init_t</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">nS</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">speedvec</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">speedvec</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">traj</span><span class="p">,</span> <span class="n">speeds</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">traj</span>
+
+    <span class="k">def</span> <span class="nf">_posq_integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xstart</span><span class="p">,</span> <span class="n">xend</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">deltaT</span><span class="p">,</span>
+                        <span class="n">base</span><span class="p">,</span> <span class="n">initT</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">nS</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; POSQ Integration procedure to general full trajectory &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">xstart</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">xend</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expect similar vector sizes in POSQ integrate&#39;</span><span class="p">)</span>
+
+        <span class="n">vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">sl</span><span class="p">,</span> <span class="n">sr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">old_sl</span><span class="p">,</span> <span class="n">old_sr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">xvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># pose vectors for trajectory</span>
+        <span class="n">speedvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># velocities during trajectory</span>
+        <span class="n">encoders</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">initT</span>  <span class="c1"># initialize global timer</span>
+        <span class="n">ti</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># initialize local timer</span>
+        <span class="n">eot</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># initialize end-of-trajectory flag</span>
+        <span class="n">xnow</span> <span class="o">=</span> <span class="p">[</span><span class="n">xstart</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xstart</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xstart</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">old_beta</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">eot</span><span class="p">:</span>
+            <span class="c1"># Calculate distances for both wheels</span>
+            <span class="n">dSl</span> <span class="o">=</span> <span class="n">sl</span> <span class="o">-</span> <span class="n">old_sl</span>
+            <span class="n">dSr</span> <span class="o">=</span> <span class="n">sr</span> <span class="o">-</span> <span class="n">old_sr</span>
+            <span class="n">dSm</span> <span class="o">=</span> <span class="p">(</span><span class="n">dSl</span> <span class="o">+</span> <span class="n">dSr</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">dSd</span> <span class="o">=</span> <span class="p">(</span><span class="n">dSr</span> <span class="o">-</span> <span class="n">dSl</span><span class="p">)</span> <span class="o">/</span> <span class="n">base</span>
+
+            <span class="c1"># Integrate robot position</span>
+            <span class="n">xnow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xnow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dSm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">xnow</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dSd</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">xnow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">xnow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dSm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xnow</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dSd</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">xnow</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normangle</span><span class="p">(</span><span class="n">xnow</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dSd</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+            <span class="c1"># implementation of the controller</span>
+            <span class="n">vl</span><span class="p">,</span> <span class="n">vr</span><span class="p">,</span> <span class="n">eot</span><span class="p">,</span> <span class="n">vm</span><span class="p">,</span> <span class="n">vd</span><span class="p">,</span> <span class="n">old_beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_posq_step</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="n">xnow</span><span class="p">,</span> <span class="n">xend</span><span class="p">,</span>
+                                                            <span class="n">direction</span><span class="p">,</span>
+                                                            <span class="n">old_beta</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+            <span class="n">vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">vel</span><span class="p">,</span> <span class="p">[</span><span class="n">vm</span><span class="p">,</span> <span class="n">vd</span><span class="p">]))</span>
+            <span class="n">speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vl</span><span class="p">,</span> <span class="n">vr</span><span class="p">])</span>
+            <span class="n">speedvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">speedvec</span><span class="p">,</span> <span class="n">speeds</span><span class="p">))</span>
+            <span class="n">xvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">xvec</span><span class="p">,</span> <span class="n">xnow</span><span class="p">))</span>
+
+            <span class="c1"># Increase timers</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">ti</span> <span class="o">+</span> <span class="n">deltaT</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">deltaT</span>
+
+            <span class="c1"># Increase accumulated encoder values</span>
+            <span class="c1"># simulated encoders of robot</span>
+            <span class="n">delta_dist1</span> <span class="o">=</span> <span class="n">speeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">deltaT</span>
+            <span class="n">delta_dist2</span> <span class="o">=</span> <span class="n">speeds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">deltaT</span>
+            <span class="n">encoders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_dist1</span>
+            <span class="n">encoders</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_dist2</span>
+
+            <span class="c1"># Keep track of previous wheel positions</span>
+            <span class="n">old_sl</span> <span class="o">=</span> <span class="n">sl</span>
+            <span class="n">old_sr</span> <span class="o">=</span> <span class="n">sr</span>
+
+            <span class="c1"># noise on the encoders</span>
+            <span class="n">sl</span> <span class="o">=</span> <span class="n">encoders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nS</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">encoders</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">nS</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">inct</span> <span class="o">=</span> <span class="n">t</span>  <span class="c1"># at the end of the trajectory the time elapsed is added</span>
+
+        <span class="k">return</span> <span class="n">xvec</span><span class="p">,</span> <span class="n">speedvec</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">inct</span>
+
+    <span class="k">def</span> <span class="nf">_posq_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">xnow</span><span class="p">,</span> <span class="n">xend</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">old_beta</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; POSQ single step &quot;&quot;&quot;</span>
+        <span class="n">k_v</span> <span class="o">=</span> <span class="mf">3.8</span>
+        <span class="n">k_rho</span> <span class="o">=</span> <span class="mi">1</span>    <span class="c1"># Condition: k_alpha + 5/3*k_beta - 2/pi*k_rho &gt; 0 !</span>
+        <span class="n">k_alpha</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">k_beta</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">rho_end</span> <span class="o">=</span> <span class="mf">0.00510</span>      <span class="c1"># [m]</span>
+
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">old_beta</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># extract coordinates</span>
+        <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">tc</span> <span class="o">=</span> <span class="n">xnow</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xnow</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xnow</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">xe</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">te</span> <span class="o">=</span> <span class="n">xend</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xend</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xend</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># rho</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xc</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">yc</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">f_rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="k">if</span> <span class="n">f_rho</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">vmax</span> <span class="o">/</span> <span class="n">k_rho</span><span class="p">):</span>
+            <span class="n">f_rho</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">/</span> <span class="n">k_rho</span>
+
+        <span class="c1"># alpha</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">normangle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span> <span class="o">-</span> <span class="n">tc</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="c1"># direction (forward or backward)</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">f_rho</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_rho</span>                   <span class="c1"># backwards</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+            <span class="k">elif</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">f_rho</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_rho</span>                   <span class="c1"># backwards</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>                  <span class="c1"># arrive backwards</span>
+            <span class="n">f_rho</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_rho</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+            <span class="k">if</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+        <span class="c1"># phi, beta</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">te</span> <span class="o">-</span> <span class="n">tc</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">normangle</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">normangle</span><span class="p">(</span><span class="n">phi</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">old_beta</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>           <span class="c1"># avoid instability</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="n">old_beta</span>
+        <span class="n">old_beta</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="n">vm</span> <span class="o">=</span> <span class="n">k_rho</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">f_rho</span> <span class="o">*</span> <span class="n">k_v</span><span class="p">)</span>
+        <span class="n">vd</span> <span class="o">=</span> <span class="p">(</span><span class="n">k_alpha</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">k_beta</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">eot</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_end</span><span class="p">)</span>
+
+        <span class="c1"># Convert speed to wheel speeds</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">vm</span> <span class="o">-</span> <span class="n">vd</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">vmax</span><span class="p">:</span>
+            <span class="n">vl</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+        <span class="n">vr</span> <span class="o">=</span> <span class="n">vm</span> <span class="o">+</span> <span class="n">vd</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">vmax</span><span class="p">:</span>
+            <span class="n">vr</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">vr</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">vl</span><span class="p">,</span> <span class="n">vr</span><span class="p">,</span> <span class="n">eot</span><span class="p">,</span> <span class="n">vm</span><span class="p">,</span> <span class="n">vd</span><span class="p">,</span> <span class="n">old_beta</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015–2016, Billy Okal.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

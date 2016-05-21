@@ -7,8 +7,8 @@
 
     Trace
 
-Detailed descriptions
------------------------
+API
+-----
 
 .. autoclass:: Trace
     :members:

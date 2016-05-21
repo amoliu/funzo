@@ -168,7 +168,8 @@
     <span class="s1">&#39;TabularRewardFunction&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MDPTransition&#39;</span><span class="p">,</span>
     <span class="s1">&#39;MDPState&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MDPAction&#39;</span>
+    <span class="s1">&#39;MDPAction&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MDPLocalController&#39;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -431,8 +432,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">r</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;New reward array shape must match</span><span class="se">\</span>
-<span class="s1">                                     reward function dimension&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;New reward array shape must match&#39;</span>
+                                     <span class="s1">&#39;reward function dimension&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_R</span> <span class="o">=</span> <span class="n">r</span></div>
 
     <span class="nd">@property</span>
@@ -502,7 +503,7 @@
 
 
 <div class="viewcode-block" id="MDPTransition"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPTransition">[docs]</a><span class="k">class</span> <span class="nc">MDPTransition</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
-    <span class="sd">&quot;&quot;&quot; A MDP transition function</span>
+    <span class="sd">&quot;&quot;&quot; A MDP single step transition function</span>
 
 <span class="sd">    .. math::</span>
 
@@ -540,6 +541,26 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="MDPLocalController"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPLocalController">[docs]</a><span class="k">class</span> <span class="nc">MDPLocalController</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Model</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; A MDP local controller</span>
+
+<span class="sd">    Representing multiple step transition, which can be interpreted as a</span>
+<span class="sd">    Markov option with only one possible terminal state.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Execute the local controller &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method&#39;</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MDPLocalController.trajectory"><a class="viewcode-back" href="../../../modules/models.html#funzo.models.MDPLocalController.trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute the trajectory/policy between two states &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract&#39;</span><span class="p">)</span></div></div>
 
 <span class="c1">########################################################################</span>
 
