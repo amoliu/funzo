@@ -1,15 +1,7 @@
-""" Geometry function helpers
-
-Useful geometry functions used in the domains to define various elements such
-as features and controllers
-
-"""
-
-# Author: Billy Okal <sudo@makokal.com>
-#
-# License: MIT
 
 from __future__ import division
+
+from six.moves import zip
 
 import numpy as np
 
@@ -19,6 +11,7 @@ __all__ = [
     'distance_to_segment',
     'edist',
     'normangle',
+    'trajectory_length',
 ]
 
 
@@ -71,6 +64,33 @@ def normangle(theta, start=0):
         return theta
     else:
         return np.inf
+
+
+def trajectory_length(traj):
+    """ Compute the length of a 2D trajectory
+
+    Parameters
+    -----------
+    traj : array-like
+        Trajectory representing the path traveled as an array of
+        shape [n_waypoints x frame_size]. Frame encodes information at
+        every time step e.g [x, y, theta, ...]
+
+    Returns
+    ---------
+    path_length : float
+        Length of the path as a sum of Euclidean distance between successive
+        way-points.
+    """
+
+    traj = np.asarray(traj)
+    if traj.ndim != 2:
+        raise ValueError("Trajectory must be a two dimensional array")
+
+    d = np.diff(traj[:, 0:2], axis=0)
+    n = np.linalg.norm(d, axis=1)
+
+    return np.sum(n)
 
 
 def edist(v1, v2):
