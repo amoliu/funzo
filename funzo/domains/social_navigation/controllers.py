@@ -69,7 +69,7 @@ class LinearController(MDPLocalController):
 
         if self._world.in_world((nx, ny)):
             target = [nx, ny, action, speed]
-            traj = self.trajectory(state, target, speed)
+            traj = self.trajectory(state, target, speed=speed)
             return traj
 
         return None
@@ -86,7 +86,8 @@ class LinearController(MDPLocalController):
 
         traj = [target[0:2] * t / dt + source[0:2] * (1 - t / dt)
                 for t in range(int(dt))]
-        traj = [t.tolist() + [theta, V] for t in traj]
+        # traj = [t.tolist() + [theta, V] for t in traj]
+        traj = [t.tolist() + [theta] for t in traj]
         traj = np.array(traj)
         return traj
 
@@ -124,8 +125,8 @@ class POSQController(LinearController):
             source, target, self._direction, self._resolution,
             self._base, init_t, V, nS=0)
 
-        speeds = np.hypot(speedvec[:, 0], speedvec[:, 1])
-        traj = np.column_stack((traj, speeds))
+        # speeds = np.hypot(speedvec[:, 0], speedvec[:, 1])
+        # traj = np.column_stack((traj, speeds))
 
         return traj
 
