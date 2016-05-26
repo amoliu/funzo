@@ -64,9 +64,6 @@ URL = 'https://github.com/makokal/funzo'
 DOWNLOAD_URL = 'https://github.com/makokal/funzo'
 LICENSE = 'MIT'
 VERSION = version('funzo/__init__.py')
-# REQUIRES = ["numpy", "scipy", "networkx",
-#             "tqdm", "six", "matplotlib", "nose", "h5py"]
-
 
 with open('requirements.txt') as f:
     INSTALL_REQUIRES = [l.strip() for l in f.readlines() if l]

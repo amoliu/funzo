@@ -6,3 +6,4 @@ nose
 tqdm
 networkx
 h5py
+scikit-learn
