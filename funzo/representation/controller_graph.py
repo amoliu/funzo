@@ -4,9 +4,12 @@ import json
 
 import numpy as np
 
+from collections import Callable
+
 from sklearn import gaussian_process
 
 from .state_graph import StateGraph
+from ..domains.geometry import trajectory_length
 
 
 class ControllerGraph(object):
@@ -18,10 +21,16 @@ class ControllerGraph(object):
     and also allows for task constraints to be modeled directly into the MDP
     action space via these local controllers.
 
+    Requires partially specified MDP with reward function, and a way to check
+    set of terminal states. The transition function role is handles by the
+    local controller.
+
     """
-    def __init__(self, params, controller, state_dim=3):
+    def __init__(self, params, starts, goal, controller, state_dim=3):
         self._params = params
         self._controller = controller
+        self._starts = starts
+        self._goal = goal
 
         # setup the graph structure and internal variables
         self._g = StateGraph(state_dim=state_dim)
@@ -36,17 +45,96 @@ class ControllerGraph(object):
                                                     thetaL=1e-4,
                                                     thetaU=1e-1)
 
-    def initialize_state_graph(self, samples=None):
-        pass
+    def initialize_state_graph(self, R, terminal, samples=None):
+        """ Initialize the controller graph
+
+        Parameters
+        -----------
+        R : callable
+            Reward function callable to evaluating reward along local
+            controller trajectories
+        terminal : callable
+            Function to check is a state is terminal.
+        samples : array-like, optional (default: None)
+            Samples of states for initializing the graph
+
+        """
+        if not isinstance(R, Callable):
+            raise TypeError('*R* must be a callable')
+        if not isinstance(terminal, Callable):
+            raise TypeError('*terminal* must be a callable')
+
+        # if R.kind == 'Tabular':
+        #     raise ValueError('CG only works with feature based rewards')
+
+        self._g.clear()
+
+        # if self._params.init_type == 'random':
+        self._fixed_init(R, terminal, samples)
+        # elif self._params.init_type == 'trajectory':
+        #     self._traj_init(R, terminal, samples)
 
     def build_graph(self):
+        """ Build the controller graph """
+        pass
+
+    def states(self):
+        """ Return the ids of the states in the CG """
+        return self._g.nodes
+
+    def all_actions(self):
+        """ Return the ids of the edges in the CG """
+        return self._g.all_edges
+
+    def state_actions(self, state):
+        """ Get the actions available at state (out-going) edges """
+        return self._g.out_edges(state)
+
+    def _fixed_init(self, R, terminal, samples):
+        """ Initialize from random samples """
+
+        # CMAX = self._params.max_cost
+        CMAX = 100
+        RMAX = 1
+
+        for start in self._starts:
+            self._g.add_node(nid=self._node_id, data=start, cost=0,
+                             priority=1, V=RMAX, pi=0, Q=[], ntype='start')
+            self._node_id += 1
+
+        self._g.add_node(nid=self._node_id, data=self._goal, cost=-CMAX,
+                         priority=1, V=RMAX, pi=0, Q=[], ntype='goal')
+        self._node_id += 1
+
+        # add the initial samples of states
+        init_samples = list(samples)
+        for sample in init_samples:
+            self._g.add_node(nid=self._node_id, data=sample, cost=-CMAX,
+                             priority=1, V=RMAX, pi=0, Q=[], ntype='simple')
+            self._node_id += 1
+
+        # add edges between each pair of states
+        for n in self._g.nodes:
+            for m in self._g.nodes:
+                if n == m or terminal(n):
+                    continue
+                ndata, mdata = self._g.gna(n, 'data'), self._g.gna(m, 'data')
+                traj = self._controller.trajectory(ndata, mdata)
+                d = trajectory_length(traj)
+                # r, phi = R(ndata, traj)
+                r, phi = 1, [0, 1, 1]
+                self._g.add_edge(source=n, target=m, reward=r,
+                                 duration=d, phi=phi, traj=traj)
+
+    def _traj_init(self, R, terminal, trajectories):
+        """ Initialize CG using way-point samples from expert trajectories """
         pass
 
 
 class CGParameters(object):
     """ ControllerGraph parameters
 
-    Uses json encoding for persistence, so as to allow different domain
+    Uses JSON encoding for persistence, so as to allow different domain
     configurations.
 
     Attributes
