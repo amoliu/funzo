@@ -1,8 +1,8 @@
 .. image:: https://img.shields.io/travis/makokal/funzo.svg
         :target: https://travis-ci.org/makokal/funzo
 
-.. image:: https://coveralls.io/repos/github/makokal/funzo/badge.svg?branch=master
-    :target: https://coveralls.io/github/makokal/funzo?branch=master
+.. image:: https://codecov.io/gh/makokal/funzo/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/makokal/funzo
 
 .. image:: https://requires.io/github/makokal/funzo/requirements.svg?branch=master
      :target: https://requires.io/github/makokal/funzo/requirements/?branch=master
@@ -19,11 +19,14 @@ Documentation: `http://makokal.github.io/funzo/ <http://makokal.github.io/funzo/
 
 Features
 ---------
-* Flexible interfaces allowing easy extensions
-* Inverse Reinforcement Learning
+* Flexible interfaces for models and algorithms
+* Inverse reinforcement learning algorithms
     - Bayesian IRL
-* RL Domains
+        - PolicyWalk based BIRL
+        - MAP based BIRL
+* RL domains for experiments
     - GridWorld (discrete)
+    - Chainworld (discrete)
     - PuddleWorld (continuous)
     - Social Navigation (continuous)
 * MDP solvers
