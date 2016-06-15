@@ -14,7 +14,7 @@ env:
     - TEST_DIR=/tmp/funzo
     - CONDA_CHANNEL="conda-forge"
     - CONDA_DEPS="pip nose coverage cython networkx numpy scipy six h5py  python-dateutil pytz matplotlib scikit-learn"
-    - PIP_DEPS="coveralls tqdm"
+    - PIP_DEPS="coveralls tqdm codecov"
   matrix:
     - EXTRA_DEPS=""
 
@@ -35,7 +35,7 @@ install:
 
 script:
 - mkdir -p $TEST_DIR
-- cd $TEST_DIR && nosetests -v --with-coverage --cov-config .coveragerc --cover-package=funzo funzo
+- cd $TEST_DIR && nosetests -v --with-coverage --cover-package=funzo funzo
 
 after_success:
     - codecov
