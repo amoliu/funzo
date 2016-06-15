@@ -159,12 +159,11 @@ class CGSocialNavigationMDP(MDP):
         # TODO
         # - Define T to extract edges at a node and put them in the standard
         # format
-        # - Set up A (only the out-going edges from a node) and S
 
     def setup_CG(self, params, samples=None):
         """ Setup the controller graph """
 
-        # todo - mode to world
+        # todo - move to world
         self._cg = ControllerGraph(params,
                                    self._domain.starts,
                                    self._domain.goal,
@@ -176,6 +175,11 @@ class CGSocialNavigationMDP(MDP):
     def graph(self):
         """ Get the underlying graph object """
         return self._cg._g
+
+    def T(self, state, action):
+        """ Perform transion on the CG """
+        # in the CG state is node id, action is edge id
+        pass
 
     @property
     def S(self):

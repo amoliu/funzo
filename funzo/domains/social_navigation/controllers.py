@@ -14,7 +14,7 @@ from ...models import MDPLocalController
 from .nav_world import SocialNavigationWorld
 
 
-__all__ = ['LinearController']
+__all__ = ['LinearController', 'POSQController']
 
 
 class LinearController(MDPLocalController):
@@ -86,7 +86,6 @@ class LinearController(MDPLocalController):
 
         traj = [target[0:2] * t / dt + source[0:2] * (1 - t / dt)
                 for t in range(int(dt))]
-        # traj = [t.tolist() + [theta, V] for t in traj]
         traj = [t.tolist() + [theta] for t in traj]
         traj = np.array(traj)
         return traj
@@ -124,9 +123,6 @@ class POSQController(LinearController):
         traj, speedvec, vel, inct = self._posq_integrate(
             source, target, self._direction, self._resolution,
             self._base, init_t, V, nS=0)
-
-        # speeds = np.hypot(speedvec[:, 0], speedvec[:, 1])
-        # traj = np.column_stack((traj, speeds))
 
         return traj
 
