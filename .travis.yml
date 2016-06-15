@@ -35,8 +35,9 @@ install:
 
 script:
 - mkdir -p $TEST_DIR
-- cd $TEST_DIR && nosetests -v --with-coverage --cover-package=funzo funzo
+- cd $TEST_DIR && nosetests -v --with-coverage --cov-config .coveragerc --cover-package=funzo funzo
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+    - codecov
+  #- bash <(curl -s https://codecov.io/bash)
   # - coveralls
